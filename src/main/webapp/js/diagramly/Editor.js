@@ -4269,7 +4269,7 @@
 			// TODO: Update sstate in Format
 			var sstate = this.format.createSelectionState();
 
-			if (sstate.style.shape != 'image' && !sstate.containsLabel)
+			if (sstate.style.shape != 'image' && !sstate.containsLabel && sstate.style.shape != 'mxgraph.ibm2mondrian.base')
 			{
 				this.container.appendChild(this.addStyles(this.createPanel()));
 			}
@@ -6639,6 +6639,8 @@
 	mxStencilRegistry.libraries['gmdl'] = [SHAPES_PATH + '/mxGmdl.js', STENCIL_PATH + '/gmdl.xml'];
 	mxStencilRegistry.libraries['gcp2'] = [SHAPES_PATH + '/mxGCP2.js', STENCIL_PATH + '/gcp2.xml'];
 	mxStencilRegistry.libraries['ibm'] = [SHAPES_PATH + '/mxIBM.js', STENCIL_PATH + '/ibm.xml'];
+	mxStencilRegistry.libraries['ibm2'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
+	mxStencilRegistry.libraries['ibm2'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
 	mxStencilRegistry.libraries['cabinets'] = [SHAPES_PATH + '/mxCabinets.js', STENCIL_PATH + '/cabinets.xml'];
 	mxStencilRegistry.libraries['archimate'] = [SHAPES_PATH + '/mxArchiMate.js'];
 	mxStencilRegistry.libraries['archimate3'] = [SHAPES_PATH + '/mxArchiMate3.js'];

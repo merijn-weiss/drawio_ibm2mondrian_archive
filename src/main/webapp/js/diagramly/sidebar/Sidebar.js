@@ -35,6 +35,10 @@
 
 	Sidebar.prototype.ibm = ['Analytics', 'Applications', 'Blockchain', 'Data', 'DevOps', 'Infrastructure', 'Management', 'Miscellaneous', 'Security', 'Social', 'Users', 'VPC', 'Boxes', 'Connectors'];
 
+	Sidebar.prototype.ibm2 = ['Groups', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Management', 'Services', 'Network', 'Security', 'Storage', 'Users'];
+
+	Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
 	Sidebar.prototype.gcp = ['Cards', 'Big Data', 'Compute', 'Developer Tools', 'Extras', 'Identity and Security', 'Machine Learning', 'Management Tools', 'Networking', 'Storage Databases'];
@@ -121,6 +125,8 @@
 	                                   {id: 'bpmn', prefix: 'bpmn', libs: [''/*prefix is library*/, 'Gateways', 'Events']},
 	                                   {id: 'clipart', prefix: null, libs: ['computer', 'finance', 'clipart', 'networking', 'people', 'telco']},
 	                                   {id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm},
+	                                   {id: 'ibm2', prefix: 'ibm2', libs: Sidebar.prototype.ibm2},
+	                                   {id: 'ibm2mondrian', prefix: 'ibm2mondrian', libs: Sidebar.prototype.ibm2mondrian},
 	                                   {id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis},
 	                                   {id: 'cumulus', libs: ['cumulus']},
 	                                   {id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip},
@@ -488,6 +494,8 @@
             			          {title: 'Cumulus', id: 'cumulus', image: IMAGE_PATH + '/sidebar-cumulus.png'},
             			          {title: 'Citrix', id: 'citrix', image: IMAGE_PATH + '/sidebar-citrix.png'},
             			          {title: 'Google Cloud Platform', id: 'gcp2', image: IMAGE_PATH + '/sidebar-gcp2.png'},
+            			          {title: 'IBM 2.0 Base', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
+            			          {title: 'IBM 2.0 Defined', id: 'ibm2', image: IMAGE_PATH + '/sidebar-ibm2.png'},
             			          {title: 'IBM', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
             			          {title: 'Kubernetes', id: 'kubernetes', image: IMAGE_PATH + '/sidebar-kubernetes.png'},
             			          {title: 'Network', id: 'network', image: IMAGE_PATH + '/sidebar-network.png'},
