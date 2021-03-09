@@ -320,6 +320,7 @@ App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': '/plugins/explore.js',
 	'tickets': '/plugins/tickets.js', 'flow': '/plugins/flow.js',
 	'webcola': '/plugins/webcola/webcola.js', 'rnd': '/plugins/random.js',
 	'page': '/plugins/page.js', 'gd': '/plugins/googledrive.js',
+	'ibm2': '/plugins/ibm2.js',
 	'tags': '/plugins/tags.js'};
 
 App.publicPlugin = [
