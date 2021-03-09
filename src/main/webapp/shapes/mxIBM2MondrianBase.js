@@ -1288,10 +1288,10 @@ mxIBM2MondrianBase.prototype.destroy = function()
 var vertexHandlerUnion = mxVertexHandler.prototype.union;
 mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, scale, tr, constrained)
 {
-  var rect = vertexHandlerUnion.apply(this, arguments);
-
   console.log("Shape:");
   console.log(this.state.style['shape']);
+  var rect = vertexHandlerUnion.apply(this, arguments);
+
   if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
   {
 	const shapeType = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);
