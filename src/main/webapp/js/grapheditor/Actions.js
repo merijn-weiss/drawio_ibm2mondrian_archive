@@ -1373,7 +1373,7 @@ Actions.prototype.init = function()
 			        		// Sets shape only if not already shape with image (label or image)
 			        		var style = graph.getCurrentCellStyle(cells[0]);
 			        		
-			        		if (style[mxConstants.STYLE_SHAPE] != 'image' && style[mxConstants.STYLE_SHAPE] != 'label')
+			        		if (style[mxConstants.STYLE_SHAPE] != 'image' && style[mxConstants.STYLE_SHAPE] != 'label' && style[mxConstants.STYLE_SHAPE] != 'mxgraph.ibm2mondrian.base')
 			        		{
 			        			graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
 			        		}

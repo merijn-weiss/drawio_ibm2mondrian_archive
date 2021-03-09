@@ -4201,9 +4201,12 @@ StyleFormatPanel.prototype.init = function()
 			this.container.appendChild(this.addSvgStyles(this.createPanel()));
 		}
 		
+		if (ss.style.shape != 'mxgraph.ibm2mondrian.base')
+		{
 		if (!ss.containsImage || ss.style.shape == 'image')
 		{
 			this.container.appendChild(this.addFill(this.createPanel()));
+		}
 		}
 	
 		this.container.appendChild(this.addStroke(this.createPanel()));
