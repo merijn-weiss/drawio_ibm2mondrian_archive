@@ -269,12 +269,6 @@
 		for (let section in sections) {
 			if (section != '*')
 			{
-				//entries.push(this.addEntry(dt + section.toLowerCase(), function() {
-				//	const name = section;
-				//	//return sb.createVertexTemplate('text;fontFamily=IBM Plex Sans;fontSize=32;fontColor=#000000;fontStyle=0;align=center;verticalAlign=middle;rotation=-45', 0, 0, name);
-				//	return save.createSection(name);
-				//}));
-				
 				entries.push(this.addEntry(dt + section.toLowerCase(), this.createSection(section)));
 			}
 
