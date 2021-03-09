@@ -1288,24 +1288,14 @@ mxIBM2MondrianBase.prototype.destroy = function()
 var vertexHandlerUnion = mxVertexHandler.prototype.union;
 mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, scale, tr, constrained)
 {
-  console.log("Shape:");
-  console.log(this.state.style['shape']);
-  if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
-  {
-    console.log("is ===");
-  }
-  else
-  {
-    console.log("is not ===");
-  }
-  var rect = vertexHandlerUnion.apply(this, arguments);
+  //var rect = vertexHandlerUnion.apply(this, arguments);
 
-  if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
-  {
+  //if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
+  //{
 	const shapeType = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);
 	const shapeLayout = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT);
-	rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout, 'mxVertexHandler');
-  }
+	var rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout, 'mxVertexHandler');
+  //}
 
   return rect;
 };
