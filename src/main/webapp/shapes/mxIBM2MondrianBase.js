@@ -1290,6 +1290,14 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 {
   console.log("Shape:");
   console.log(this.state.style['shape']);
+  if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
+  {
+    console.log("is ===");
+  }
+  else
+  {
+    console.log("is not ===");
+  }
   var rect = vertexHandlerUnion.apply(this, arguments);
 
   if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
