@@ -87,7 +87,7 @@
 					}))
 			});
 			this.setCurrentSearchEntryLibrary('ibm2mondrian', 'ibm2' + header);
-			this.addPaletteFunctions('ibm2mondrian' + header, 'IBM 2.0 / ' + header, false, entries);
+			this.addPaletteFunctions('ibm2mondrian' + header, 'IBM / ' + header, false, entries);
 		});
 
 		this.setCurrentSearchEntryLibrary();

@@ -289,7 +289,7 @@
 			}
 		}
 		this.setCurrentSearchEntryLibrary('ibm2', 'ibm2' + category)
-		this.addPaletteFunctions('ibm2' + category, 'IBM 2.0 / ' + category, false, entries);
+		this.addPaletteFunctions('ibm2' + category, 'IBM / ' + category, false, entries);
 	}
 
 	this.setCurrentSearchEntryLibrary();
