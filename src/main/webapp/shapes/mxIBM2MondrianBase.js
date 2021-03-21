@@ -1526,28 +1526,28 @@ mxIBM2MondrianBase.prototype.getConstraints = function(style, w, h)
 		
 		var connectionConstraint = null;
 		// Left side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(0, pointPosition), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(0, connectionPositions[pointIndex]), false);
 			constr.push(connectionConstraint);	
 		}
 
 		// Right side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(1, pointPosition), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(1, connectionPositions[pointIndex]), false);
 			connectionConstraint.dx = dXoffSet;
 			constr.push(connectionConstraint);	
 		}
 
 		// Top side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(pointPosition, 0), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(connectionPositions[pointIndex], 0), false);
 			connectionConstraint.dy = -1 * dYoffSet;
 			constr.push(connectionConstraint);	
 		}
 
 		// Bottom side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(pointPosition, 1), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(connectionPositions[pointIndex], 1), false);
 			constr.push(connectionConstraint);	
 		}
 
