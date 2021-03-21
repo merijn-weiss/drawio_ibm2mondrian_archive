@@ -61,13 +61,12 @@ mxIBM2MondrianBase.prototype.cst = {
 	POSITION_TEXT : 'positionText', 
 	POSITION_TEXT_DEFAULT : 'bottom',
 
-	MODIFIER : 'modifier',
-	MODIFIER_DEFAULT : 'noModifier',
-	MODIFIER_COLOR_FAMILY : 'modifierColorFamily',
-	MODIFIER_COLOR_FAMILY_DEFAULT : 'black',
-	MODIFIER_COLOR_FILL : 'modifierColorFill', 
-	MODIFIER_COLOR_FILL_DEFAULT : 'medium', 
-
+	TAG : 'tag',
+	TAG_DEFAULT : 'noTag',
+	TAG_COLOR_FAMILY : 'tagColorFamily',
+	TAG_COLOR_FAMILY_DEFAULT : 'black',
+	TAG_COLOR_FILL : 'tagColorFill', 
+	TAG_COLOR_FILL_DEFAULT : 'medium', 
 };
 
 //**********************************************************************************************************************************************************
@@ -109,12 +108,9 @@ mxIBM2MondrianBase.prototype.isDarkColor = function(paletteVersion,color,colorSw
 		if(colorSwatch != null)
 			swatch = colorSwatch.split("_")[1];
 		if(swatch != null)
-			if(paletteVersion === 'v2')
-				return parseInt(swatch) >= 50;
-			else
-				return parseInt(swatch) >= 60;
+			return parseInt(swatch) >= 50;
 		else
-			return false;	
+			return false;
 	}
 }
 
@@ -133,76 +129,43 @@ mxIBM2MondrianBase.prototype.getColorSwatch = function(paletteVersion, colorFami
 	{
 		return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR; // the icon in a group never has a fill
 	}
+	else if(shapePart === 'outerLine' || shapePart === 'tagLine')
+	{
+		switch(colorIntensity) 
+		{
+			case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
+				if(colorFamily === 'blue' || colorFamily === 'red')
+					return 'swatch_80';
+				else
+					return 'swatch_70';
+			default:
+				if(colorFamily === 'blue')
+					return 'swatch_60';
+				else
+					return 'swatch_50';	
+				}
+	}
 	else
 	{
-		if(paletteVersion === 'v2')
+		switch(colorIntensity)
 		{
-			if(shapePart === 'outerLine' || shapePart === 'modifierLine')// TODO: after v1/v2 decision made this must be fixed. Now you the color is determined by the Icon (Fill)
-			{
-				switch(colorIntensity) 
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						if(colorFamily === 'blue' || colorFamily === 'red')
-							return 'swatch_80';
-						else
-							return 'swatch_70';
-					default:
-						if(colorFamily === 'blue')
-							return 'swatch_60';
-						else
-							return 'swatch_50';	
-						}
-			}
-			else
-			{
-				switch(colorIntensity)
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
-						return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
-					case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
-						return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
-					case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
-					case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
-						return 'swatch_10';
-					case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
-						if(colorFamily === 'blue' || colorFamily === 'gray')
-							return 'swatch_60';
-						else
-							return 'swatch_50';
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						if(colorFamily === 'blue' || colorFamily === 'red' || colorFamily === 'gray') // TODO: check with Diana since the spec says Black for Gray
-							return 'swatch_80';
-						else
-							return 'swatch_70';
-				}	
-			}
-		}
-		else // paletteVersion === 'v1a' || paletteVersion === 'v1b'
-		{
-			if ((shapePart === 'outerLine' && paletteVersion === 'v1b') || shapePart === 'modifierLine')
-				return 'swatch_60'
-			else if (shapePart === 'outerLine' && shapeLayout === 'expanded')
-				return 'swatch_60'
-			else if(shapePart === 'outerLine' && shapeLayout === 'collapsed' && (colorIntensity === 'noColor' || colorIntensity === 'white'))
-				return 'swatch_60';
-			else
-			{
-				switch(colorIntensity)
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
-						return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
-					case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
-						return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
-					case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
-						return 'swatch_10';
-					case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
-						return 'swatch_30';
-					case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
-						return 'swatch_40';
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						return 'swatch_50';
-				}
-			}
+			case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
+				return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
+			case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
+				return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
+			case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
+			case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
+				return 'swatch_10';
+			case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
+				if(colorFamily === 'blue' || colorFamily === 'gray')
+					return 'swatch_60';
+				else
+					return 'swatch_50';
+			case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
+				if(colorFamily === 'blue' || colorFamily === 'red' || colorFamily === 'gray')
+					return 'swatch_80';
+				else
+					return 'swatch_70';
 		}	
 	}
 }
@@ -232,7 +195,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 		dividerLine: {color: null, colorSwatch: null},
 		container: {color: null, colorSwatch: null},
 		decorator: {component: {color: WHITE, colorSwatch: null}},
-		modifier: {shape: 'circle', visible: false, fill: {color: null, colorSwatch: null}, line: {color: null, colorSwatch: null}, text: null, textColor: null},
+		tag: {shape: 'circle', visible: false, fill: {color: null, colorSwatch: null}, line: {color: null, colorSwatch: null}, text: null, textColor: null},
 	};
 
 	//shape 
@@ -321,22 +284,22 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 
 	shapeVD.decorator.component.color = WHITE;
 
-	//  modifier
-	shapeVD.modifier.shape = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.MODIFIER, mxIBM2MondrianBase.prototype.cst.MODIFIER_DEFAULT);
-	shapeVD.modifier.visible = (shapeVD.modifier.shape != 'noModifier');
-	if(shapeVD.modifier.visible)
+	//  tag
+	shapeVD.tag.shape = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG, mxIBM2MondrianBase.prototype.cst.TAG_DEFAULT);
+	shapeVD.tag.visible = (shapeVD.tag.shape != 'noTag');
+	if(shapeVD.tag.visible)
 	{
-		let modifierColorFamily = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.MODIFIER_COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.MODIFIER_COLOR_FAMILY_DEFAULT);
-		let modifierColorFill = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.MODIFIER_COLOR_FILL, mxIBM2MondrianBase.prototype.cst.MODIFIER_COLOR_FILL_DEFAULT);
+		let tagColorFamily = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY_DEFAULT);
+		let tagColorFill = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL_DEFAULT);
 		
-		shapeVD.modifier.fill.colorSwatch = this.getColorSwatch(paletteVersion, modifierColorFamily, modifierColorFill, 'modifier', shapeLayout, shapeType);
-		shapeVD.modifier.fill.color = this.getSelectedColorSpecification(modifierColorFamily)[shapeVD.modifier.fill.colorSwatch];
+		shapeVD.tag.fill.colorSwatch = this.getColorSwatch(paletteVersion, tagColorFamily, tagColorFill, 'tag', shapeLayout, shapeType);
+		shapeVD.tag.fill.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.fill.colorSwatch];
 
-		shapeVD.modifier.line.colorSwatch = this.getColorSwatch(paletteVersion, modifierColorFamily, modifierColorFill, 'modifierLine', shapeLayout, shapeType);
-		shapeVD.modifier.line.color = this.getSelectedColorSpecification(modifierColorFamily)[shapeVD.modifier.line.colorSwatch];
+		shapeVD.tag.line.colorSwatch = this.getColorSwatch(paletteVersion, tagColorFamily, tagColorFill, 'tagLine', shapeLayout, shapeType);
+		shapeVD.tag.line.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.line.colorSwatch];
 
-		shapeVD.modifier.text = thisShape.state.cell.getAttribute('Modifier-Text',null);
-		shapeVD.modifier.textColor = (this.isDarkColor(paletteVersion, shapeVD.modifier.fill.color, shapeVD.modifier.fill.colorSwatch)) ?  WHITE : BLACK;
+		shapeVD.tag.text = thisShape.state.cell.getAttribute('Tag-Text',null);
+		shapeVD.tag.textColor = (this.isDarkColor(paletteVersion, shapeVD.tag.fill.color, shapeVD.tag.fill.colorSwatch)) ?  WHITE : BLACK;
 	}
 
 	return shapeVD;
@@ -368,14 +331,14 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'positionText', dispName:'Label (Position)', type:'enum', defVal:'bottom',
 		enumList:[{val:'bottom', dispName: 'Bottom'}, {val:'top', dispName: 'Top'}, {val:'left', dispName: 'Left'}, {val:'right', dispName: 'Right'}]},
 
-	// Modifier
-	{name:'modifier', dispName:'Modifier', type:'enum', defVal:'noModifier',
+	// Tag
+	{name:'tag', dispName:'Tag', type:'enum', defVal:'noTag',
 		enumList:[
-		{val:'noModifier', dispName: 'None'}, {val:'circle', dispName: 'Circle'}, {val:'diamond', dispName: 'Diamond'}, 
+		{val:'noTag', dispName: 'None'}, {val:'circle', dispName: 'Circle'}, {val:'diamond', dispName: 'Diamond'}, 
 		{val:'square', dispName: 'Square'}, {val:'triangle', dispName: 'Triangle'}, {val:'hexagon', dispName: 'Hexagon'}, {val:'octagon', dispName: 'Octagon'}]},
-	{name:'modifierColorFamily', dispName:'Modifier (Color)', type:'enum', defVal:'black',
+	{name:'tagColorFamily', dispName:'Tag (Color)', type:'enum', defVal:'black',
 		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
-	{name:'modifierColorFill', dispName:'Modifier (Fill)', type:'enum', defVal:'medium',
+	{name:'tagColorFill', dispName:'Tag (Fill)', type:'enum', defVal:'medium',
 		enumList:[{val:'white', dispName: 'White'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
 	];
 
@@ -461,14 +424,14 @@ mxIBM2MondrianBase.prototype.init = function(container)
 {
 	if(Editor.config != null && Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE])
 	{
-		for (var key in Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE]['icon_stencil_libraries']) {
-			mxStencilRegistry.loadStencilSet(
-				Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE]['icon_stencil_libraries'][key]);
+		let iconStencilLibraries = Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE].icon_stencil_libraries;
+		for (stencilLibrary in iconStencilLibraries) {
+			mxStencilRegistry.loadStencilSet(iconStencilLibraries[stencilLibrary]);
 		}
 	}
 
-	let mondrianAttributes = ['Element-ID', 'Element-Name','Icon-Name','Modifier-Text'];
-	for (var attributeIndex in mondrianAttributes) {
+	let mondrianAttributes = ['Element-ID', 'Element-Name','Icon-Name','Tag-Text'];
+	for (attributeIndex = 0; attributeIndex < mondrianAttributes.length; attributeIndex++ ) {
 		if(!this.state.cell.hasAttribute(mondrianAttributes[attributeIndex]))
 		{
 			this.state.cell.setAttribute(mondrianAttributes[attributeIndex],'')
@@ -501,41 +464,48 @@ mxIBM2MondrianBase.prototype.colorConversion = function(colorValue)
 	}
 }
 
+// Function to convert diagrams to current version if breaking changes have been introduced
 mxIBM2MondrianBase.prototype.templateConversion = function()
 {
 	try {
 		if(this.state != null)
 		{
+
+			if(this.state.cell.hasAttribute('Modifier-Text'))
+			{
+				this.state.cell.setAttribute('Tag-Text', this.state.cell.getAttribute('Modifier-Text',''));
+				this.state.cell.getValue().removeAttribute('Modifier-Text');
+			}
+
 			let styleCurrent = null;
 			let styleUpdate = false;
 		
 			if(this.state.view.graph.model != null && this.state.cell != null)
 				styleCurrent = this.state.view.graph.model.getStyle(this.state.cell);
 		
-			//const shapeVersion = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION);
-		
-			//if(shapeVersion == 'undefined')
-			//{
-			//}
 			if(styleCurrent != null)
-				styleUpdate = (styleCurrent.indexOf('swatch_') > 0)
+				styleUpdate = (styleCurrent.indexOf('modifier') > 0)
 		
 			if(styleUpdate)
 			{
-				newStyle = styleCurrent.replace(/swatch_10/g, 'veryLight');
-				newStyle = newStyle.replace(/swatch_30/g, 'light');
-				newStyle = newStyle.replace(/swatch_40/g, 'medium');
-				newStyle = newStyle.replace(/swatch_50/g, 'dark');
+				console.log(styleCurrent);
+				newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
+				newStyle = newStyle.replace(/modifier/g, 'tag');
+				console.log(newStyle);
+
+				console.log(this.state.style);
 		
 				this.state.view.graph.model.beginUpdate();
 				try
 				{
-					if(this.state.style['colorFillIcon'] != null)
-						this.state.style['colorFillIcon'] = this.colorConversion(this.state.style['colorFillIcon']);
-					if(this.state.style['colorFillText'] != null)
-						this.state.style['colorFillText'] = this.colorConversion(this.state.style['colorFillText']);
-					if(this.state.style['colorFillContainer'] != null)
-						this.state.style['colorFillContainer'] = this.colorConversion(this.state.style['colorFillContainer']);
+					if(this.state.style['modifier'] != null)
+						this.state.style['tag'] = this.state.style['modifier'].replace(/noModifier/g, 'noTag');
+
+					if(this.state.style['modifierColorFamily'] != null)
+						this.state.style['tagColorFamily'] = this.state.style['modifierColorFamily'];
+
+					if(this.state.style['modifierColorFill'] != null)
+						this.state.style['tagColorFill'] = this.state.style['modifierColorFill'];
 
 					this.state.view.graph.model.setStyle(this.state.cell, newStyle);
 				}
@@ -571,8 +541,8 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 					const currentIconName = (currentIconAttribute != null) ? currentIconAttribute.value : null;
 					const previousIconName = (previousIconAttribute != null) ?  previousIconAttribute.value : null;
 					
-					const currentCMTextAttribute = evt.properties.change.value.attributes.getNamedItem('Modifier-Text');
-					const previousCMTextAttribute = evt.properties.change.previous.attributes.getNamedItem('Modifier-Text');
+					const currentCMTextAttribute = evt.properties.change.value.attributes.getNamedItem('Tag-Text');
+					const previousCMTextAttribute = evt.properties.change.previous.attributes.getNamedItem('Tag-Text');
 	
 					const currentCMText = (currentCMTextAttribute != null) ? currentCMTextAttribute.value : null;
 					const previousCMText = (previousCMTextAttribute != null) ?  previousCMTextAttribute.value : null;
@@ -732,7 +702,7 @@ mxIBM2MondrianBase.prototype.paintVertexShape = function(c, x, y, w, h)
 	this.paintCorner(c);
 	this.paintIcon(c);
 	this.paintShape(c);
-	this.paintModifier(c);
+	this.paintTag(c);
 
 	// if the fontColor is Black or White the color is controlled by visualization rules
 	fontColor = this.style.fontColor;
@@ -1087,13 +1057,13 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 	}
 };
 
-mxIBM2MondrianBase.prototype.paintModifier = function(c)
+mxIBM2MondrianBase.prototype.paintTag = function(c)
 {
-	if(this.shapeVisualDefinition.modifier.visible)
+	if(this.shapeVisualDefinition.tag.visible)
 	{
 		let fontSize = 12;
 		let characterWidth = (6/10) * fontSize;
-		let modifierOuterBoxSingle = {
+		let tagOuterBoxSingle = {
 			circle: {width: 14, height:14},
 			diamond: {width: 14, height:14},
 			square: {width: 12, height:12},
@@ -1101,104 +1071,104 @@ mxIBM2MondrianBase.prototype.paintModifier = function(c)
 			hexagon: {width: 15, height:13},
 			octagon: {width: 13, height:13},
 		};
-		let outerBoxSingleWidth = modifierOuterBoxSingle[this.shapeVisualDefinition.modifier.shape].width;
-		let outerBoxSingleHeight = modifierOuterBoxSingle[this.shapeVisualDefinition.modifier.shape].height;
+		let outerBoxSingleWidth = tagOuterBoxSingle[this.shapeVisualDefinition.tag.shape].width;
+		let outerBoxSingleHeight = tagOuterBoxSingle[this.shapeVisualDefinition.tag.shape].height;
 
-		let modifierText = this.shapeVisualDefinition.modifier.text;
-		let textLength = (modifierText != null) ? modifierText.length : 0;
+		let tagText = this.shapeVisualDefinition.tag.text;
+		let textLength = (tagText != null) ? tagText.length : 0;
 		let extraTextWidth = (textLength > 1) ? characterWidth * (textLength - 1) + 4 : 0;
 
-		let modifierHeight = outerBoxSingleHeight;
-		let modifierWidth = outerBoxSingleWidth + extraTextWidth;
-		let topModifierY = -1 * modifierHeight/2;
-		let bottomModifierY = modifierHeight/2;
+		let tagHeight = outerBoxSingleHeight;
+		let tagWidth = outerBoxSingleWidth + extraTextWidth;
+		let topTagY = -1 * tagHeight/2;
+		let bottomTagY = tagHeight/2;
 		
-		let rightModifierX = (this.shapeVisualDefinition.shape.layout === 'collapsed') ? (this.shapeVisualDefinition.shape.width/2 + modifierWidth/2) : this.shapeVisualDefinition.shape.width - 16;
-		let leftModifierX = rightModifierX - modifierWidth;
-		let centerModifierX = (rightModifierX + leftModifierX)/2;
+		let rightTagX = (this.shapeVisualDefinition.shape.layout === 'collapsed') ? (this.shapeVisualDefinition.shape.width/2 + tagWidth/2) : this.shapeVisualDefinition.shape.width - 16;
+		let leftTagX = rightTagX - tagWidth;
+		let centerTagX = (rightTagX + leftTagX)/2;
 
-		c.setFillColor(this.shapeVisualDefinition.modifier.fill.color);
-		c.setStrokeColor(this.shapeVisualDefinition.modifier.line.color);
+		c.setFillColor(this.shapeVisualDefinition.tag.fill.color);
+		c.setStrokeColor(this.shapeVisualDefinition.tag.line.color);
 		c.setDashed(false);
 		c.setStrokeWidth(1);
 
-		if(this.shapeVisualDefinition.modifier.shape === 'circle')
+		if(this.shapeVisualDefinition.tag.shape === 'circle')
 		{
 			let circleRadius = 7;
 			c.begin();
-			c.moveTo(leftModifierX + circleRadius, topModifierY);
-			c.lineTo(rightModifierX - circleRadius, topModifierY);
-			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, rightModifierX - circleRadius, bottomModifierY);
-			c.lineTo(leftModifierX + circleRadius, bottomModifierY);
-			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, leftModifierX + circleRadius, topModifierY);
+			c.moveTo(leftTagX + circleRadius, topTagY);
+			c.lineTo(rightTagX - circleRadius, topTagY);
+			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, rightTagX - circleRadius, bottomTagY);
+			c.lineTo(leftTagX + circleRadius, bottomTagY);
+			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, leftTagX + circleRadius, topTagY);
 			c.close();
 		}
-		else if(this.shapeVisualDefinition.modifier.shape === 'diamond')
+		else if(this.shapeVisualDefinition.tag.shape === 'diamond')
 		{
 			c.begin();
-			c.moveTo(leftModifierX + outerBoxSingleWidth/2, topModifierY);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/2, topModifierY);
-			c.lineTo(rightModifierX, 0);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/2, bottomModifierY);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/2, bottomModifierY);
-			c.lineTo(leftModifierX, 0);
+			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX, 0);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/2, bottomTagY);
+			c.lineTo(leftTagX, 0);
 			c.close();
 		}
-		else if(this.shapeVisualDefinition.modifier.shape === 'square')
+		else if(this.shapeVisualDefinition.tag.shape === 'square')
 		{
 			c.begin();
-			c.moveTo(leftModifierX, topModifierY);
-			c.lineTo(rightModifierX, topModifierY);
-			c.lineTo(rightModifierX, bottomModifierY);
-			c.lineTo(leftModifierX, bottomModifierY);
-			c.lineTo(leftModifierX, topModifierY);
+			c.moveTo(leftTagX, topTagY);
+			c.lineTo(rightTagX, topTagY);
+			c.lineTo(rightTagX, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY);
+			c.lineTo(leftTagX, topTagY);
 			c.close();
 		}
-		else if(this.shapeVisualDefinition.modifier.shape === 'triangle')
+		else if(this.shapeVisualDefinition.tag.shape === 'triangle')
 		{
 			c.begin();
-			c.moveTo(leftModifierX + outerBoxSingleWidth/2, topModifierY);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/2, topModifierY);
-			c.lineTo(rightModifierX, bottomModifierY);
-			c.lineTo(leftModifierX, bottomModifierY);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/2, topModifierY);
+			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/2, topTagY);
 			c.close();
 		}
-		else if(this.shapeVisualDefinition.modifier.shape === 'hexagon')
+		else if(this.shapeVisualDefinition.tag.shape === 'hexagon')
 		{
 			c.begin();
-			c.moveTo(leftModifierX + outerBoxSingleWidth/4, topModifierY);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/4, topModifierY);
-			c.lineTo(rightModifierX, 0);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/4, bottomModifierY);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/4, bottomModifierY);
-			c.lineTo(leftModifierX, 0);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/4, topModifierY);		
+			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX, 0);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX, 0);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);		
 			c.close();
 		}
-		else if(this.shapeVisualDefinition.modifier.shape === 'octagon')
+		else if(this.shapeVisualDefinition.tag.shape === 'octagon')
 		{
 			c.begin();
-			c.moveTo(leftModifierX + outerBoxSingleWidth/4, topModifierY);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/4, topModifierY);
-			c.lineTo(rightModifierX, topModifierY + outerBoxSingleHeight/4);
-			c.lineTo(rightModifierX, bottomModifierY - outerBoxSingleHeight/4);
-			c.lineTo(rightModifierX - outerBoxSingleWidth/4, bottomModifierY);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/4, bottomModifierY);
-			c.lineTo(leftModifierX, bottomModifierY - outerBoxSingleHeight/4);
-			c.lineTo(leftModifierX, topModifierY + outerBoxSingleHeight/4);
-			c.lineTo(leftModifierX + outerBoxSingleWidth/4, topModifierY);			
+			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX, topTagY + outerBoxSingleHeight/4);
+			c.lineTo(rightTagX, bottomTagY - outerBoxSingleHeight/4);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY - outerBoxSingleHeight/4);
+			c.lineTo(leftTagX, topTagY + outerBoxSingleHeight/4);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);			
 			c.close();
 		}
 
 		c.fillAndStroke();
 
-		if(modifierText != null)
+		if(tagText != null)
 		{
-			c.setFontColor(this.shapeVisualDefinition.modifier.textColor);
+			c.setFontColor(this.shapeVisualDefinition.tag.textColor);
 			c.setFontSize(fontSize);
 			c.setFontFamily('IBM Plex Mono');
-			c.text(centerModifierX, -1, 0, 14, modifierText, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE, 0, null, 0, 0, 0);	
+			c.text(centerTagX, -1, 0, 14, tagText, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE, 0, null, 0, 0, 0);	
 		}
 	}
 }
