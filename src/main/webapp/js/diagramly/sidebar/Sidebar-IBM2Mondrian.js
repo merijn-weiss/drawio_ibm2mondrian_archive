@@ -39,6 +39,10 @@
 
 	Sidebar.prototype.addIBM2MondrianPalette = function()
 	{
+		Graph.addFont('IBM Plex Sans', 'fonts/IBMPlexSans-Regular.woff');
+		Graph.addFont('IBM Plex Mono', 'fonts/IBMPlexMono-Regular.woff');
+		Graph.addFont('IBM Plex Sans Condensed', 'fonts/IBMPlexSansCondensed-Regular.woff');
+		
 		const dt = 'ibm mondrian ';
 		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
 
