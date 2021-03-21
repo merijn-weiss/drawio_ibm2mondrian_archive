@@ -185,8 +185,9 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 
 	// VD properties
 	let shapeVD = {
-		shape: {type: shapeType, layout: shapeLayout, style: shapeStyle, width: width, height: height, container: false},
-		outerLine: {color: null, colorSwatch: null},
+		shape: {type: shapeType, layout: shapeLayout, width: width, height: height, container: false},
+		style: {type: shapeStyle, color: null},
+		outerLine: {color: null, colorSwatch: null, dashed: false, secondLine: false, secondLineDashed: false},
 		bar: {color: null, visible: false, width: null},
 		corner: {color: null, colorSwatch: null, visible: false, width: 48, height: 48},
 		icon: {color: null, colorSwatch: null, visible: (iconImage != 'noIcon'), rotate: 0, flipH: false, flipV: false},
@@ -278,9 +279,47 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	shapeVD.icon.color = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : BLACK;
 
 	if(shapeLayout === 'collapsed')
+	{
 		shapeVD.text.color = BLACK;
+		shapeVD.style.color = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : shapeVD.outerLine.color;
+
+		if(shapeVD.style.type === 'dashed')
+		{
+			if(this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch))
+			{
+				shapeVD.outerLine.secondLine = true;
+				shapeVD.outerLine.secondLineDashed = true;
+			}
+			else
+			{
+				shapeVD.outerLine.dashed = true;
+			}			
+		}
+		else if(shapeVD.style.type === 'double')
+			shapeVD.outerLine.secondLine = true;
+	}
 	else
+	{
 		shapeVD.text.color = (this.isDarkColor(paletteVersion, shapeVD.titleBar.color, shapeVD.titleBar.colorSwatch)) ?  WHITE : BLACK;
+		shapeVD.style.color = shapeVD.outerLine.color;
+
+		if(shapeVD.style.type === 'dashed')
+		{
+			if(shapeType === 'ts' && this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch))
+			{
+				shapeVD.outerLine.secondLine = true;
+				shapeVD.outerLine.secondLineDashed = true;
+			}
+			else
+			{
+				shapeVD.outerLine.dashed = true;
+			}
+		}
+		else if(shapeVD.style.type === 'double')
+		{
+			shapeVD.outerLine.secondLine = true;
+		}
+	}
 
 	shapeVD.decorator.component.color = WHITE;
 
@@ -311,9 +350,9 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'shapeLayout', dispName:'Shape (Layout)', type:'enum', defVal:'expanded',
 		enumList:[{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},{val:'custom', dispName: 'Custom'}]},
 	{name:'shapeStyle', dispName:'Shape (Style)', type:'enum', defVal:'solid',
-		enumList:[{val:'solid', dispName: 'Solid'},{val:'strikethrough', dispName: 'Strikethrough'},
-		//{val:'double', dispName: 'Double'}, 
-		{val:'dashed', dispName: 'Dashed'}]},
+		enumList:[{val:'solid', dispName: 'Solid'},{val:'strikethrough', dispName: 'Strikethrough'},{val:'double', dispName: 'Double'}, {val:'dashed', dispName: 'Dashed'}
+		//,{val:'multiple', dispName: 'Multiple'}
+	]},
 	{name:'shapeMultiplicity', dispName: 'Multiplicity', type: 'bool', defVal: false},
 	{name:'colorFamily', dispName:'Color', type:'enum', defVal:'blue',
 		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
@@ -422,14 +461,6 @@ mxIBM2MondrianBase.prototype.titleBarWidthMinimum = 144;
  */
 mxIBM2MondrianBase.prototype.init = function(container)
 {
-	if(Editor.config != null && Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE])
-	{
-		let iconStencilLibraries = Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE].icon_stencil_libraries;
-		for (stencilLibrary in iconStencilLibraries) {
-			mxStencilRegistry.loadStencilSet(iconStencilLibraries[stencilLibrary]);
-		}
-	}
-
 	let mondrianAttributes = ['Element-ID', 'Element-Name','Icon-Name','Tag-Text'];
 	for (attributeIndex = 0; attributeIndex < mondrianAttributes.length; attributeIndex++ ) {
 		if(!this.state.cell.hasAttribute(mondrianAttributes[attributeIndex]))
@@ -488,13 +519,9 @@ mxIBM2MondrianBase.prototype.templateConversion = function()
 		
 			if(styleUpdate)
 			{
-				console.log(styleCurrent);
 				newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
 				newStyle = newStyle.replace(/modifier/g, 'tag');
-				console.log(newStyle);
 
-				console.log(this.state.style);
-		
 				this.state.view.graph.model.beginUpdate();
 				try
 				{
@@ -697,6 +724,7 @@ mxIBM2MondrianBase.prototype.paintVertexShape = function(c, x, y, w, h)
 
 	c.translate(x, y);
 
+	this.paintShapeMultiplicity(c);
 	this.paintContainer(c);
 	this.paintTitleBar(c);
 	this.paintCorner(c);
@@ -823,6 +851,7 @@ mxIBM2MondrianBase.prototype.paintCorner = function(c)
 	if(this.shapeVisualDefinition.corner.visible)
 	{
 		c.setFillColor(this.shapeVisualDefinition.corner.color);
+		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
 
 		if(this.shapeType === 'actor')
 		{
@@ -870,7 +899,10 @@ mxIBM2MondrianBase.prototype.paintCorner = function(c)
 			c.rect(0, 0, cornerWidth, cornerHeight);
 		}
 		
-		c.fill();
+		if(this.shapeVisualDefinition.shape.layout === 'expanded' && this.shapeType != 'group')
+			c.fillAndStroke();
+		else
+			c.fill();
 	}
 };
 
@@ -886,25 +918,51 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 	let componentDecoratorOffset = -4;
 	let componentDecoratorHeight = 4;
 	let componentDecoratorWidth = 8;
+	let dashPattern = '8 8';
 
-	if(this.shapeVisualDefinition.shape.style === 'dashed')
-	{
-		c.setDashed(true, true);
-		c.setDashPattern('8 8');
-	}
+	const doubleStyleOffset = 2;
 	
 	if(this.shapeType === 'actor')
 	{
 		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'actor');
 
+		// Base
+		c.save();
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
 		c.ellipse(0, 0, shapeWidth, shapeHeigth);
 		c.stroke();
+		c.restore();
+
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+			if(this.shapeVisualDefinition.outerLine.secondLineDashed)
+			{
+				c.setDashed(true, true);
+				c.setDashPattern(dashPattern);
+			}
+		
+			c.ellipse(-doubleStyleOffset, -doubleStyleOffset, shapeWidth + 2*doubleStyleOffset, shapeHeigth + 2*doubleStyleOffset);
+			c.stroke();
+			c.restore();
+		}
 	}
 	else if(this.shapeType === 'ts')
 	{
 		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'ts');
+
+		// Base
+		c.save();
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
 
 		c.begin();
 		c.moveTo(this.targetSystemRadius, 0);
@@ -914,6 +972,29 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 		c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
 		c.close();
 		c.stroke();
+		c.restore();
+
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+
+			if(this.shapeVisualDefinition.outerLine.secondLineDashed)
+			{
+				c.setDashed(true, true);
+				c.setDashPattern(dashPattern);
+			}
+
+			c.begin();
+			c.moveTo(this.targetSystemRadius, -doubleStyleOffset);
+			c.lineTo(shapeWidth - this.targetSystemRadius + doubleStyleOffset, -doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius + doubleStyleOffset, this.targetSystemRadius + doubleStyleOffset, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight + doubleStyleOffset);
+			c.lineTo(this.targetSystemRadius - doubleStyleOffset, this.titleBarHeight + doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius + doubleStyleOffset, this.targetSystemRadius + doubleStyleOffset, 0, 0, 1, this.targetSystemRadius, -doubleStyleOffset);
+			c.close();
+			c.stroke();
+			c.restore();
+		}
 	}
 	else if(this.shapeType === 'ln' || this.shapeType === 'lc') // Logical Node or Logical Component
 	{
@@ -930,10 +1011,33 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.restore();
 		}
 		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		
+		// Base
+		c.save();
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
 		c.roundrect(0, 0, shapeWidth, shapeHeigth, this.cornerRadius, this.cornerRadius);
 		c.stroke();
-		
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rounded');
+		c.restore();
+
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+
+			if(this.shapeVisualDefinition.outerLine.secondLineDashed)
+			{
+				c.setDashed(true, true);
+				c.setDashPattern(dashPattern);
+			}
+			c.roundrect(-doubleStyleOffset, -doubleStyleOffset, shapeWidth + 2*doubleStyleOffset, shapeHeigth + 2*doubleStyleOffset, this.cornerRadius + doubleStyleOffset, this.cornerRadius + doubleStyleOffset);
+			c.stroke();
+
+			c.restore();
+		}
 
 		if(this.shapeType === 'lc')
 		{
@@ -962,10 +1066,33 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.restore();
 		}
 		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		
+		// Base
+		c.save();
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
 		c.rect(0, 0, shapeWidth, shapeHeigth);
 		c.stroke();
+		c.restore();
 
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rectangular');
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+
+			if(this.shapeVisualDefinition.outerLine.secondLineDashed)
+			{
+				c.setDashed(true, true);
+				c.setDashPattern(dashPattern);
+			}
+			c.rect(-doubleStyleOffset, -doubleStyleOffset, shapeWidth + 2*doubleStyleOffset, shapeHeigth + 2*doubleStyleOffset);
+			c.stroke();
+
+			c.restore();
+		}
 
 		if(this.shapeType === 'pc')
 		{
@@ -982,10 +1109,34 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 	else if(this.shapeType === 'group')
 	{
 		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		
+		// Base
+		c.save();
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
 		c.rect(0, 0, shapeWidth, shapeHeigth);
 		c.stroke();
+		c.restore();
 
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rectangular');
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+
+			if(this.shapeVisualDefinition.outerLine.secondLineDashed)
+			{
+				c.setDashed(true, true);
+				c.setDashPattern(dashPattern);
+			}
+
+			c.rect(-doubleStyleOffset, -doubleStyleOffset, shapeWidth + 2*doubleStyleOffset, shapeHeigth + 2*doubleStyleOffset);
+			c.stroke();
+
+			c.restore();
+		}
 
 		if(this.shapeVisualDefinition.bar.visible)
 		{
@@ -995,14 +1146,14 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 		}
 	}
 
-	if(this.shapeVisualDefinition.shape.style === 'strikethrough')
+	if(this.shapeVisualDefinition.style.type === 'strikethrough')
 	{
 		let leftCornerX = (this.shapeVisualDefinition.shape.layout === 'expanded') ? this.shapeVisualDefinition.corner.width : 0;
 		let leftCornerY = 0;
 		let rightCornerX = shapeWidth
 		let rightCornerY = this.titleBarHeight;
 
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		c.setStrokeColor(this.shapeVisualDefinition.style.color);
 		c.begin();
 		
 		if(this.shapeType === 'actor')
@@ -1049,6 +1200,11 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			angle = 315;
 			rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
 			rightCornerY = k - r*Math.sin(angle * (Math.PI/180));
+		}
+		else if(this.shapeType === 'group')
+		{
+			leftCornerX = this.shapeVisualDefinition.bar.width;
+			rightCornerY = this.shapeVisualDefinition.shape.height;
 		}
 
 		c.moveTo(leftCornerX, leftCornerY);
@@ -1173,16 +1329,25 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 	}
 }
 
-mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, shapeHeigth, shapeOuterShape)
+mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
 {
-	if(this.shapeMultiplicity)
+	if(this.shapeMultiplicity || this.shapeVisualDefinition.style.type === 'multiple')
 	{
+		const shapeWidth = this.shapeVisualDefinition.shape.width;
+		const shapeHeigth = this.shapeVisualDefinition.shape.height;
 		const multiplicityOffset = 8;
 		const multiplicitySpacing = 4;
 		const cornerRadius = 8;
 		const circleRadius = 20;
 
-		if(shapeOuterShape === 'rectangular')
+		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			c.setDashed(true, true);
+			c.setDashPattern('8 8');
+		}
+
+		if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
 		{
 			c.begin();
 			c.moveTo(multiplicityOffset, -1 * multiplicitySpacing);
@@ -1194,7 +1359,7 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, sh
 			c.lineTo(shapeWidth + 2 * multiplicitySpacing, shapeHeigth - 2 * multiplicityOffset);	
 			c.stroke();
 		}
-		else if(shapeOuterShape === 'rounded')
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
 		{
 			c.begin();
 			c.moveTo(multiplicityOffset, -1 * multiplicitySpacing);
@@ -1208,7 +1373,7 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, sh
 			c.lineTo(shapeWidth + 2 * multiplicitySpacing, shapeHeigth - 2 * multiplicityOffset);	
 			c.stroke();
 		}
-		else if(shapeOuterShape === 'actor')
+		else if(this.shapeType === 'actor')
 		{
 			c.ellipse(multiplicitySpacing, -1 * multiplicitySpacing, shapeWidth, shapeHeigth);
 			c.stroke();
@@ -1216,16 +1381,29 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, sh
 			c.ellipse(2 * multiplicitySpacing, -2 * multiplicitySpacing, shapeWidth, shapeHeigth);
 			c.stroke();
 		}
-		else if (shapeOuterShape === 'ts')
+		else if (this.shapeType === 'ts')
 		{
 			c.begin();
-			c.moveTo(circleRadius + 0 * multiplicityOffset, -1 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 1 * multiplicitySpacing - circleRadius, -1 * multiplicitySpacing);
-			c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + 1 * multiplicitySpacing - circleRadius, this.titleBarHeight - 1 * multiplicitySpacing);
+			//if(this.shapeVisualDefinition.style.type === 'multiple')
+			//{
+			//	c.moveTo(circleRadius, -1 * multiplicitySpacing);
+			//	c.lineTo(shapeWidth - circleRadius + 1 * multiplicitySpacing, -1 * multiplicitySpacing);
+			//	c.arcTo(circleRadius + 1 * multiplicitySpacing, circleRadius + 1 * multiplicitySpacing, 0, 0, 1, shapeWidth + 2 * multiplicitySpacing, shapeHeigth/2 - 1 * multiplicitySpacing);
+	
+			//	c.moveTo(circleRadius + 1 * multiplicityOffset, -2 * multiplicitySpacing);
+			//	c.lineTo(shapeWidth - circleRadius + 2 * multiplicitySpacing, -2 * multiplicitySpacing);
+			//	c.arcTo(circleRadius + 2 * multiplicitySpacing, circleRadius + 2 * multiplicitySpacing, 0, 0, 1, shapeWidth + 3 * multiplicitySpacing, shapeHeigth/2 - 2 * multiplicitySpacing);	
+			//}
+			//else{
+				c.moveTo(circleRadius + 0 * multiplicityOffset, -1 * multiplicitySpacing);
+				c.lineTo(shapeWidth + 1 * multiplicitySpacing - circleRadius, -1 * multiplicitySpacing);
+				c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + 1 * multiplicitySpacing - circleRadius, this.titleBarHeight - 1 * multiplicitySpacing);
 
-			c.moveTo(this.targetSystemRadius + 1 * multiplicityOffset, -2 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 1 * multiplicityOffset - circleRadius, -2 * multiplicitySpacing);
-			c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + 1 * multiplicityOffset - circleRadius, this.titleBarHeight-2 * multiplicitySpacing);
+				c.moveTo(this.targetSystemRadius + 1 * multiplicityOffset, -2 * multiplicitySpacing);
+				c.lineTo(shapeWidth + 1 * multiplicityOffset - circleRadius, -2 * multiplicitySpacing);
+				c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + 1 * multiplicityOffset - circleRadius, this.titleBarHeight-2 * multiplicitySpacing);
+			//}
+
 			c.stroke();	
 		}
 	}
@@ -1302,6 +1480,7 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 		style = mxUtils.setStyle(style, 'container', 1);
 		style = mxUtils.setStyle(style, 'collapsible', 0);
 		style = mxUtils.setStyle(style, 'recursiveResize', 0);
+		style = mxUtils.setStyle(style, 'expand', 0);
 
 		if(shapeLayout === 'collapsed') // a group can only be expanded so should ignore the shapeLayout setting
 			style = mxUtils.setStyle(style, 'shapeLayout', 'expanded');
