@@ -1,6 +1,8 @@
 (function()
 {
 	Sidebar.prototype.IBM2MondrianBaseShape = {
+		BASE_SHAPE : 'mxgraph.ibm2mondrian.base',
+
 		SHAPE_TYPE: {
 			ACTOR: 'actor',
 			TARGET_SYSTEM: 'ts',
@@ -37,8 +39,29 @@
 		}
 	}
 
+	Sidebar.prototype.addIBM2MondrianEditorExtensions = function()
+	{
+		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
+
+		// load webfonts used in Visual Standards
+		Graph.addFont('IBM Plex Sans', 'fonts/IBMPlexSans-Regular.woff');
+		Graph.addFont('IBM Plex Mono', 'fonts/IBMPlexMono-Regular.woff');
+		Graph.addFont('IBM Plex Sans Condensed', 'fonts/IBMPlexSansCondensed-Regular.woff');
+
+		// load external stencil libraries
+		if(Editor.config != null && Editor.config[MBS.BASE_SHAPE])
+		{
+			let iconStencilLibraries = Editor.config[MBS.BASE_SHAPE].icon_stencil_libraries;
+			for (stencilLibrary in iconStencilLibraries) {
+				mxStencilRegistry.loadStencilSet(iconStencilLibraries[stencilLibrary]);
+			}
+		}
+	}
+
 	Sidebar.prototype.addIBM2MondrianPalette = function()
 	{
+		Sidebar.prototype.addIBM2MondrianEditorExtensions();
+
 		const dt = 'ibm mondrian ';
 		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
 
@@ -114,13 +137,13 @@
 		{
 			shapeHeight = 48;
 			shapeWidth = (shapeType === MBS.SHAPE_TYPE.TARGET_SYSTEM) ? 64 : 48;
-			styleText = styleText + ';verticalAlign=top;align=center;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=4;spacingBottom=0;verticalLabelPosition=bottom;labelPosition=center;positionText=bottom';
+			styleText = styleText + ';verticalAlign=top;align=center;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;verticalLabelPosition=bottom;labelPosition=center;positionText=bottom';
 		}
 
 		if(shapeContainer === MBS.SHAPE_CONTAINER.YES || shapeContainer === MBS.SHAPE_CONTAINER.YES_TRANSPARENT)
-			styleOther = styleOther + ';container=1;collapsible=0;recursiveResize=0';
+			styleOther = styleOther + ';container=1;collapsible=0;recursiveResize=0;expand=0';
 		else if(shapeContainer === MBS.SHAPE_CONTAINER.NO || shapeContainer === MBS.SHAPE_CONTAINER.NO_TRANSPARENT)
-			styleOther = styleOther + ';container=0;collapsible=0;recursiveResize=0';
+			styleOther = styleOther + ';container=0;collapsible=0;recursiveResize=0;expand=0';
 
 		if(shapeContainer === MBS.SHAPE_CONTAINER.YES_TRANSPARENT || shapeContainer === MBS.SHAPE_CONTAINER.NO_TRANSPARENT)
 			styleOther = styleOther + ';colorFillText=noColor;colorFillContainer=noColor';			
