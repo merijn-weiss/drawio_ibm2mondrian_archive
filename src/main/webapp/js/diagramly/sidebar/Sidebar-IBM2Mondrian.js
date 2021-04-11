@@ -73,8 +73,11 @@
 
 		if(addSidebarBase)
 		{
-			sidebarConfigFileURLs.splice(0,0,{id: 'ibm2mondrian', name: 'IBM' , url: window.location.protocol + '//' + window.location.host + '/js/diagramly/sidebar/IBM2MondrianBase.json'});
-			sidebarConfigFileURLs.splice(1,0,{id: 'ibm2', name: 'IBM' , url: window.location.protocol + '//' + window.location.host + '/js/diagramly/sidebar/IBM2MondrianDefined.json'});
+
+			let baseUrl = (new RegExp(/^.*\//)).exec(window.location.href)[0];
+
+			sidebarConfigFileURLs.splice(0,0,{id: 'ibm2mondrian', name: 'IBM' , url:  baseUrl + 'js/diagramly/sidebar/IBM2MondrianBase.json'});
+			sidebarConfigFileURLs.splice(1,0,{id: 'ibm2', name: 'IBM' , url: baseUrl + 'js/diagramly/sidebar/IBM2MondrianDefined.json'});
 		}
 		
 		for(let sidebarExtension in mondrianEditorExtensions.Sidebars)
@@ -91,61 +94,70 @@
 			let sidebarID = sidebarConfigFileURLs[filenameIndex].id;
 			let sidebarMainName = sidebarConfigFileURLs[filenameIndex].name;
 
-			let sidebarConfigs = JSON.parse(mxUtils.load(filename).getText());
-			let sidebarVariables = sidebarConfigs.Variables;
-	
-			for(let sidebarKey in sidebarConfigs.Sidebars)
+			try
 			{
-				let sidebar = sidebarConfigs.Sidebars[sidebarKey]; 
-				let sbEntries = [];
-	
-				for (let section in sidebar)
+				let sidebarFileText = mxUtils.load(filename).getText();;
+				let sidebarConfigs = JSON.parse(sidebarFileText);;
+				let sidebarVariables = sidebarConfigs.Variables;;
+		
+				for(let sidebarKey in sidebarConfigs.Sidebars)
 				{
-					// Expand Variables
-					for(let shapeKey in sidebar[section])
+					let sidebar = sidebarConfigs.Sidebars[sidebarKey]; 
+					let sbEntries = [];
+		
+					for (let section in sidebar)
 					{
-						let shape = sidebar[section][shapeKey];
-	
-						// Expand Properties
-						for(let prop in shape)
+						// Expand Variables
+						for(let shapeKey in sidebar[section])
 						{
-							if(sidebarVariables[prop])
+							let shape = sidebar[section][shapeKey];
+		
+							// Expand Properties
+							for(let prop in shape)
 							{
-								for(let newProp in sidebarVariables[prop])
+								if(sidebarVariables[prop])
 								{
-									shape[newProp] = sidebarVariables[prop][newProp]; 
+									for(let newProp in sidebarVariables[prop])
+									{
+										shape[newProp] = sidebarVariables[prop][newProp]; 
+									}
 								}
 							}
+		
+							// Expand Property Values
+							for(let prop in shape)
+							{
+								if(typeof(shape[prop]) === 'string' && sidebarVariables[shape[prop]])
+									shape[prop] = sidebarVariables[shape[prop]]; 
+							}
 						}
-	
-						// Expand Property Values
-						for(let prop in shape)
-						{
-							if(typeof(shape[prop]) === 'string' && sidebarVariables[shape[prop]])
-								shape[prop] = sidebarVariables[shape[prop]]; 
+		
+						//Create SB entries
+						if (section != '*')
+							sbEntries.push(this.addEntry(dt + section.toLowerCase(), this.createSection(section)));
+			
+						let shapes = sidebar[section];
+			
+						for (let shapeName in shapes) {
+							sbEntries.push(this.addEntry(dt + shapeName.toLowerCase(), function() {
+								const shape = shapes[shapeName];
+								var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, shape.extra+";expand=0;version=v2", shape.id, shapeName, shape.icon);
+								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName);
+							}));
 						}
 					}
-	
-					//Create SB entries
-					if (section != '*')
-						sbEntries.push(this.addEntry(dt + section.toLowerCase(), this.createSection(section)));
-		
-					let shapes = sidebar[section];
-		
-					for (let shapeName in shapes) {
-						sbEntries.push(this.addEntry(dt + shapeName.toLowerCase(), function() {
-							const shape = shapes[shapeName];
-							var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, shape.extra+";expand=0;version=v2", shape.id, shapeName, shape.icon);
-							   return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName);
-						}));
-					}
-				}
-		
-				const sidebarFullName = sidebarMainName + " / " + sidebarKey;
+			
+					const sidebarFullName = sidebarMainName + " / " + sidebarKey;
 
-				this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
-				this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
-			}	
+					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
+					this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
+				}
+			}
+			catch (ex){
+				console.log(sidebarConfigFileURLs[filenameIndex]);	
+				console.log(ex);
+			}
+
 		}
 
 		this.setCurrentSearchEntryLibrary();
