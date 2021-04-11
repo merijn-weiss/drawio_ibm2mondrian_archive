@@ -55,63 +55,98 @@
 			for (stencilLibrary in iconStencilLibraries) {
 				mxStencilRegistry.loadStencilSet(iconStencilLibraries[stencilLibrary]);
 			}
+
+			let sideBars = Editor.config[MBS.BASE_SHAPE].sidebars;
+			
+			return {
+				IconStencils: iconStencilLibraries,
+				Sidebars: sideBars
+			};
 		}
 	}
 
-	Sidebar.prototype.addIBM2MondrianPalette = function()
+	Sidebar.prototype.addIBM2MondrianPalette = function(sidebarConfigFileURLs, addSidebarBase = true)
 	{
-		Sidebar.prototype.addIBM2MondrianEditorExtensions();
+		let mondrianEditorExtensions = Sidebar.prototype.addIBM2MondrianEditorExtensions();
 
+		sidebarConfigFileURLs = sidebarConfigFileURLs || [];
+
+		if(addSidebarBase)
+		{
+			sidebarConfigFileURLs.splice(0,0,{id: 'ibm2mondrian', name: 'IBM' , url: window.location.protocol + '//' + window.location.host + '/js/diagramly/sidebar/IBM2MondrianBase.json'});
+			sidebarConfigFileURLs.splice(1,0,{id: 'ibm2', name: 'IBM' , url: window.location.protocol + '//' + window.location.host + '/js/diagramly/sidebar/IBM2MondrianDefined.json'});
+		}
+		
+		for(let sidebarExtension in mondrianEditorExtensions.Sidebars)
+		{
+			sidebarConfigFileURLs.push(mondrianEditorExtensions.Sidebars[sidebarExtension]);
+		}
+
+		// Create sidebar based on JSON
 		const dt = 'ibm mondrian ';
-		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
 
-		const stencils = 
-		[
-		    [['Base Shapes'],
-				['Actor',								'default',			MBS.SHAPE_TYPE.ACTOR, 				MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
-				['Target System (Collapsed)',			'default',			MBS.SHAPE_TYPE.TARGET_SYSTEM, 		MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
-				['Logical Node (Collapsed)',			'default',			MBS.SHAPE_TYPE.LOGICAL_NODE, 		MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
-				['Logical Component (Collapsed)',		'default',			MBS.SHAPE_TYPE.LOGICAL_COMPONENT, 	MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
-				['Prescribed Node (Collapsed)',			'default',			MBS.SHAPE_TYPE.PRESCRIBED_NODE, 	MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
-				['Prescribed Component (Collapsed)',	'default',			MBS.SHAPE_TYPE.PRESCRIBED_COMPONENT, MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.COLLAPSED, MBS.SHAPE_CONTAINER.NO],
+		for(let filenameIndex in sidebarConfigFileURLs)
+		{
+			let filename = sidebarConfigFileURLs[filenameIndex].url;
+			let sidebarID = sidebarConfigFileURLs[filenameIndex].id;
+			let sidebarMainName = sidebarConfigFileURLs[filenameIndex].name;
 
-				['Target System (Expanded)',			'default',			MBS.SHAPE_TYPE.TARGET_SYSTEM, 		MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO],
-				['Logical Node (Expanded)',				'default',			MBS.SHAPE_TYPE.LOGICAL_NODE, 		MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO],
-				['Logical Component (Expanded)',		'default',			MBS.SHAPE_TYPE.LOGICAL_COMPONENT, 	MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO],
-				['Prescribed Node (Collapsed)',			'default',			MBS.SHAPE_TYPE.PRESCRIBED_NODE, 	MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO],
-				['Prescribed Component (Collapsed)',	'default',			MBS.SHAPE_TYPE.PRESCRIBED_COMPONENT, MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO],
+			let sidebarConfigs = JSON.parse(mxUtils.load(filename).getText());
+			let sidebarVariables = sidebarConfigs.Variables;
+	
+			for(let sidebarKey in sidebarConfigs.Sidebars)
+			{
+				let sidebar = sidebarConfigs.Sidebars[sidebarKey]; 
+				let sbEntries = [];
+	
+				for (let section in sidebar)
+				{
+					// Expand Variables
+					for(let shapeKey in sidebar[section])
+					{
+						let shape = sidebar[section][shapeKey];
+	
+						// Expand Properties
+						for(let prop in shape)
+						{
+							if(sidebarVariables[prop])
+							{
+								for(let newProp in sidebarVariables[prop])
+								{
+									shape[newProp] = sidebarVariables[prop][newProp]; 
+								}
+							}
+						}
+	
+						// Expand Property Values
+						for(let prop in shape)
+						{
+							if(typeof(shape[prop]) === 'string' && sidebarVariables[shape[prop]])
+								shape[prop] = sidebarVariables[shape[prop]]; 
+						}
+					}
+	
+					//Create SB entries
+					if (section != '*')
+						sbEntries.push(this.addEntry(dt + section.toLowerCase(), this.createSection(section)));
+		
+					let shapes = sidebar[section];
+		
+					for (let shapeName in shapes) {
+						sbEntries.push(this.addEntry(dt + shapeName.toLowerCase(), function() {
+							const shape = shapes[shapeName];
+							var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, shape.extra+";expand=0;version=v2", shape.id, shapeName, shape.icon);
+							   return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName);
+						}));
+					}
+				}
+		
+				const sidebarFullName = sidebarMainName + " / " + sidebarKey;
 
-				['Group (Container)',					'default',			MBS.SHAPE_TYPE.GROUP, 				MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.YES_TRANSPARENT],
-				['Group (No Container)',				'default',			MBS.SHAPE_TYPE.GROUP, 				MBS.COLOR_FAMILY.BLUE, MBS.SHAPE_LAYOUT.EXPANDED, MBS.SHAPE_CONTAINER.NO_TRANSPARENT],
-	   	    ],
-		];
-
-		stencils.forEach((section, stencil_index) => {
-			var header = '';
-			var entries = [];
-			section.forEach((stencil, section_index) => {
-				if (section_index == 0)
-					header = stencil[0];
-				else
-					entries.push(this.addEntry(dt + name.toLowerCase(), function() { 
-						var shapeName = stencil[0];
-						var iconName = stencil[1];
-						var shapeType = stencil[2];
-						var shapeColor = stencil[3];
-						var shapeLayout = stencil[4];
-						var shapeContainer = stencil[5];
-			
-						var styleFont = '';
-						var extraStyle = '';
-						var shapeId = '';
-			
-						var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shapeType, shapeLayout, shapeColor, shapeContainer, styleFont, extraStyle, shapeId, shapeName, iconName);
-						   return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName);
-					}))
-			});
-			this.setCurrentSearchEntryLibrary('ibm2mondrian', 'ibm2' + header);
-			this.addPaletteFunctions('ibm2mondrian' + header, 'IBM / ' + header, false, entries);
-		});
+				this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
+				this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
+			}	
+		}
 
 		this.setCurrentSearchEntryLibrary();
 	};
@@ -119,7 +154,6 @@
 	Sidebar.prototype.addIBM2MondrianVertexTemplateFactory = function(shapeType, shapeLayout, shapeColor, shapeContainer, styleFont, shapeExtraStyle, shapeId, shapeName, iconName)
 	{
 		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
-		const gn = 'mxgraph.ibm2mondrian';
 		const default_icon = '';
 		var styleOther = 'metaEdit=1;strokeWidth=1' + shapeExtraStyle;
 		var styleFont = (styleFont == '') ? ';fontFamily=IBM Plex Sans;fontColor=#000000;fontSize=14' : styleFont;
@@ -150,7 +184,7 @@
 
 		var bg = new mxCell('', 
 			new mxGeometry(0, 0, shapeWidth, shapeHeight), 
-				"shape=" + gn + ".base" + ";shapeType=" + shapeType + ";shapeLayout=" + shapeLayout + ";colorFamily=" + shapeColor + ";" + styleText + ";" + styleOther + ";" + "image=" + default_icon);
+				"shape=" + Sidebar.prototype.IBM2MondrianBaseShape.BASE_SHAPE + ";shapeType=" + shapeType + ";shapeLayout=" + shapeLayout + ";colorFamily=" + shapeColor + ";" + styleText + ";" + styleOther + ";" + "image=" + default_icon);
 		bg.vertex = true;
 		bg.setValue(mxUtils.createXmlDocument().createElement('UserObject'));
 		bg.setAttribute('placeholders', '1');

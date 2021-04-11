@@ -1,0 +1,45 @@
+{
+    "Sidebars":{
+        "Base Shapes":{
+            "Collapsed": {
+                "Actor": {"$DEFAULT_PROPERTIES": null, "format": "$ACTOR_FORMAT"},
+                "Target System": {"$DEFAULT_PROPERTIES": null, "format": "$TS_FORMAT_COLLAPSED"},
+                "Logical Node": {"$DEFAULT_PROPERTIES": null, "format": "$LN_FORMAT_COLLAPSED"},
+                "Logical Component": {"$DEFAULT_PROPERTIES": null, "format": "$LC_FORMAT_COLLAPSED"},
+                "Prescribed Node": {"$DEFAULT_PROPERTIES": null, "format": "$PN_FORMAT_COLLAPSED"},
+                "Prescribed Component": {"$DEFAULT_PROPERTIES": null, "format": "$PC_FORMAT_COLLAPSED"}
+            },
+            "Expanded": {
+                "Target System": {"$DEFAULT_PROPERTIES": null, "format": "$TS_FORMAT_EXPANDED"},
+                "Logical Node": {"$DEFAULT_PROPERTIES": null, "format": "$LN_FORMAT_EXPANDED"},
+                "Logical Component": {"$DEFAULT_PROPERTIES": null, "format": "$LC_FORMAT_EXPANDED"},
+                "Prescribed Node": {"$DEFAULT_PROPERTIES": null, "format": "$PN_FORMAT_EXPANDED"},
+                "Prescribed Component": {"$DEFAULT_PROPERTIES": null, "format": "$PC_FORMAT_EXPANDED"}
+            },
+            "Groups": {
+                "Group (Container)": {"$DEFAULT_PROPERTIES": null, "format": "$GROUP_CONTAINER"},
+                "Group (No Container)": {"$DEFAULT_PROPERTIES": null, "format": "$GROUP_NO_CONTAINER"}
+            }
+        }
+    },
+    
+    "Variables":{
+        "$DEFAULT_PROPERTIES": {"id": "", "icon": "default", "color": "$DEFAULT_COLOR", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": false},
+        "$DEFAULT_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DEFAULT_TEXT_DETAIL": {"font": "", "position": null},
+
+        "$ACTOR_FORMAT": {"type": "actor", "layout": "collapsed", "container": "no_container_transparent"},
+        "$TS_FORMAT_COLLAPSED": {"type": "ts", "layout": "collapsed", "container": "container_transparent"},
+        "$TS_FORMAT_EXPANDED": {"type": "ts", "layout": "expanded", "container": "container_transparent"},
+        "$LN_FORMAT_COLLAPSED": {"type": "ln", "layout": "collapsed", "container": "container_transparent"},
+        "$LN_FORMAT_EXPANDED": {"type": "ln", "layout": "expanded", "container": "container_transparent"},
+        "$LC_FORMAT_COLLAPSED": {"type": "lc", "layout": "collapsed", "container": "container_transparent"},
+        "$LC_FORMAT_EXPANDED": {"type": "lc", "layout": "expanded", "container": "container_transparent"},
+        "$PN_FORMAT_COLLAPSED": {"type": "pn", "layout": "collapsed", "container": "container_transparent"},
+        "$PN_FORMAT_EXPANDED": {"type": "pn", "layout": "expanded", "container": "container_transparent"},
+        "$PC_FORMAT_COLLAPSED": {"type": "pc", "layout": "collapsed", "container": "container_transparent"},
+        "$PC_FORMAT_EXPANDED": {"type": "pc", "layout": "expanded", "container": "container_transparent"},
+        "$GROUP_CONTAINER": {"type": "group", "layout": "expanded", "container": "container_transparent"},
+        "$GROUP_NO_CONTAINER": {"type": "group", "layout": "expanded", "container": "no_container_transparent"}
+    }
+}
