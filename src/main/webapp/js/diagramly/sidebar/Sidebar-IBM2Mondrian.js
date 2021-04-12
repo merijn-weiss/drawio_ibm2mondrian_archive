@@ -67,7 +67,7 @@
 
 	Sidebar.prototype.addIBM2MondrianPalette = function(sidebarConfigFileURLs, addSidebarBase = true)
 	{
-		let mondrianEditorExtensions = Sidebar.prototype.addIBM2MondrianEditorExtensions();
+		let mondrianEditorExtensions = Sidebar.prototype.addIBM2MondrianEditorExtensions() || [];
 
 		sidebarConfigFileURLs = sidebarConfigFileURLs || [];
 
@@ -80,9 +80,12 @@
 			sidebarConfigFileURLs.splice(1,0,{id: 'ibm2', name: 'IBM' , url: baseUrl + 'js/diagramly/sidebar/IBM2MondrianDefined.json'});
 		}
 		
-		for(let sidebarExtension in mondrianEditorExtensions.Sidebars)
+		if(mondrianEditorExtensions.Sidebars != null)
 		{
-			sidebarConfigFileURLs.push(mondrianEditorExtensions.Sidebars[sidebarExtension]);
+			for(let sidebarExtension in mondrianEditorExtensions.Sidebars)
+			{
+				sidebarConfigFileURLs.push(mondrianEditorExtensions.Sidebars[sidebarExtension]);
+			}	
 		}
 
 		// Create sidebar based on JSON
