@@ -53,11 +53,14 @@ mxIBM2MondrianBase.prototype.cst = {
 	COLOR_FAMILY_DEFAULT : 'blue',
 	COLOR_FILL_ICON : 'colorFillIcon', 
 	COLOR_FILL_ICON_DEFAULT : 'medium', 
-	COLOR_FILL_TEXT : 'colorFillText', 
-	COLOR_FILL_TEXT_DEFAULT : 'white',
-	COLOR_FILL_CONTAINER : 'colorFillContainer', 
-	COLOR_FILL_CONTAINER_DEFAULT : 'white',
+	COLOR_FILL_BACKGROUND : 'colorBackground',
+	COLOR_FILL_BACKGROUND_DEFAULT : 'noColor:noColor',
 
+	COLOR_FILL_TEXT : 'colorFillText', // deprecated
+	COLOR_FILL_TEXT_DEFAULT : 'white', // deprecated
+	COLOR_FILL_CONTAINER : 'colorFillContainer', // deprecated
+	COLOR_FILL_CONTAINER_DEFAULT : 'white', // deprecated
+	
 	POSITION_TEXT : 'positionText', 
 	POSITION_TEXT_DEFAULT : 'bottom',
 
@@ -337,10 +340,20 @@ mxIBM2MondrianBase.prototype.customProperties = [
 		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
 	{name:'colorFillIcon', dispName:'Color (Corner)', type:'enum', defVal:'medium',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
-	{name:'colorFillText', dispName:'Color (Title bar)', type:'enum', defVal:'white',
+	
+	{name:'colorBackground', dispName:'Color (Background)', type:'enum', defVal:'noColor:noColor',
+		enumList:[
+		{val:'noColor:noColor', dispName: 'None'}, {val:'white:white', dispName: 'White'}, {val:'veryLight:veryLight', dispName: 'Very Light'},
+		{val:'white:noColor', dispName: 'Bar: White, Container: None'},
+		{val:'veryLight:noColor', dispName: 'Bar: Very Light, Container: None'},
+		{val:'veryLight:white', dispName: 'Bar: Very Light, Container: White'}
+	]},
+
+/** {name:'colorFillText', dispName:'Color (Title bar)', type:'enum', defVal:'white',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'white', dispName: 'White'}, {val:'veryLight', dispName: 'Very Light'}]},
 	{name:'colorFillContainer', dispName:'Color (Container)', type:'enum', defVal:'white',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'white', dispName: 'White'}, {val:'veryLight', dispName: 'Very Light'}]},
+*/
 	{name:'iconImage', dispName:'Icon', type:'enum', defVal:'stencilIcon',
 		enumList:[{val:'noIcon', dispName: 'No'}, {val:'stencilIcon', dispName: 'Yes'}, 
 		{val:'stencilIcon_Rotate90', dispName: 'Yes (Rotate 90)'}, {val:'stencilIcon_Rotate180', dispName: 'Yes (Rotate 180)'}, {val:'stencilIcon_Rotate270', dispName: 'Yes (Rotate 270)'},
@@ -457,21 +470,17 @@ mxIBM2MondrianBase.prototype.init = function(container)
 };
 
 /* temporary function to support coversion of old diagrams  */
-mxIBM2MondrianBase.prototype.colorConversion = function(colorValue)
+mxIBM2MondrianBase.prototype.colorBackgroundConversion = function(colorFillText, colorFillContainer)
 {
-	switch(colorValue)
-	{
-		case 'swatch_10':
-			return 'veryLight';
-		case 'swatch_30':
-			return 'light';
-		case 'swatch_40':
-			return 'medium';
-		case 'swatch_50':
-			return 'dark';
-		default:
-			return colorValue;
-	}
+	colorFillText = (colorFillText == 'undefined') ? 'noColor' : colorFillText;
+	colorFillContainer = (colorFillContainer == 'undefined') ? 'noColor' : colorFillContainer;
+
+	if(colorFillContainer == 'veryLight')
+		colorFillText = 'veryLight';
+	else if(colorFillContainer == 'white' && colorFillText == 'noColor')
+		colorFillText = 'white';
+
+	return colorFillText + ':' + colorFillContainer;
 }
 
 // Function to convert diagrams to current version if breaking changes have been introduced
@@ -489,29 +498,62 @@ mxIBM2MondrianBase.prototype.templateConversion = function()
 
 			let styleCurrent = null;
 			let styleUpdate = false;
+			let modifierUpdate = false;
+			let colorBackgroundUpdate = false;
 		
 			if(this.state.view.graph.model != null && this.state.cell != null)
 				styleCurrent = this.state.view.graph.model.getStyle(this.state.cell);
 		
 			if(styleCurrent != null)
-				styleUpdate = (styleCurrent.indexOf('modifier') > 0)
+			{
+				if (styleCurrent.indexOf('modifier') > 0)
+				{
+					styleUpdate = true;
+					modifierUpdate = true;
+				}
+					
+				if (styleCurrent.indexOf('colorFillText') > 0 || styleCurrent.indexOf('colorFillContainer') > 0)
+				{
+					styleUpdate = true;
+					colorBackgroundUpdate = true;
+				}
+			}
+				
 		
 			if(styleUpdate)
 			{
-				newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
-				newStyle = newStyle.replace(/modifier/g, 'tag');
+				// Modifier -> Tag
+				if(modifierUpdate)
+				{
+					newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
+					newStyle = newStyle.replace(/modifier/g, 'tag');	
+				}
+				
+				// Color Title Bar & Container -> Background
 
 				this.state.view.graph.model.beginUpdate();
 				try
 				{
-					if(this.state.style['modifier'] != null)
-						this.state.style['tag'] = this.state.style['modifier'].replace(/noModifier/g, 'noTag');
+					if(modifierUpdate)
+					{
+						if(this.state.style['modifier'] != null)
+							this.state.style['tag'] = this.state.style['modifier'].replace(/noModifier/g, 'noTag');
 
-					if(this.state.style['modifierColorFamily'] != null)
-						this.state.style['tagColorFamily'] = this.state.style['modifierColorFamily'];
+						if(this.state.style['modifierColorFamily'] != null)
+							this.state.style['tagColorFamily'] = this.state.style['modifierColorFamily'];
 
-					if(this.state.style['modifierColorFill'] != null)
-						this.state.style['tagColorFill'] = this.state.style['modifierColorFill'];
+						if(this.state.style['modifierColorFill'] != null)
+							this.state.style['tagColorFill'] = this.state.style['modifierColorFill'];
+					}
+
+					if(colorBackgroundUpdate)
+					{
+						newStyle = mxUtils.setStyle(styleCurrent, 'colorBackground', mxIBM2MondrianBase.prototype.colorBackgroundConversion(this.state.style['colorFillText'], this.state.style['colorFillContainer']));
+						this.state.style['colorBackground'] = mxIBM2MondrianBase.prototype.colorBackgroundConversion(this.state.style['colorFillText'], this.state.style['colorFillContainer']);
+
+						newStyle = mxUtils.setStyle(newStyle, 'colorFillText', null);
+						newStyle = mxUtils.setStyle(newStyle, 'colorFillContainer', null);
+					}
 
 					this.state.view.graph.model.setStyle(this.state.cell, newStyle);
 				}
@@ -670,8 +712,12 @@ mxIBM2MondrianBase.prototype.redraw = function()
 	this.iconImage = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE_DEFAULT);
 	this.colorFamily = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.COLOR_FAMILY_DEFAULT);
 	this.colorFillIcon = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_ICON, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_ICON_DEFAULT);
-	this.colorFillText = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT_DEFAULT);
-	this.colorFillContainer = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER_DEFAULT);
+	
+	let colorFillBackground = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_BACKGROUND, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_BACKGROUND_DEFAULT).split(':');
+	
+	this.colorFillText = colorFillBackground[0];//mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT_DEFAULT); // deprecated
+	this.colorFillContainer = colorFillBackground[1];//mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER_DEFAULT); // deprecated
+
 	this.positionText = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.POSITION_TEXT, mxIBM2MondrianBase.prototype.cst.POSITION_TEXT_DEFAULT);
 
 	mxShape.prototype.redraw.apply(this, arguments);
