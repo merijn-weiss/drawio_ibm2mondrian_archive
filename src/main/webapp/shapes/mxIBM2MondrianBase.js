@@ -1352,6 +1352,11 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
  * Function: paintIcon
  * 
  * Generic background painting implementation.
+ * Two options are provide to show an Icon:
+ * 	  1) Via a Stencil, where the Icon-Name data attribute must contain the name of the shape available in the Stencil
+ *    2) Via the image style property
+ * 
+ * Option 2 is deprecated and will be removed in future. If both options are used on the same Shape, the Stencil Icon is used 
  */
 mxIBM2MondrianBase.prototype.paintIcon = function(c)
 {
@@ -1373,17 +1378,39 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 	if(this.shapeVisualDefinition.icon.visible)
 	{
 		let iconStencilName = this.state.cell.getAttribute('Icon-Name',null);
-		if(iconStencilName != null && iconStencilName != '')
+		let iconImageStyle = this.image || 'undefined';
+
+		// Determine what Icon to show
+		let showStencilIcon = (iconStencilName != null && iconStencilName != '');
+		let stencilIconIsUndefined = (iconStencilName == 'undefined');
+
+		let showImageIcon = (iconImageStyle != null && iconImageStyle != '' && iconImageStyle != 'undefined');
+
+		// Retrieve the stencil from the registry 
+		let iconStencil = null;
+		if(showStencilIcon)
 		{
-			var bgSt1 = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.' + iconStencilName);
-			if(bgSt1 == null)
-				bgSt1 = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.undefined');
+			iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.' + iconStencilName);
 
+			if(iconStencil == null) // the iconStencilName cannot be found, so the 'undefined' Icon is retrieved
+			{
+				iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.undefined');
+				stencilIconIsUndefined = true;
+			}
+
+			showStencilIcon = (iconStencil != null); // only show the Icon if a stencil is found
+		}
+
+		// Make final call what Icon to show
+		if(showStencilIcon && !stencilIconIsUndefined) // stencil is found and it is not the 'undefined' stencil -> never use the Image Style
+			showImageIcon = false;
+		else if(showStencilIcon && stencilIconIsUndefined && showImageIcon) // stencil is found, but it is the 'undefined stencil and there is an Image Style set -> use the Image Style
+			showStencilIcon = false;
+		
+
+		if(showStencilIcon || showImageIcon)
+		{
 			c.save();
-			c.setStrokeColor('none');
-			c.setFillColor(this.shapeVisualDefinition.icon.color);
-			c.setDashed(false);
-
 			let canvasCenterX = positionX + this.iconSize/2;
 			let canvasCenterY = 24;
 		
@@ -1391,18 +1418,22 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 			c.rotate(this.shapeVisualDefinition.icon.rotate, this.shapeVisualDefinition.icon.flipH, this.shapeVisualDefinition.icon.flipV, 
 				canvasCenterX, canvasCenterY);
 			
-			bgSt1.strokewidth = 1;
-			bgSt1.drawShape(c, this, positionX, positionY, this.iconSize, this.iconSize);
+			if(showStencilIcon)
+			{
+				c.setStrokeColor('none');
+				c.setFillColor(this.shapeVisualDefinition.icon.color);
+				c.setDashed(false);
+	
+				iconStencil.strokewidth = 1;
+				iconStencil.drawShape(c, this, positionX, positionY, this.iconSize, this.iconSize);	
+			}
+			else if(showImageIcon)
+			{
+				c.image(positionX, positionY, this.iconSize, this.iconSize, this.image, true, false, false);
+			}
+			
 			c.restore();
 		}
-	}
-	else if(this.iconImage === 'imageIcon' && this.image != null && this.image != '') // REMOVE
-	{
-		c.image(positionX, positionY, this.iconSize, this.iconSize, this.image, true, false, false);
-	}
-	else
-	{
-		// do nothing
 	}
 };
 
