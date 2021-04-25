@@ -17,8 +17,10 @@
                 "Prescribed Component": {"$DEFAULT_PROPERTIES": null, "format": "$PC_FORMAT_EXPANDED"}
             },
             "Groups": {
-                "Group (Container)": {"$DEFAULT_PROPERTIES": null, "format": "$GROUP_CONTAINER"},
-                "Group (No Container)": {"$DEFAULT_PROPERTIES": null, "format": "$GROUP_NO_CONTAINER"}
+                "Logical Group (Container)": {"$DEFAULT_PROPERTIES": null, "format": "$LG_CONTAINER"},
+                "Logical Group (No Container)": {"$DEFAULT_PROPERTIES": null, "format": "$LG_NO_CONTAINER"},
+                "Prescribed Group (Container)": {"$DEFAULT_PROPERTIES": null, "format": "$PG_CONTAINER"},
+                "Prescribed Group (No Container)": {"$DEFAULT_PROPERTIES": null, "format": "$PG_NO_CONTAINER"}
             }
         }
     },
@@ -35,11 +37,13 @@
         "$LN_FORMAT_EXPANDED": {"type": "ln", "layout": "expanded", "container": "container_transparent"},
         "$LC_FORMAT_COLLAPSED": {"type": "lc", "layout": "collapsed", "container": "container_transparent"},
         "$LC_FORMAT_EXPANDED": {"type": "lc", "layout": "expanded", "container": "container_transparent"},
+        "$LG_CONTAINER": {"type": "lg", "layout": "expanded", "container": "container_transparent"},
+        "$LG_NO_CONTAINER": {"type": "lg", "layout": "expanded", "container": "no_container_transparent"},
         "$PN_FORMAT_COLLAPSED": {"type": "pn", "layout": "collapsed", "container": "container_transparent"},
         "$PN_FORMAT_EXPANDED": {"type": "pn", "layout": "expanded", "container": "container_transparent"},
         "$PC_FORMAT_COLLAPSED": {"type": "pc", "layout": "collapsed", "container": "container_transparent"},
         "$PC_FORMAT_EXPANDED": {"type": "pc", "layout": "expanded", "container": "container_transparent"},
-        "$GROUP_CONTAINER": {"type": "group", "layout": "expanded", "container": "container_transparent"},
-        "$GROUP_NO_CONTAINER": {"type": "group", "layout": "expanded", "container": "no_container_transparent"}
+        "$PG_CONTAINER": {"type": "pg", "layout": "expanded", "container": "container_transparent"},
+        "$PG_NO_CONTAINER": {"type": "pg", "layout": "expanded", "container": "no_container_transparent"}
     }
 }

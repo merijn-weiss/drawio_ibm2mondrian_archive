@@ -128,9 +128,9 @@ mxIBM2MondrianBase.prototype.colorIntensity = {
 
 mxIBM2MondrianBase.prototype.getColorSwatch = function(paletteVersion, colorFamily, colorIntensity, shapePart, shapeLayout, shapeType)
 {
-	if(shapeType === 'group' && shapePart === 'corner')
+	if((shapeType === 'pg' || shapeType === 'lg') && shapePart === 'corner')
 	{
-		return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR; // the icon in a group never has a fill
+		return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
 	}
 	else if(shapePart === 'outerLine' || shapePart === 'tagLine')
 	{
@@ -204,7 +204,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	};
 
 	//shape 
-	shapeVD.shape.container = (shapeVD.shape.layout === 'expanded' && shapeType !== 'group') && (shapeVD.shape.height - this.titleBarHeight > 2); //
+	shapeVD.shape.container = (shapeVD.shape.layout === 'expanded' && shapeType !== 'pg' && shapeType != 'lg') && (shapeVD.shape.height - this.titleBarHeight > 2); //
 
 	//outerLine
 	shapeVD.outerLine.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'outerLine', shapeLayout, shapeType);
@@ -238,7 +238,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	//bar & corner
 	shapeVD.bar.colorSwatch = shapeVD.outerLine.colorSwatch;
 	shapeVD.corner.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
-	if(shapeType === 'group') {
+	if(shapeType === 'pg' || shapeType === 'lg') {
 		shapeVD.bar.visible = !(colorFillIcon === 'noColor'); // color fill is a workaround to enable hiding the bar
 		shapeVD.bar.width = (shapeVD.bar.visible) ? 6 : 0;
 		
@@ -328,7 +328,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 
 mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'shapeType', dispName:'Shape', type:'enum', defVal:'pn',
-		enumList:[{val:'actor', dispName: 'Actor'}, {val:'ts', dispName: 'Target System'}, {val:'ln', dispName: 'Logical Node'}, {val:'lc', dispName: 'Logical Component'}, {val:'pn', dispName: 'Prescribed Node'}, {val:'pc', dispName: 'Prescribed Component'}, {val:'group', dispName: 'Group'}]},
+		enumList:[{val:'actor', dispName: 'Actor'}, {val:'ts', dispName: 'Target System'}, {val:'ln', dispName: 'Logical Node'}, {val:'lc', dispName: 'Logical Component'}, {val:'lg', dispName: 'Logical Group'}, {val:'pn', dispName: 'Prescribed Node'}, {val:'pc', dispName: 'Prescribed Component'}, {val:'pg', dispName: 'Prescribed Group'}]},
 	{name:'shapeLayout', dispName:'Shape (Layout)', type:'enum', defVal:'expanded',
 		enumList:[{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},{val:'custom', dispName: 'Custom'}]},
 	{name:'shapeStyle', dispName:'Shape (Style)', type:'enum', defVal:'solid',
@@ -500,6 +500,7 @@ mxIBM2MondrianBase.prototype.templateConversion = function()
 			let styleUpdate = false;
 			let modifierUpdate = false;
 			let colorBackgroundUpdate = false;
+			let groupUpdate = false;
 		
 			if(this.state.view.graph.model != null && this.state.cell != null)
 				styleCurrent = this.state.view.graph.model.getStyle(this.state.cell);
@@ -517,15 +518,22 @@ mxIBM2MondrianBase.prototype.templateConversion = function()
 					styleUpdate = true;
 					colorBackgroundUpdate = true;
 				}
+
+				if (this.state.style['shapeType'] == 'group')
+				{
+					styleUpdate = true;
+					groupUpdate = true;
+				}
 			}
 				
 		
 			if(styleUpdate)
 			{
+				newStyle = styleCurrent;
 				// Modifier -> Tag
 				if(modifierUpdate)
 				{
-					newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
+					newStyle = newStyle.replace(/noModifier/g, 'noTag');
 					newStyle = newStyle.replace(/modifier/g, 'tag');	
 				}
 				
@@ -548,11 +556,17 @@ mxIBM2MondrianBase.prototype.templateConversion = function()
 
 					if(colorBackgroundUpdate)
 					{
-						newStyle = mxUtils.setStyle(styleCurrent, 'colorBackground', mxIBM2MondrianBase.prototype.colorBackgroundConversion(this.state.style['colorFillText'], this.state.style['colorFillContainer']));
+						newStyle = mxUtils.setStyle(newStyle, 'colorBackground', mxIBM2MondrianBase.prototype.colorBackgroundConversion(this.state.style['colorFillText'], this.state.style['colorFillContainer']));
 						this.state.style['colorBackground'] = mxIBM2MondrianBase.prototype.colorBackgroundConversion(this.state.style['colorFillText'], this.state.style['colorFillContainer']);
 
 						newStyle = mxUtils.setStyle(newStyle, 'colorFillText', null);
 						newStyle = mxUtils.setStyle(newStyle, 'colorFillContainer', null);
+					}
+
+					if(groupUpdate)
+					{
+						newStyle = mxUtils.setStyle(newStyle, 'shapeType', 'pg');
+						this.state.style['shapeType'] = 'pg';
 					}
 
 					this.state.view.graph.model.setStyle(this.state.cell, newStyle);
@@ -714,7 +728,6 @@ mxIBM2MondrianBase.prototype.redraw = function()
 	this.colorFillIcon = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_ICON, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_ICON_DEFAULT);
 	
 	let colorFillBackground = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_BACKGROUND, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_BACKGROUND_DEFAULT).split(':');
-	
 	this.colorFillText = colorFillBackground[0];//mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_TEXT_DEFAULT); // deprecated
 	this.colorFillContainer = colorFillBackground[1];//mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER, mxIBM2MondrianBase.prototype.cst.COLOR_FILL_CONTAINER_DEFAULT); // deprecated
 
@@ -838,10 +851,23 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c)
 				c.fill();
 			}
 		}
-		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
+		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg')
 		{
 			c.setFillColor(this.shapeVisualDefinition.titleBar.color);
 			c.rect(0, 0, titleBarWidth, titleBarHeight);
+			c.fill();
+		}
+		else if(this.shapeType === 'lg')
+		{
+			c.setFillColor(this.shapeVisualDefinition.titleBar.color);
+			c.begin();
+			c.moveTo(0, 0);
+			c.lineTo(titleBarWidth - this.cornerRadius, 0);
+			c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, titleBarWidth, this.cornerRadius);
+			c.lineTo(titleBarWidth, titleBarHeight);
+			c.lineTo(0, titleBarHeight);
+			c.lineTo(0, 0);
+			c.close();
 			c.fill();
 		}
 		else {
@@ -908,12 +934,12 @@ mxIBM2MondrianBase.prototype.paintCorner = function(c)
 				c.close();	
 			}		
 		}
-		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
+		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg' || this.shapeType === 'lg')
 		{
 			c.rect(doubleStyleOffset, doubleStyleOffset, cornerWidth - 2*doubleStyleOffset, cornerHeight - 2*doubleStyleOffset);
 		}
 		
-		if(this.shapeVisualDefinition.shape.layout === 'expanded' && (this.shapeType != 'group' && this.shapeType != 'ts'))
+		if(this.shapeVisualDefinition.shape.layout === 'expanded' && (this.shapeType != 'pg' && this.shapeType != 'lg' && this.shapeType != 'ts'))
 			c.fillAndStroke();
 		else
 			c.fill();
@@ -929,202 +955,201 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 {
 	let shapeWidth = this.shapeVisualDefinition.shape.width;
 	let shapeHeigth = this.shapeVisualDefinition.shape.height;
-	let componentDecoratorOffset = -4;
-	let componentDecoratorHeight = 4;
-	let componentDecoratorWidth = 8;
-	let dashPattern = '6 6';
-
-	const WHITE = '#ffffff';
-	const doubleStyleOffset = 3;
-
 	let doRestore = false;
 	
 	c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
 
-	if(this.shapeType === 'actor')
+// Style: Double
+	if(this.shapeVisualDefinition.outerLine.secondLine)
 	{
-		// Style: Double
-		if(this.shapeVisualDefinition.outerLine.secondLine)
-		{
-			c.save();
-			c.setDashed(false, false);
+		const doubleStyleOffset = 3;
+		const WHITE = '#ffffff';
 
-			// WHITE LINE
-			c.setStrokeWidth(doubleStyleOffset);
-			c.setStrokeColor(WHITE);
+		c.save();
+		c.setDashed(false, false);
+
+		// WHITE LINE 
+		c.setStrokeWidth(doubleStyleOffset);
+		c.setStrokeColor(WHITE);
+
+		if(this.shapeType === 'actor')
+		{
 			c.ellipse(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth-doubleStyleOffset, shapeHeigth-doubleStyleOffset);
-			c.stroke();
-
-			// DOUBLE LINE
-			c.setStrokeWidth(1);
-			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-			c.ellipse(doubleStyleOffset, doubleStyleOffset, shapeWidth + -2*doubleStyleOffset, shapeHeigth + -2*doubleStyleOffset);
-			c.stroke();
-
-			c.restore();
 		}
-
-		// Base
-		if(this.shapeVisualDefinition.outerLine.dashed)
+		else if(this.shapeType === 'ts')
 		{
-			doRestore = true;
-			c.save();
-			c.setDashed(true, true);
-			c.setDashPattern(dashPattern);
-		}
-
-		c.ellipse(0, 0, shapeWidth, shapeHeigth);
-		c.stroke();
-
-		this.paintShapeMultiplicity(c);
-
-		if(doRestore)
-			c.restore();
-		
-	}
-	else if(this.shapeType === 'ts')
-	{
-		// Style: Double
-		if(this.shapeVisualDefinition.outerLine.secondLine)
-		{
-			c.save();
-			c.setDashed(false, false);
-
-			// WHITE LINE 
-			c.setStrokeWidth(doubleStyleOffset);
-			c.setStrokeColor(WHITE);
-
 			c.begin();
 			c.moveTo(this.targetSystemRadius, doubleStyleOffset/2);
 			c.lineTo(shapeWidth - this.targetSystemRadius, doubleStyleOffset/2);
 			c.arcTo(this.targetSystemRadius - doubleStyleOffset/2, this.targetSystemRadius - doubleStyleOffset/2, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset/2);
 			c.lineTo(this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset/2);
 			c.arcTo(this.targetSystemRadius - doubleStyleOffset/2, this.targetSystemRadius - doubleStyleOffset/2, 0, 0, 1, this.targetSystemRadius, doubleStyleOffset/2);
+			c.close();	
+		}
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		{
+			c.roundrect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset, this.cornerRadius - doubleStyleOffset/2, this.cornerRadius - doubleStyleOffset/2);
+		}
+		else if(this.shapeType === 'lg')
+		{
+			let offSet = doubleStyleOffset/2;
+			let innerRadius = this.cornerRadius - offSet;
+			c.begin();
+			c.moveTo(offSet, offSet);
+			c.lineTo(shapeWidth - this.cornerRadius, offSet);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, shapeWidth - offSet, this.cornerRadius);
+			c.lineTo(shapeWidth - offSet, shapeHeigth - this.cornerRadius);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, shapeWidth - this.cornerRadius, shapeHeigth - offSet);
+			c.lineTo(this.cornerRadius, shapeHeigth - offSet);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, offSet, shapeHeigth - this.cornerRadius);
+			c.lineTo(offSet, offSet);
 			c.close();
-			c.stroke();
+		}
+		else
+		{
+			c.rect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset);
+		}
+		
+		c.stroke();
 
-			// DOUBLE LINE
-			c.setStrokeWidth(1);
-			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		// DOUBLE LINE
+		c.setStrokeWidth(1);
+		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);			
 
+		if(this.shapeType === 'actor')
+		{
+			c.ellipse(doubleStyleOffset, doubleStyleOffset, shapeWidth + -2*doubleStyleOffset, shapeHeigth + -2*doubleStyleOffset);
+		}
+		else if(this.shapeType === 'ts')
+		{
 			c.begin();
 			c.moveTo(this.targetSystemRadius, doubleStyleOffset);
 			c.lineTo(shapeWidth - this.targetSystemRadius, doubleStyleOffset);
 			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset);
 			c.lineTo(this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset);
 			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, this.targetSystemRadius, doubleStyleOffset);
-			c.close();
-			c.stroke();
-
-			c.restore();
+			c.close();	
 		}
-
-		// Base
-		if(this.shapeVisualDefinition.outerLine.dashed)
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
 		{
-			doRestore = true;
-			c.save();
-			c.setDashed(true, true);
-			c.setDashPattern(dashPattern);
+			c.roundrect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset, this.cornerRadius - doubleStyleOffset, this.cornerRadius - doubleStyleOffset);
 		}
+		else if(this.shapeType === 'lg')
+		{
+			let offSet = doubleStyleOffset;
+			let innerRadius = this.cornerRadius - offSet;
+			c.begin();
+			c.moveTo(offSet, offSet);
+			c.lineTo(shapeWidth - this.cornerRadius, offSet);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, shapeWidth - offSet, this.cornerRadius);
+			c.lineTo(shapeWidth - offSet, shapeHeigth - this.cornerRadius);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, shapeWidth - this.cornerRadius, shapeHeigth - offSet);
+			c.lineTo(this.cornerRadius, shapeHeigth - offSet);
+			c.arcTo(innerRadius, innerRadius, 0, 0, 1, offSet, shapeHeigth - this.cornerRadius);
+			c.lineTo(offSet, offSet);
+			c.close();
+		}	
+		else
+		{
+			c.rect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset);
+		}
+			
+		c.stroke();
 
+		c.restore();
+	}
+		
+// Container
+	if (this.shapeVisualDefinition.shape.container)
+	{
+		c.save();
+		c.setStrokeColor(this.shapeVisualDefinition.dividerLine.color);
+		c.setDashed(false);
+		c.setStrokeWidth(1);
+		c.begin();
+		c.moveTo(0, this.titleBarHeight);
+		c.lineTo(shapeWidth, this.titleBarHeight);		
+		c.stroke();
+		c.restore();
+	}
+	
+// Base
+	if(this.shapeVisualDefinition.outerLine.dashed)
+	{
+		let dashPattern = '6 6';
+
+		doRestore = true;
+		c.save();
+		c.setDashed(true, true);
+		c.setDashPattern(dashPattern);
+	}
+
+	if(this.shapeType === 'actor')
+	{
+		c.ellipse(0, 0, shapeWidth, shapeHeigth);
+	}
+	else if(this.shapeType === 'ts')
+	{
 		c.begin();
 		c.moveTo(this.targetSystemRadius, 0);
 		c.lineTo(shapeWidth - this.targetSystemRadius, 0);
 		c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight);
 		c.lineTo(this.targetSystemRadius, this.titleBarHeight);
 		c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
+		c.close();	
+	}
+	else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+	{
+		c.roundrect(0, 0, shapeWidth, shapeHeigth, this.cornerRadius, this.cornerRadius);
+	}
+	else if(this.shapeType === 'lg')
+	{
+		c.begin();
+		c.moveTo(0, 0);
+		c.lineTo(shapeWidth - this.cornerRadius, 0);
+		c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, shapeWidth, this.cornerRadius);
+		c.lineTo(shapeWidth, shapeHeigth - this.cornerRadius);
+		c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, shapeWidth - this.cornerRadius, shapeHeigth);
+		c.lineTo(this.cornerRadius, shapeHeigth);
+		c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, 0, shapeHeigth - this.cornerRadius);
+		c.lineTo(0, 0);
 		c.close();
-		c.stroke();
-
-		this.paintShapeMultiplicity(c);
-
-		if(doRestore)
-			c.restore();		
 	}
 	else
 	{
-		// Style: Double
-		if(this.shapeVisualDefinition.outerLine.secondLine)
-		{
-			c.save();
-			c.setDashed(false, false);
+		c.rect(0, 0, shapeWidth, shapeHeigth);
+	}
 
-			// WHITE LINE 
-			c.setStrokeWidth(doubleStyleOffset);
-			c.setStrokeColor(WHITE);
-			if(this.shapeType === 'ln' || this.shapeType === 'lc')
-				c.roundrect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset, this.cornerRadius - doubleStyleOffset/2, this.cornerRadius - doubleStyleOffset/2);
-			else
-				c.rect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset);
-			c.stroke();
+	c.stroke();
 
-			// DOUBLE LINE
-			c.setStrokeWidth(1);
-			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);			
-			if(this.shapeType === 'ln' || this.shapeType === 'lc')
-				c.roundrect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset, this.cornerRadius - doubleStyleOffset, this.cornerRadius - doubleStyleOffset);
-			else
-				c.rect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset);
-			c.stroke();
+	this.paintShapeMultiplicity(c);
 
-			c.restore();
-		}
-		
-		// Container
-		if (this.shapeVisualDefinition.shape.container)
-		{
-			c.save();
-			c.setStrokeColor(this.shapeVisualDefinition.dividerLine.color);
-			c.setDashed(false);
-			c.setStrokeWidth(1);
-			c.begin();
-			c.moveTo(0, this.titleBarHeight);
-			c.lineTo(shapeWidth, this.titleBarHeight);		
-			c.stroke();
-			c.restore();
-		}
-		
-		// Base
-		if(this.shapeVisualDefinition.outerLine.dashed)
-		{
-			doRestore = true;
-			c.save();
-			c.setDashed(true, true);
-			c.setDashPattern(dashPattern);
-		}
-		if(this.shapeType === 'ln' || this.shapeType === 'lc')
-			c.roundrect(0, 0, shapeWidth, shapeHeigth, this.cornerRadius, this.cornerRadius);
-		else
-			c.rect(0, 0, shapeWidth, shapeHeigth);
+	if(doRestore)
+		c.restore();		
 
-		c.stroke();
+// Component decorator
+	if(this.shapeType === 'lc' || this.shapeType === 'pc')
+	{
+		let componentDecoratorOffset = -4;
+		let componentDecoratorHeight = 4;
+		let componentDecoratorWidth = 8;
 	
-		this.paintShapeMultiplicity(c);
-
-		if(doRestore)
-			c.restore();		
-
-		// Component decorator
-		if(this.shapeType === 'lc' || this.shapeType === 'pc')
-		{
-			c.save();
-			c.setDashed(false);
-			c.setFillColor(this.shapeVisualDefinition.decorator.component.color);
-			c.rect(componentDecoratorOffset, 12, componentDecoratorWidth, componentDecoratorHeight);
-			c.fillAndStroke();
-			c.rect(componentDecoratorOffset, 32, componentDecoratorWidth, componentDecoratorHeight);
-			c.fillAndStroke();
-			c.restore();
-		}
-		
-		//Bar decorator
-		if(this.shapeVisualDefinition.bar.visible)
-		{
-			c.setFillColor(this.shapeVisualDefinition.outerLine.color);
-			c.rect(0, 0, this.shapeVisualDefinition.bar.width, this.titleBarHeight);
-			c.fillAndStroke();
-		}
+		c.save();
+		c.setDashed(false);
+		c.setFillColor(this.shapeVisualDefinition.decorator.component.color);
+		c.rect(componentDecoratorOffset, 12, componentDecoratorWidth, componentDecoratorHeight);
+		c.fillAndStroke();
+		c.rect(componentDecoratorOffset, 32, componentDecoratorWidth, componentDecoratorHeight);
+		c.fillAndStroke();
+		c.restore();
+	}
+	
+//Bar decorator
+	if(this.shapeVisualDefinition.bar.visible)
+	{
+		c.setFillColor(this.shapeVisualDefinition.outerLine.color);
+		c.rect(0, 0, this.shapeVisualDefinition.bar.width, this.titleBarHeight);
+		c.fillAndStroke();
 	}
 
 	if(this.shapeVisualDefinition.style.type === 'strikethrough')
@@ -1175,14 +1200,19 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			}
 
 		}
-		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc' || this.shapeType === 'lg')
 		{
 			let h = 8; // x coordinate of circle center
 			let k = 8; // y coordinate of circle center
 			let r = 8; // radius of circle
 			let angle = 135;
 
-			if(this.shapeVisualDefinition.shape.layout === 'expanded' && this.shapeVisualDefinition.corner.visible)
+			if(this.shapeType === 'lg')
+			{
+				leftCornerX = this.shapeVisualDefinition.bar.width;
+				rightCornerY = this.shapeVisualDefinition.shape.height;	
+			}
+			else if(this.shapeVisualDefinition.shape.layout === 'expanded' && this.shapeVisualDefinition.corner.visible)
 			{
 				//do nothing
 			}
@@ -1199,7 +1229,7 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
 			rightCornerY = k - r*Math.sin(angle * (Math.PI/180));
 		}
-		else if(this.shapeType === 'group')
+		else if(this.shapeType === 'pg')
 		{
 			leftCornerX = this.shapeVisualDefinition.bar.width;
 			rightCornerY = this.shapeVisualDefinition.shape.height;
@@ -1346,7 +1376,7 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
 		//	c.setDashPattern('6 6');
 		//}
 
-		if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
+		if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg')
 		{
 			c.begin();
 			for(let idx = 0; idx < lineNumbers.length; idx++)
@@ -1357,7 +1387,7 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
 			}
 			c.stroke();
 		}
-		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc' || this.shapeType === 'lg')
 		{
 			c.begin();
 			for(let idx = 0; idx < lineNumbers.length; idx++)
@@ -1416,7 +1446,7 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 		else
 			positionX = this.iconSpacing;
 	}
-	else if(this.shapeType === 'group')
+	else if(this.shapeType === 'pg' || this.shapeType === 'lg')
 	{
 		positionX = this.shapeVisualDefinition.bar.width + this.iconSpacing;
 	}
@@ -1491,7 +1521,7 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 var shapeStyle = {};
 mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, positionText, iconImage)
 {	
-	if(shapeType === 'group')
+	if(shapeType === 'pg' || shapeType === 'lg')
 	{
 		style = mxUtils.setStyle(style, 'container', 1);
 		style = mxUtils.setStyle(style, 'collapsible', 0);
@@ -1643,7 +1673,7 @@ mxIBM2MondrianBase.prototype.getRectangle = function(rect, shapeType, shapeLayou
 
 			}
 		}
-		else if(shapeType === 'group')
+		else if(shapeType === 'pg' || shapeType === 'lg')
 		{
 			if(shapeLayout === 'collapsed' || shapeLayout === 'expanded')
 			{
