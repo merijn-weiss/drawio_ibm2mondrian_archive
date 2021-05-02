@@ -95,7 +95,11 @@ mxIBM2MondrianBase.prototype.getSelectedColorSpecification = function(colorFamil
 			return {noColor: 'none', white: '#ffffff', swatch_10: '#f2f4f8', swatch_20: '#dde1e6', swatch_30: '#000000', swatch_40: '#000000', swatch_50: '#000000', swatch_60: '#000000', swatch_70: '#000000', swatch_80: '#000000', swatch_90: '#000000', swatch_100: '#000000'};
 		case 'gray':
 			return {noColor: 'none', white: '#ffffff', swatch_10: '#f2f4f8', swatch_20: '#dde1e6', swatch_30: '#c1c7cd', swatch_40: '#a2a9b0', swatch_50: '#878d96', swatch_60: '#697077', swatch_70: '#4d5358', swatch_80: '#343a3f', swatch_90: '#21272a', swatch_100: '#121619'};
-	}
+		case 'yellow':
+			return {noColor: 'none', white: '#ffffff', swatch_10: '#fcf4d6', swatch_20: '#fddc69', swatch_30: '#f1c21b', swatch_40: '#d2a106', swatch_50: '#b28600', swatch_60: '#8e6a00', swatch_70: '#684e00', swatch_80: '#483700', swatch_90: '#302400', swatch_100: '#1c1500'};
+		case 'orange':
+			return {noColor: 'none', white: '#ffffff', swatch_10: '#fff2e8', swatch_20: '#ffd9Be', swatch_30: '#ffb784', swatch_40: '#ff832b', swatch_50: '#eb6200', swatch_60: '#ba4e00', swatch_70: '#8a3800', swatch_80: '#5e2900', swatch_90: '#3e1a00', swatch_100: '#231000'};			
+		}
 }
 
 // A color swatch of 60 or higher is considered 'dark'
@@ -337,7 +341,7 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	]},
 	{name:'shapeMultiplicity', dispName: 'Multiplicity', type: 'bool', defVal: false},
 	{name:'colorFamily', dispName:'Color', type:'enum', defVal:'blue',
-		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
+		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}, {val:'yellow', dispName: 'Yellow'}, {val:'orange', dispName: 'Orange'}]},
 	{name:'colorFillIcon', dispName:'Color (Corner)', type:'enum', defVal:'medium',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
 	
