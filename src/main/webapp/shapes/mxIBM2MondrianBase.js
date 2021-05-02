@@ -348,9 +348,9 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'colorBackground', dispName:'Color (Background)', type:'enum', defVal:'noColor:noColor',
 		enumList:[
 		{val:'noColor:noColor', dispName: 'None'}, {val:'white:white', dispName: 'White'}, {val:'veryLight:veryLight', dispName: 'Very Light'},
-		{val:'white:noColor', dispName: 'Bar: White, Container: None'},
-		{val:'veryLight:noColor', dispName: 'Bar: Very Light, Container: None'},
-		{val:'veryLight:white', dispName: 'Bar: Very Light, Container: White'}
+		{val:'white:noColor', dispName: 'Bar: White, Body: None'},
+		{val:'veryLight:noColor', dispName: 'Bar: Very Light, Body: None'},
+		{val:'veryLight:white', dispName: 'Bar: Very Light, Body: White'}
 	]},
 
 /** {name:'colorFillText', dispName:'Color (Title bar)', type:'enum', defVal:'white',
@@ -372,7 +372,7 @@ mxIBM2MondrianBase.prototype.customProperties = [
 		{val:'noTag', dispName: 'None'}, {val:'circle', dispName: 'Circle'}, {val:'diamond', dispName: 'Diamond'}, 
 		{val:'square', dispName: 'Square'}, {val:'triangle', dispName: 'Triangle'}, {val:'hexagon', dispName: 'Hexagon'}, {val:'octagon', dispName: 'Octagon'}]},
 	{name:'tagColorFamily', dispName:'Tag (Color)', type:'enum', defVal:'black',
-		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
+		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}, {val:'yellow', dispName: 'Yellow'}, {val:'orange', dispName: 'Orange'}]},
 	{name:'tagColorFill', dispName:'Tag (Fill)', type:'enum', defVal:'medium',
 		enumList:[{val:'white', dispName: 'White'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
 	];
