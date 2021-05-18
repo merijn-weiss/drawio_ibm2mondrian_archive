@@ -360,11 +360,11 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	}
 
 	//container
-	shapeVD.container.visible = shapeVD.shape.visible && (shapeVD.shape.layout === 'expanded' && shapeType !== 'pg' && shapeType != 'lg') && (shapeVD.shape.height - dimensions.titleBarHeight > 0);
+	shapeVD.container.visible = shapeVD.shape.visible && (shapeVD.shape.layout === 'expanded') && (shapeVD.shape.height - dimensions.titleBarHeight > 0);
 	shapeVD.container.colorSwatch = this.getColorSwatch(colorFamily, colorFillContainer, 'container', shapeLayout, shapeType);
 
 	//dividerLine
-	shapeVD.dividerLine.visible = shapeVD.container.visible;
+	shapeVD.dividerLine.visible = shapeVD.container.visible && (shapeType !== 'pg' && shapeType != 'lg');
 	shapeVD.dividerLine.colorSwatch = (shapeVD.titleBar.colorSwatch === 'swatch_10') ? 'swatch_30' : 'swatch_20';
 
 	// Get the HEX values for each Shape part
