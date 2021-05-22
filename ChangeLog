@@ -1,3 +1,156 @@
+20-MAY-2021: 14.7.0
+
+- Updates RoughJS to 4.4.1 with preserveVertices option
+- Sets template backgrounds to transparent, except where it is set to an explicit non-white color
+- Adds support for Lucidchart OrgBlock
+- [conf cloud] Adds support for attached images in label (in page Ids import)
+- Fixes NPE in Lucidchart import
+- Fixes default user picture
+- [conf cloud] Removes draft check error of zero byte files
+- Updates Mermaid to 8.10.1
+- Updates es translations
+
+13-MAY-2021: 14.6.13
+
+- Updates to latest Azure stencils
+- [conf cloud] Improves error handling around draft load failing
+- [conf cloud] Fixes lib import without config space
+
+11-MAY-2021: 14.6.12
+
+- Fixes sidebar preview for sketch theme
+- Disables handwritten fonts in sketch theme with rough=0
+- Fixes inconsistent pointer event handling
+- Fixes ignored comic style for rectangle shape
+- Adds modifier keys for wheel scrolling in sketch theme
+- Disables page view after page format change with sketch theme
+- Updates ar and ru translations
+
+07-MAY-2021: 14.6.11
+
+- Fixes Dropbox client in dev mode
+- Adds iconsearch CF worker
+- Updates Gliffy translations for BPMN 2.0
+- Removes JSON2 usage. Required for IE7- which doesn't work since VML support removed.
+- Reverts parameters for sidebar so default style is not applied.
+- Adds gitflow examples
+- Additional Spanish translations
+
+04-MAY-2021: 14.6.10
+
+- Adds zoomFactor config option
+- Fixes links on custom shapes in Lucid import
+- Adds ctrl/cmd+dblclick to change cell ID
+- Adds containers to general sidebar
+- Fixes pointer events for text shapes
+- Fixes selected style in dark mode
+- Moves Dropbox auth from implicit grant to server-side flow
+- Adds XML option to import menu in minimal and sketch theme
+- Adds Shift+Click on clear waypoints button to clear fixed anchor points
+- Fixes overridden default font in sidebar thumbnails
+- Fixes ignored default styles for shapes dialog and inserted templates
+- Fixes NPE for sketch UI in embed mode
+- Adds enabledChanged event to graph
+- Separates clear waypoints and clear anchor points
+- Disables file API in Opera
+- Fixes anchor points behavior for Choreography shapes in BPMN
+
+29-APR-2021: 14.6.9
+
+- Corrects GitHub app ID
+
+29-APR-2021: 14.6.8
+
+- Refactors GitHub paths
+
+28-APR-2021: 14.6.7
+
+- Switches to server flow for GitHub and Gitlab auth
+
+22-APR-2021: 14.6.6
+
+- Adds dark mode for minimal theme
+
+21-APR-2021: 14.6.5
+
+- Versions shapes minified JS
+
+21-APR-2021: 14.6.4
+
+- Restores BPMN 2.0 shapes
+
+19-APR-2021: 14.6.3
+
+- Fixes for dark mode and sketch theme
+
+19-APR-2021: 14.6.2
+
+- Fixes private Gitlab instance URL parsing
+
+15-APR-2021: 14.6.1
+
+- Improvements to sketch theme
+
+13-APR-2021: 14.6.0
+
+- Updates to workbox 6.1.2
+
+09-APR-2021: 14.5.10
+
+- Internal release
+
+09-APR-2021: 14.5.9
+
+- Improvement to sketch theme
+
+06-APR-2021: 14.5.8
+
+- Fixes Confluence Cloud saving issue
+
+03-APR-2021: 14.5.7
+
+- Add various shapes
+
+02-APR-2021: 14.5.6
+
+- Removes BPMN 2 changes
+
+01-APR-2021: 14.5.5
+
+- Improves BPMN symbols to 2.0 spec
+
+31-MAR-2021: 14.5.4
+
+- Fixes for vsdx export
+- Adds re-tries on cache write failures
+
+26-MAR-2021: 14.5.3
+
+- Internal release
+
+26-MAR-2021: 14.5.2
+
+- Disables copy as image in iframes
+- Fixes find/replace dialog in minimal theme https://github.com/jgraph/drawio/issues/1896
+- Fixes ignored grid for polygon shapes https://github.com/jgraph/drawio/issues/1891
+
+23-MAR-2021: 14.5.1
+
+- Fixes for Electron 12
+
+22-MAR-2021: 14.5.0
+
+- Improves Lucidchart import
+
+17-MAR-2021: 14.4.9
+
+- Adds copy as image option
+- Makes find and replace dialog the default
+
+12-MAR-2021: 14.4.8
+
+- Fixes segment router removing control hints at specific zooms
+
 10-MAR-2021: 14.4.7
 
 - Adds upload option back in embed conf cloud

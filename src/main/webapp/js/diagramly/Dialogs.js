@@ -148,7 +148,7 @@ var StorageDialog = function(editorUi, fn, rowLimit)
 				width: 5, // The line thickness
 				radius: 10, // The radius of the inner circle
 				rotate: 0, // The rotation offset
-				color: (uiTheme == 'dark') ? '#c0c0c0' : '#000', // #rgb or #rrggbb
+				color: Editor.isDarkMode() ? '#c0c0c0' : '#000', // #rgb or #rrggbb
 				speed: 1.5, // Rounds per second
 				trail: 60, // Afterglow percentage
 				shadow: false, // Whether to render a shadow
@@ -2371,8 +2371,8 @@ var NewDialog = function(editorUi, compact, showName, callback, createOnly, canc
 	showName = (showName != null) ? showName : true;
 	createOnly = (createOnly != null) ? createOnly : false;
 	leftHighlight = (leftHighlight != null) ? leftHighlight : '#ebf2f9';
-	rightHighlight = (rightHighlight != null) ? rightHighlight : ((uiTheme == 'dark') ? '#a2a2a2' : '#e6eff8');
-	rightHighlightBorder = (rightHighlightBorder != null) ? rightHighlightBorder : ((uiTheme == 'dark') ? '1px dashed #00a8ff' : '1px solid #ccd9ea');
+	rightHighlight = (rightHighlight != null) ? rightHighlight : (Editor.isDarkMode() ? '#a2a2a2' : '#e6eff8');
+	rightHighlightBorder = (rightHighlightBorder != null) ? rightHighlightBorder : (Editor.isDarkMode() ? '1px dashed #00a8ff' : '1px solid #ccd9ea');
 	templateFile = (templateFile != null) ? templateFile : EditorUi.templateFile;
 	
 	var outer = document.createElement('div');
@@ -2827,7 +2827,7 @@ var NewDialog = function(editorUi, compact, showName, callback, createOnly, canc
 		elt.style.height = w + 'px';
 		elt.style.width = h + 'px';
 	
-		if (uiTheme == 'dark')
+		if (Editor.isDarkMode())
 		{
 			elt.style.filter = 'invert(100%)';
 		}
@@ -2888,7 +2888,7 @@ var NewDialog = function(editorUi, compact, showName, callback, createOnly, canc
 			
 			if (title != null)
 			{
-				elt.innerHTML = '<table width="100%" height="100%" style="line-height:1.3em;' + ((uiTheme == 'dark') ? '' : 'background:rgba(255,255,255,0.85);') +
+				elt.innerHTML = '<table width="100%" height="100%" style="line-height:1.3em;' + (Editor.isDarkMode() ? '' : 'background:rgba(255,255,255,0.85);') +
 					'border:inherit;"><tr><td align="center" valign="middle"><span style="display:inline-block;padding:4px 8px 4px 8px;user-select:none;' +
 					'border-radius:3px;background:rgba(255,255,255,0.85);overflow:hidden;text-overflow:ellipsis;max-width:' + (w - 34) + 'px;">' +
 					mxUtils.htmlEntities(mxResources.get(title, null, title)) + '</span></td></tr></table>';
@@ -3405,6 +3405,8 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 		div.appendChild(FilenameDialog.createTypeHint(editorUi, nameInput, hints));
 	}
 	
+	var copyBtn = null;
+	
 	// Disables SVG preview if SVG is not supported in browser
 	if (data != null && mimeType != null && (mimeType.substring(0, 6) == 'image/' &&
 		(mimeType.substring(0, 9) != 'image/svg' || mxClient.IS_SVG)))
@@ -3422,13 +3424,37 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 			'translate(50%,-50%)');
 		div.appendChild(preview);
 		
+		if (!mxClient.IS_FF && navigator.clipboard != null && mimeType == 'image/png')
+		{
+			copyBtn = mxUtils.button(mxResources.get('copy'), function(evt)
+			{
+				var blob = editorUi.base64ToBlob(temp, 'image/png');
+				var html = '<img src="' + 'data:' + mimeType + ';base64,' + temp + '">';
+				var cbi = new ClipboardItem({'image/png': blob,
+					'text/html': new Blob([html], {type: 'text/html'})});
+				navigator.clipboard.write([cbi]).then(mxUtils.bind(this, function()
+				{
+					editorUi.alert(mxResources.get('copiedToClipboard'));
+				}))['catch'](mxUtils.bind(this, function(e)
+				{
+					editorUi.handleError(e);
+				}));
+			});
+			
+			copyBtn.style.marginTop = '6px';
+			copyBtn.className = 'geBtn';
+		}
+		
 		if (allowTab && Editor.popupsAllowed)
 		{
 			preview.style.cursor = 'pointer';
 			
-			mxEvent.addGestureListeners(preview, null, null, function()
+			mxEvent.addGestureListeners(preview, null, null, function(evt)
 			{
-				create('_blank');
+				if (!mxEvent.isPopupTrigger(evt))
+				{
+					create('_blank');
+				}
 			});
 		}
 	}
@@ -3730,7 +3756,7 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 		btns.appendChild(helpBtn);
 	}
 	
-	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
+	var cancelBtn = mxUtils.button(mxResources.get((cancelFn != null) ? 'close' : 'cancel'), function()
 	{
 		if (cancelFn != null)
 		{
@@ -3747,7 +3773,7 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 	
 	cancelBtn.className = 'geBtn';
 	
-	if (editorUi.editor.cancelFirst)
+	if (editorUi.editor.cancelFirst && cancelFn == null)
 	{
 		btns.appendChild(cancelBtn);
 	}
@@ -3788,7 +3814,7 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 		openBtn.className = 'geBtn';
 		btns.appendChild(openBtn);
 	}
-	
+
 	if (CreateDialog.showDownloadButton)
 	{
 		var downloadButton = mxUtils.button(mxResources.get('download'), function()
@@ -3798,6 +3824,18 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 		
 		downloadButton.className = 'geBtn';
 		btns.appendChild(downloadButton);
+		
+		if (copyBtn != null)
+		{
+			downloadButton.style.marginTop = '6px';
+			btns.style.marginTop = '6px';
+		}
+	}
+		
+	if (copyBtn != null)
+	{
+		mxUtils.br(btns);
+		btns.appendChild(copyBtn);
 	}
 	
 	if (/*!mxClient.IS_IOS || */!showButtons)
@@ -3811,7 +3849,7 @@ var CreateDialog = function(editorUi, title, createFn, cancelFn, dlgTitle, btnLa
 		btns.appendChild(createBtn);
 	}
 	
-	if (!editorUi.editor.cancelFirst)
+	if (!editorUi.editor.cancelFirst || cancelFn != null)
 	{
 		btns.appendChild(cancelBtn);
 	}
@@ -5003,7 +5041,7 @@ var RevisionDialog = function(editorUi, revs, restoreFn)
 	  corners: 1, // Corner roundness (0..1)
 	  rotate: 0, // The rotation offset
 	  direction: 1, // 1: clockwise, -1: counterclockwise
-	  color: (uiTheme == 'dark') ? '#c0c0c0' : '#000', // #rgb or #rrggbb
+	  color: Editor.isDarkMode() ? '#c0c0c0' : '#000', // #rgb or #rrggbb
 	  speed: 1.4, // Rounds per second
 	  trail: 60, // Afterglow percentage
 	  shadow: false, // Whether to render a shadow
@@ -5564,7 +5602,7 @@ var RevisionDialog = function(editorUi, revs, restoreFn)
 							
 							currentRev = item;
 							currentRow = row;
-							currentRow.style.backgroundColor = (uiTheme == 'dark') ? '#000000' : '#ebf2f9';
+							currentRow.style.backgroundColor = Editor.isDarkMode() ? '#000000' : '#ebf2f9';
 							currentDoc = null;
 							currentXml = null;
 
@@ -5942,7 +5980,7 @@ var DraftDialog = function(editorUi, title, xml, editFn, discardFn, editLabel, d
 				
 				if (bg == null || bg == '' || bg == mxConstants.NONE)
 				{
-					bg = (uiTheme == 'dark') ? 'transparent' : '#ffffff';
+					bg = Editor.isDarkMode() ? 'transparent' : '#ffffff';
 				}
 				
 				container.style.backgroundColor = bg;
@@ -6078,10 +6116,12 @@ var DraftDialog = function(editorUi, title, xml, editFn, discardFn, editLabel, d
  */
 var FindWindow = function(ui, x, y, w, h, withReplace)
 {
-	var action = ui.actions.get('find');
+	var action = ui.actions.get('findReplace');
+	
 	var graph = ui.editor.graph;
 	var lastSearch = null;
 	var lastFound = null;
+	var lastSearchSuccessful = false;
 	var allChecked = false;
 	var lblMatch = null;
 	var lblMatchPos = 0;
@@ -6093,7 +6133,7 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 	div.style.padding = '10px';
 	div.style.height = '100%';
 	
-	var txtWidth = withReplace? '330px' : '200px';
+	var txtWidth = withReplace? '260px' : '200px';
 	var searchInput = document.createElement('input');
 	searchInput.setAttribute('placeholder', mxResources.get('find'));
 	searchInput.setAttribute('type', 'text');
@@ -6121,6 +6161,8 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		replaceInput.style.padding = '6px';
 		div.appendChild(replaceInput);
 		mxUtils.br(div);
+		
+		mxEvent.addListener(replaceInput, 'input', updateReplBtns);
 	}
 	
 	var regexInput = document.createElement('input');
@@ -6157,7 +6199,7 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
     
 	var tmp = document.createElement('div');
 	
-	function testMeta(re, cell, search)
+	function testMeta(re, cell, search, checkIndex)
 	{
 		if (typeof cell.value === 'object' && cell.value.attributes != null)
 		{
@@ -6169,7 +6211,8 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 				{
 					var value = mxUtils.trim(attrs[i].nodeValue.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' ')).toLowerCase();
 					
-					if ((re == null && value.substring(0, search.length) === search) ||
+					if ((re == null && ((checkIndex && value.indexOf(search) >= 0) ||
+						(!checkIndex && value.substring(0, search.length) === search))) ||
 						(re != null && re.test(value)))
 					{
 						return true;
@@ -6181,8 +6224,32 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		return false;
 	};
 	
-	function search(internalCall, trySameCell)
+	function updateReplBtns()
 	{
+		if (lastSearchSuccessful && replaceInput.value)
+		{
+			replaceFindBtn.removeAttribute('disabled');
+			replaceBtn.removeAttribute('disabled');
+		}
+		else
+		{
+			replaceFindBtn.setAttribute('disabled', 'disabled');
+			replaceBtn.setAttribute('disabled', 'disabled');
+		}
+		
+		if (replaceInput.value && searchInput.value)
+		{
+			replaceAllBtn.removeAttribute('disabled');
+		}
+		else
+		{
+			replaceAllBtn.setAttribute('disabled', 'disabled');
+		}
+	}
+				
+	function search(internalCall, trySameCell, stayOnPage)
+	{
+		replAllNotif.innerHTML = '';
 		var cells = graph.model.getDescendants(graph.model.getRoot());
 		var searchStr = searchInput.value.toLowerCase();
 		var re = (regexInput.checked) ? new RegExp(searchStr) : null;
@@ -6228,18 +6295,26 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 					graph.model.setRoot(nextPage.root);
 					nextPageIndex = (nextPageIndex + 1) % ui.pages.length;
 				}
-				while(!search(true, trySameCell) && nextPageIndex != currentPageIndex);
+				while(!search(true, trySameCell, stayOnPage) && nextPageIndex != currentPageIndex);
 				
 				if (lastFound)
 				{
 					lastFound = null;
-					ui.selectPage(nextPage);
+					
+					if (!stayOnPage)
+					{
+						ui.selectPage(nextPage);
+					}
+					else
+					{
+						ui.editor.graph.model.execute(new SelectPage(ui, nextPage));
+					}
 				}
 				
 				allChecked = false;
 				graph = ui.editor.graph;
 				
-				return search(true, trySameCell);
+				return search(true, trySameCell, stayOnPage);
 			}
 			
 			var i;
@@ -6257,7 +6332,7 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 				if (state != null && state.cell.value != null && (active || firstMatch == null) &&
 					(graph.model.isVertex(state.cell) || graph.model.isEdge(state.cell)))
 				{
-					if (graph.isHtmlLabel(state.cell))
+					if (state.style != null && state.style['html'] == '1')
 					{
 						tmp.innerHTML = graph.sanitizeHtml(graph.getLabel(state.cell));
 						label = mxUtils.extractTextWithWhitespace([tmp]);
@@ -6276,8 +6351,14 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 						lblPosShift = lblMatchPos;
 					}
 					
-					if ((re == null && (label.substring(0, searchStr.length) === searchStr || (!withReplace && testMeta(re, state.cell, searchStr)))) ||
-						(re != null && (re.test(label) || (!withReplace && testMeta(re, state.cell, searchStr)))))
+					var checkMeta = replaceInput.value == '';
+					var checkIndex = checkMeta;
+					
+					if ((re == null && ((checkIndex && label.indexOf(searchStr) >= 0) ||
+						(!checkIndex && label.substring(0, searchStr.length) === searchStr) ||
+						(checkMeta && testMeta(re, state.cell, searchStr, checkIndex)))) ||
+						(re != null && (re.test(label) || (checkMeta &&
+						testMeta(re, state.cell, searchStr, checkIndex)))))
 					{
 						if (withReplace)
 						{
@@ -6317,7 +6398,7 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 			{
 				lastFound = null;
 				allChecked = true;
-				return search(true, trySameCell);
+				return search(true, trySameCell, stayOnPage);
 			}
 			
 			lastFound = firstMatch;
@@ -6325,7 +6406,12 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 			
 			if (graph.isEnabled())
 			{
-				graph.setSelectionCell(lastFound.cell);
+				if (!stayOnPage &&
+					(graph.getSelectionCell() != lastFound.cell ||
+					graph.getSelectionCount() != 1))
+				{
+					graph.setSelectionCell(lastFound.cell);
+				}
 			}
 			else
 			{
@@ -6336,22 +6422,45 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		else if (!internalCall && allPagesInput.checked)
 		{
 			allChecked = true;
-			return search(true, trySameCell);
+			return search(true, trySameCell, stayOnPage);
 		}
-		else if (graph.isEnabled())
+		else if (graph.isEnabled() && !stayOnPage)
 		{
 			graph.clearSelection();
+		}
+		
+		lastSearchSuccessful = firstMatch != null;
+		
+		if (withReplace && !internalCall)
+		{
+			updateReplBtns();
 		}
 		
 		return searchStr.length == 0 || firstMatch != null;
 	};
 
 	mxUtils.br(div);
+	
+	var btnsCont = document.createElement('div');
+	btnsCont.style.left = '0px';
+	btnsCont.style.right = '0px';
+	btnsCont.style.marginTop = '6px';
+	btnsCont.style.padding = '0 6px 0 6px';
+	btnsCont.style.textAlign = 'center';
+	div.appendChild(btnsCont);
 
 	var resetBtn = mxUtils.button(mxResources.get('reset'), function()
 	{
+		replAllNotif.innerHTML = '';
 		searchInput.value = '';
 		searchInput.style.backgroundColor = '';
+		
+		if (withReplace)
+		{
+			replaceInput.value = '';
+			updateReplBtns();
+		}
+		
 		lastFound = null;
 		lastSearch = null;
 		allChecked = false;
@@ -6359,18 +6468,25 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 	});
 	
 	resetBtn.setAttribute('title', mxResources.get('reset'));
+	resetBtn.style.float = 'none';
+	resetBtn.style.width = '120px';
 	resetBtn.style.marginTop = '6px';
-	resetBtn.style.marginRight = withReplace? 0 : '4px';
-	resetBtn.style.marginLeft = ((w - 20 - (withReplace? 4 * 82 : 2 * 78)) / 2) + 'px'; // 20 are window padding, and 78/82 is btn width
+	resetBtn.style.marginLeft = '8px';
+	resetBtn.style.overflow = 'hidden';
+	resetBtn.style.textOverflow = 'ellipsis';
 	resetBtn.className = 'geBtn';
 	
-	div.appendChild(resetBtn);
+	if (!withReplace)
+	{
+		btnsCont.appendChild(resetBtn);		
+	}
 
 	var btn = mxUtils.button(mxResources.get('find'), function()
 	{
 		try
 		{
-			searchInput.style.backgroundColor = search() ? '' : '#ffcfcf';
+			searchInput.style.backgroundColor = search() ? '' :
+				(Editor.isDarkMode() ? '#ff0000' : '#ffcfcf');
 		}
 		catch (e)
 		{
@@ -6378,16 +6494,36 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		}
 	});
 	
+	// TODO: Reset state after selection change
 	btn.setAttribute('title', mxResources.get('find') + ' (Enter)');
+	btn.style.float = 'none';
+	btn.style.width = '120px';
 	btn.style.marginTop = '6px';
+	btn.style.marginLeft = '8px';
+	btn.style.overflow = 'hidden';
+	btn.style.textOverflow = 'ellipsis';
 	btn.className = 'geBtn gePrimaryBtn';
 	
-	div.appendChild(btn);
+	btnsCont.appendChild(btn);
+
+	var replAllNotif = document.createElement('div');
+	replAllNotif.style.marginTop = '10px';
 	
-	if (withReplace)
+	if (!withReplace)
 	{
-		function replaceInHtml(str, substr, newSubstr, startIndex)
+		resetBtn.style.width = '90px';	
+		btn.style.width = '90px';
+	}
+	else
+	{
+		function replaceInLabel(str, substr, newSubstr, startIndex, style)
 		{
+			if (style == null || style['html'] != '1')
+			{
+				var replStart = str.toLowerCase().indexOf(substr, startIndex);
+				return replStart < 0? str : str.substr(0, replStart) + newSubstr + str.substr(replStart + substr.length);
+			}
+			
 			var origStr = str;
 			substr = mxUtils.htmlEntities(substr);
 			var tagPos = [], p = -1;
@@ -6437,6 +6573,38 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 			return newStr;
 		};
 		
+		var replaceFindBtn = mxUtils.button(mxResources.get('replFind'), function()
+		{
+			try
+			{
+				if (lblMatch != null && lastFound != null && replaceInput.value)
+				{
+					var cell = lastFound.cell, lbl = graph.getLabel(cell);
+					
+					graph.model.setValue(cell, replaceInLabel(lbl, lblMatch, replaceInput.value, lblMatchPos - lblMatch.length, graph.getCurrentCellStyle(cell)));
+					searchInput.style.backgroundColor = search(false, true) ? '' :
+						(Editor.isDarkMode() ? '#ff0000' : '#ffcfcf');
+				}
+			}
+			catch (e)
+			{
+				ui.handleError(e);
+			}
+		});
+		
+		replaceFindBtn.setAttribute('title', mxResources.get('replFind'));
+		replaceFindBtn.style.float = 'none';
+		replaceFindBtn.style.width = '120px';
+		replaceFindBtn.style.marginTop = '6px';
+		replaceFindBtn.style.marginLeft = '8px';
+		replaceFindBtn.style.overflow = 'hidden';
+		replaceFindBtn.style.textOverflow = 'ellipsis';
+		replaceFindBtn.className = 'geBtn gePrimaryBtn';
+		replaceFindBtn.setAttribute('disabled', 'disabled');
+		
+		btnsCont.appendChild(replaceFindBtn);
+		mxUtils.br(btnsCont);
+		
 		var replaceBtn = mxUtils.button(mxResources.get('replace'), function()
 		{
 			try
@@ -6445,8 +6613,9 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 				{
 					var cell = lastFound.cell, lbl = graph.getLabel(cell);
 					
-					graph.model.setValue(cell, replaceInHtml(lbl, lblMatch, replaceInput.value, lblMatchPos - lblMatch.length));
-					searchInput.style.backgroundColor = search(false, true) ? '' : '#ffcfcf';
+					graph.model.setValue(cell, replaceInLabel(lbl, lblMatch, replaceInput.value, lblMatchPos - lblMatch.length, graph.getCurrentCellStyle(cell)));
+					replaceFindBtn.setAttribute('disabled', 'disabled');
+					replaceBtn.setAttribute('disabled', 'disabled');
 				}
 			}
 			catch (e)
@@ -6456,23 +6625,34 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		});
 		
 		replaceBtn.setAttribute('title', mxResources.get('replace'));
+		replaceBtn.style.float = 'none';
+		replaceBtn.style.width = '120px';
 		replaceBtn.style.marginTop = '6px';
+		replaceBtn.style.marginLeft = '8px';
+		replaceBtn.style.overflow = 'hidden';
+		replaceBtn.style.textOverflow = 'ellipsis';
 		replaceBtn.className = 'geBtn gePrimaryBtn';
+		replaceBtn.setAttribute('disabled', 'disabled');
 		
-		div.appendChild(replaceBtn);
+		btnsCont.appendChild(replaceBtn);
 		
 		var replaceAllBtn = mxUtils.button(mxResources.get('replaceAll'), function()
 		{
+			replAllNotif.innerHTML = '';
+			
 			if (replaceInput.value)
 			{
-				allPagesInput.checked = false; //We don't support all pages replace all due to invalid undo behavior (changing the editor page cause undo to split and not applied)
+				var currentPage = ui.currentPage;
+				var cells = ui.editor.graph.getSelectionCells();
+				ui.editor.graph.rendering = false;
+				
 				graph.getModel().beginUpdate();
 				try
 				{
 					var safeguard = 0;
 					var seen = {};
 					
-					while (search(false, true) && safeguard < 100)
+					while (search(false, true, true) && safeguard < 100)
 					{
 						var cell = lastFound.cell, lbl = graph.getLabel(cell);
 						var oldSeen = seen[cell.id];
@@ -6483,9 +6663,17 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 						}
 						
 						seen[cell.id] = {replAllMrk: marker, replAllPos: lblMatchPos};
-						graph.model.setValue(cell, replaceInHtml(lbl, lblMatch, replaceInput.value, lblMatchPos - lblMatch.length));
+						
+						graph.model.setValue(cell, replaceInLabel(lbl, lblMatch, replaceInput.value, lblMatchPos - lblMatch.length, graph.getCurrentCellStyle(cell)));
 						safeguard++;
 					}
+					
+					if (currentPage != ui.currentPage)
+					{
+						ui.editor.graph.model.execute(new SelectPage(ui, currentPage));
+					}
+					
+					mxUtils.write(replAllNotif, mxResources.get('matchesRepl', [safeguard]));
 				}
 				catch (e)
 				{
@@ -6494,6 +6682,8 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 				finally
 				{
 					graph.getModel().endUpdate();
+					ui.editor.graph.setSelectionCells(cells);
+					ui.editor.graph.rendering = true;
 				}
 				
 				marker++;
@@ -6501,10 +6691,36 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		});
 		
 		replaceAllBtn.setAttribute('title', mxResources.get('replaceAll'));
+		replaceAllBtn.style.float = 'none';
+		replaceAllBtn.style.width = '120px';
 		replaceAllBtn.style.marginTop = '6px';
+		replaceAllBtn.style.marginLeft = '8px';
+		replaceAllBtn.style.overflow = 'hidden';
+		replaceAllBtn.style.textOverflow = 'ellipsis';
 		replaceAllBtn.className = 'geBtn gePrimaryBtn';
+		replaceAllBtn.setAttribute('disabled', 'disabled');
 		
-		div.appendChild(replaceAllBtn);
+		btnsCont.appendChild(replaceAllBtn);
+		mxUtils.br(btnsCont);
+		btnsCont.appendChild(resetBtn);		
+
+		var closeBtn = mxUtils.button(mxResources.get('close'), mxUtils.bind(this, function()
+		{
+			this.window.setVisible(false);
+		}));
+		
+		closeBtn.setAttribute('title', mxResources.get('close'));
+		closeBtn.style.float = 'none';
+		closeBtn.style.width = '120px';
+		closeBtn.style.marginTop = '6px';
+		closeBtn.style.marginLeft = '8px';
+		closeBtn.style.overflow = 'hidden';
+		closeBtn.style.textOverflow = 'ellipsis';
+		closeBtn.className = 'geBtn';
+		
+		btnsCont.appendChild(closeBtn);
+		mxUtils.br(btnsCont);
+		btnsCont.appendChild(replAllNotif);
 	}
 	
 	mxEvent.addListener(searchInput, 'keyup', function(evt)
@@ -6517,21 +6733,24 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		}
 		else if (evt.keyCode == 27)
 		{
+			// Escape closes window
 			action.funct();
 		}
 		else if (lastSearch != searchInput.value.toLowerCase() || evt.keyCode == 13)
 		{
 			try
 			{
-				searchInput.style.backgroundColor = search() ? '' : '#ffcfcf';
+				searchInput.style.backgroundColor = search() ? '' :
+					(Editor.isDarkMode() ? '#ff0000' : '#ffcfcf');
 			}
 			catch (e)
 			{
-				searchInput.style.backgroundColor = '#ffcfcf';
+				searchInput.style.backgroundColor = Editor.isDarkMode() ? '#ff0000' : '#ffcfcf';
 			}
 		}
 	});
 
+	// Ctrl+F closes window
 	mxEvent.addListener(div, 'keydown', function(evt)
 	{
 		if (evt.keyCode == 70 && ui.keyHandler.isControlDown(evt) && !mxEvent.isShiftDown(evt))
@@ -6541,7 +6760,9 @@ var FindWindow = function(ui, x, y, w, h, withReplace)
 		}
 	});
 
-	this.window = new mxWindow(mxResources.get('find'), div, x, y, w, h, true, true);
+	this.window = new mxWindow(mxResources.get('find') + ((withReplace) ?
+		'/' + mxResources.get('replace') : ''),
+		div, x, y, w, h, true, true);
 	this.window.destroyOnClose = false;
 	this.window.setMaximizable(false);
 	this.window.setResizable(false);
@@ -7066,7 +7287,7 @@ var MoreShapesDialog = function(editorUi, expanded, entries)
 				{
 					var title = listEntry.cloneNode(false);
 					title.style.fontWeight = 'bold';
-					title.style.backgroundColor = (uiTheme == 'dark') ? '#505759' : '#e5e5e5';
+					title.style.backgroundColor = Editor.isDarkMode() ? '#505759' : '#e5e5e5';
 					title.style.padding = '6px 0px 6px 20px';
 					mxUtils.write(title, section.title);
 					list.appendChild(title);
@@ -7134,7 +7355,7 @@ var MoreShapesDialog = function(editorUi, expanded, entries)
 									}
 									
 									currentListItem = option;
-									currentListItem.style.backgroundColor = (uiTheme == 'dark') ? '#000000' : '#ebf2f9';
+									currentListItem.style.backgroundColor = Editor.isDarkMode() ? '#000000' : '#ebf2f9';
 									
 									if (evt != null)
 									{
@@ -8321,7 +8542,7 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 					label.style.bottom = '-18px';
 					label.style.left = '10px';
 					label.style.right = '10px';
-					label.style.backgroundColor = (uiTheme == 'dark') ? '#2a2a2a' : '#ffffff';
+					label.style.backgroundColor = Editor.isDarkMode() ? '#2a2a2a' : '#ffffff';
 					label.style.overflow = 'hidden';
 					label.style.textAlign = 'center';
 					

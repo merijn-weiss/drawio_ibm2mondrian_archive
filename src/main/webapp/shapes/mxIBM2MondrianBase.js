@@ -34,12 +34,14 @@ mxUtils.extend(mxIBM2MondrianBase, mxShape);
 mxIBM2MondrianBase.prototype.cst = {
 	MONDRIAN_BASE : 'mxgraph.ibm2mondrian.base',
 	MONDRIAN_VERSION: 'version',
-	MONDRIAN_VERSION_DEFAULT: 'v1a',
+	MONDRIAN_VERSION_DEFAULT: 'v2',
 
 	SHAPE_TYPE : 'shapeType',
 	SHAPE_TYPE_DEFAULT : 'pn',
 	SHAPE_LAYOUT : 'shapeLayout',
 	SHAPE_LAYOUT_DEFAULT : 'expanded',
+	SHAPE_STYLE : 'shapeStyle',
+	SHAPE_STYLE_DEFAULT : 'solid',
 
 	SHAPE_MULTIPLICITY : 'shapeMultiplicity',
 	SHAPE_MULTIPLICITY_DEFAULT : false,
@@ -58,6 +60,13 @@ mxIBM2MondrianBase.prototype.cst = {
 
 	POSITION_TEXT : 'positionText', 
 	POSITION_TEXT_DEFAULT : 'bottom',
+
+	TAG : 'tag',
+	TAG_DEFAULT : 'noTag',
+	TAG_COLOR_FAMILY : 'tagColorFamily',
+	TAG_COLOR_FAMILY_DEFAULT : 'black',
+	TAG_COLOR_FILL : 'tagColorFill', 
+	TAG_COLOR_FILL_DEFAULT : 'medium', 
 };
 
 //**********************************************************************************************************************************************************
@@ -99,12 +108,9 @@ mxIBM2MondrianBase.prototype.isDarkColor = function(paletteVersion,color,colorSw
 		if(colorSwatch != null)
 			swatch = colorSwatch.split("_")[1];
 		if(swatch != null)
-			if(paletteVersion === 'v2')
-				return parseInt(swatch) >= 50;
-			else
-				return parseInt(swatch) >= 60;
+			return parseInt(swatch) >= 50;
 		else
-			return false;	
+			return false;
 	}
 }
 
@@ -123,84 +129,55 @@ mxIBM2MondrianBase.prototype.getColorSwatch = function(paletteVersion, colorFami
 	{
 		return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR; // the icon in a group never has a fill
 	}
+	else if(shapePart === 'outerLine' || shapePart === 'tagLine')
+	{
+		switch(colorIntensity) 
+		{
+			case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
+				if(colorFamily === 'blue' || colorFamily === 'red')
+					return 'swatch_80';
+				else
+					return 'swatch_70';
+			default:
+				if(colorFamily === 'blue')
+					return 'swatch_60';
+				else
+					return 'swatch_50';	
+				}
+	}
 	else
 	{
-		if(paletteVersion === 'v2')
+		switch(colorIntensity)
 		{
-			if(shapePart === 'outerLine')// TODO: after v1/v2 decision made this must be fixed. Now you the color is determined by the Icon (Fill)
-			{
-				switch(colorIntensity) 
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						if(colorFamily === 'blue' || colorFamily === 'red' || colorFamily === 'gray') // TODO: check with Diana since the spec says Black for Gray
-							return 'swatch_80';
-						else
-							return 'swatch_70';
-					default:
-						if(colorFamily === 'blue' || colorFamily === 'gray')
-							return 'swatch_60';
-						else
-							return 'swatch_50';	
-						}
-			}
-			else
-			{
-				switch(colorIntensity)
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
-						return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
-					case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
-						return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
-					case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
-					case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
-						return 'swatch_10';
-					case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
-						if(colorFamily === 'blue' || colorFamily === 'gray')
-							return 'swatch_60';
-						else
-							return 'swatch_50';
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						if(colorFamily === 'blue' || colorFamily === 'red' || colorFamily === 'gray') // TODO: check with Diana since the spec says Black for Gray
-							return 'swatch_80';
-						else
-							return 'swatch_70';
-				}	
-			}
-		}
-		else // paletteVersion === 'v1a' || paletteVersion === 'v1b'
-		{
-			if (shapePart === 'outerLine' && paletteVersion === 'v1b')
-				return 'swatch_60'
-			else if (shapePart === 'outerLine' && shapeLayout === 'expanded')
-				return 'swatch_60'
-			else if(shapePart === 'outerLine' && shapeLayout === 'collapsed' && (colorIntensity === 'noColor' || colorIntensity === 'white'))
-				return 'swatch_60';
-			else
-			{
-				switch(colorIntensity)
-				{
-					case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
-						return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
-					case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
-						return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
-					case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
-						return 'swatch_10';
-					case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
-						return 'swatch_30';
-					case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
-						return 'swatch_40';
-					case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
-						return 'swatch_50';
-				}
-			}
+			case mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR:
+				return mxIBM2MondrianBase.prototype.colorIntensity.NO_COLOR;
+			case mxIBM2MondrianBase.prototype.colorIntensity.WHITE:
+				return mxIBM2MondrianBase.prototype.colorIntensity.WHITE;
+			case mxIBM2MondrianBase.prototype.colorIntensity.VERY_LIGHT:
+			case mxIBM2MondrianBase.prototype.colorIntensity.LIGHT:
+				return 'swatch_10';
+			case mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM:
+				if(colorFamily === 'blue' || colorFamily === 'gray')
+					return 'swatch_60';
+				else
+					return 'swatch_50';
+			case mxIBM2MondrianBase.prototype.colorIntensity.DARK:
+				if(colorFamily === 'blue' || colorFamily === 'red' || colorFamily === 'gray')
+					return 'swatch_80';
+				else
+					return 'swatch_70';
 		}	
 	}
 }
 
 
 // The ShapeVisualDefinition contains all properties that define color of various parts of the Shape
-mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (mondrianVersion, shapeType, shapeLayout,
-							colorFamily, colorFillIcon, colorFillText, colorFillContainer) {	
+mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
+							thisShape,
+							mondrianVersion, 
+							shapeType, shapeLayout, shapeStyle, width, height,
+							colorFamily, colorFillIcon, colorFillText, colorFillContainer,
+							iconImage) {
 	// basic colors
 	const WHITE = '#ffffff';
 	const BLACK = '#000000';
@@ -208,34 +185,82 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (mondrianVersio
 
 	// VD properties
 	let shapeVD = {
-		outerLine: {color: null, colorSwatch: null},
+		shape: {type: shapeType, layout: shapeLayout, width: width, height: height, container: false},
+		style: {type: shapeStyle, color: null},
+		outerLine: {color: null, colorSwatch: null, 
+			dashed: (shapeStyle === 'dashed'), secondLine: (shapeStyle === 'double')},
 		bar: {color: null, visible: false, width: null},
-		corner: {color: null, colorSwatch: null},
-		icon: {color: null, colorSwatch: null},
+		corner: {color: null, colorSwatch: null, visible: false, width: 48, height: 48},
+		icon: {color: null, colorSwatch: null, visible: (iconImage != 'noIcon'), rotate: 0, flipH: false, flipV: false},
 		titleBar: {color: null, colorSwatch: null},
+		text: {color: null},
 		dividerLine: {color: null, colorSwatch: null},
 		container: {color: null, colorSwatch: null},
-		decorator: {component: {color: WHITE, colorSwatch: null},}
+		decorator: {component: {color: WHITE, colorSwatch: null}},
+		tag: {shape: 'circle', visible: false, fill: {color: null, colorSwatch: null}, line: {color: null, colorSwatch: null}, text: null, textColor: null},
 	};
 
-	// Shape Type Specific
-	if(shapeType === 'group') {
-		shapeVD.bar.visible = (shapeType === 'group' && colorFillIcon != 'noColor'); // color fill is a workaround to enable hiding the bar
-		shapeVD.bar.width = (shapeVD.bar.visible) ? 6 : 0;
-	}
+	//shape 
+	shapeVD.shape.container = (shapeVD.shape.layout === 'expanded' && shapeType !== 'group') && (shapeVD.shape.height - this.titleBarHeight > 2); //
 
-	// Get the Swatches for each Shape part
-	//outerline
+	//outerLine
 	shapeVD.outerLine.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'outerLine', shapeLayout, shapeType);
 
-	//bar
-	shapeVD.bar.colorSwatch = shapeVD.outerLine.colorSwatch;
-
-	//corner
-	shapeVD.corner.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
-
 	//titleBar
-	shapeVD.titleBar.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillText, 'titleBar', shapeLayout, shapeType);
+	if(shapeType === 'ts')
+		shapeVD.titleBar.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
+	else
+		shapeVD.titleBar.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillText, 'titleBar', shapeLayout, shapeType);
+
+	// icon
+	switch(iconImage)
+	{
+		case 'stencilIcon_Rotate90':
+			shapeVD.icon.rotate = 90;
+			break;
+		case 'stencilIcon_Rotate180':
+			shapeVD.icon.rotate = 180;
+			break;
+		case 'stencilIcon_Rotate270':
+			shapeVD.icon.rotate = 270;
+			break;
+		case 'stencilIcon_FlipH':
+			shapeVD.icon.flipH = true;
+			break;
+		case 'stencilIcon_FlipV':
+			shapeVD.icon.flipV = true;
+			break;				
+		}
+
+	//bar & corner
+	shapeVD.bar.colorSwatch = shapeVD.outerLine.colorSwatch;
+	shapeVD.corner.colorSwatch = this.getColorSwatch(paletteVersion, colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
+	if(shapeType === 'group') {
+		shapeVD.bar.visible = !(colorFillIcon === 'noColor'); // color fill is a workaround to enable hiding the bar
+		shapeVD.bar.width = (shapeVD.bar.visible) ? 6 : 0;
+		
+		shapeVD.corner.visible = shapeVD.icon.visible;
+		shapeVD.corner.width = (shapeVD.corner.visible) ? this.iconSpacing + this.iconSize + shapeVD.bar.width : shapeVD.bar.width;
+	}
+	else
+	{
+		if(shapeType === 'ts')
+			shapeVD.corner.visible = shapeVD.icon.visible;
+		else
+			shapeVD.corner.visible = (shapeVD.corner.colorSwatch === 'noColor' && !shapeVD.icon.visible) ? false : true;
+		
+		if(shapeVD.corner.visible)
+		{
+			if(shapeType === 'ts')
+				shapeVD.corner.width = (shapeLayout === 'collapsed') ? (2 * this.targetSystemRadius + 16) : (this.iconSpacing + this.iconSize - 4);
+			else
+				shapeVD.corner.width = (shapeVD.corner.colorSwatch === 'noColor' || shapeVD.corner.colorSwatch === shapeVD.titleBar.colorSwatch) ? this.iconSpacing + this.iconSize : shapeVD.corner.width;
+		}
+		else
+		{
+			shapeVD.corner.width = 0;
+		}
+	}
 
 	//dividerLine		
 	shapeVD.dividerLine.colorSwatch = (shapeVD.titleBar.colorSwatch === 'swatch_10') ? 'swatch_30' : 'swatch_20';
@@ -252,31 +277,87 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (mondrianVersio
 	shapeVD.container.color = this.getSelectedColorSpecification(colorFamily)[shapeVD.container.colorSwatch];
 
 	shapeVD.icon.color = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : BLACK;
+
+	if(shapeLayout === 'collapsed')
+	{
+		shapeVD.text.color = BLACK;
+		shapeVD.style.color = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : shapeVD.outerLine.color;
+
+		if(shapeVD.outerLine.dashed)
+			shapeVD.outerLine.secondLine = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch));
+	}
+	else
+	{
+		shapeVD.text.color = (this.isDarkColor(paletteVersion, shapeVD.titleBar.color, shapeVD.titleBar.colorSwatch)) ?  WHITE : BLACK;
+		shapeVD.style.color = shapeVD.outerLine.color;
+
+		if(shapeType === 'ts')
+		{
+			if(shapeVD.style.type === 'strikethrough')
+				shapeVD.style.color = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : shapeVD.outerLine.color;
+			else if(shapeVD.outerLine.dashed)
+				shapeVD.outerLine.secondLine = (this.isDarkColor(paletteVersion, shapeVD.corner.color, shapeVD.corner.colorSwatch));
+		}
+	}
+
 	shapeVD.decorator.component.color = WHITE;
+
+	//  tag
+	shapeVD.tag.shape = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG, mxIBM2MondrianBase.prototype.cst.TAG_DEFAULT);
+	shapeVD.tag.visible = (shapeVD.tag.shape != 'noTag');
+	if(shapeVD.tag.visible)
+	{
+		let tagColorFamily = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY_DEFAULT);
+		let tagColorFill = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL_DEFAULT);
+		
+		shapeVD.tag.fill.colorSwatch = this.getColorSwatch(paletteVersion, tagColorFamily, tagColorFill, 'tag', shapeLayout, shapeType);
+		shapeVD.tag.fill.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.fill.colorSwatch];
+
+		shapeVD.tag.line.colorSwatch = this.getColorSwatch(paletteVersion, tagColorFamily, tagColorFill, 'tagLine', shapeLayout, shapeType);
+		shapeVD.tag.line.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.line.colorSwatch];
+
+		shapeVD.tag.text = thisShape.state.cell.getAttribute('Tag-Text',null);
+		shapeVD.tag.textColor = (this.isDarkColor(paletteVersion, shapeVD.tag.fill.color, shapeVD.tag.fill.colorSwatch)) ?  WHITE : BLACK;
+	}
 
 	return shapeVD;
 };
 
 mxIBM2MondrianBase.prototype.customProperties = [
-	{name:'version', dispName: '[TMP: Visual Standard]', type:'enum', defVal:'v1a',
-		enumList:[{val:'v1a', dispName: 'v1a - 3-color intensities, no outerline for collapsed'}, {val:'v1b', dispName: 'v1b - 3-color intensities, outerline for collapsed'}, {val:'v2', dispName: 'v2 - 2-color intensities'}]},
-	{name:'shapeType', dispName:'Type', type:'enum', defVal:'pn',
+	{name:'shapeType', dispName:'Shape', type:'enum', defVal:'pn',
 		enumList:[{val:'actor', dispName: 'Actor'}, {val:'ts', dispName: 'Target System'}, {val:'ln', dispName: 'Logical Node'}, {val:'lc', dispName: 'Logical Component'}, {val:'pn', dispName: 'Prescribed Node'}, {val:'pc', dispName: 'Prescribed Component'}, {val:'group', dispName: 'Group'}]},
-	{name:'shapeLayout', dispName:'Layout', type:'enum', defVal:'expanded',
+	{name:'shapeLayout', dispName:'Shape (Layout)', type:'enum', defVal:'expanded',
 		enumList:[{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},{val:'custom', dispName: 'Custom'}]},
-	{name: 'shapeMultiplicity', dispName: 'Multiplicity', type: 'bool', defVal: false},
-	{name:'iconImage', dispName:'Icon (Image)', type:'enum', defVal:'stencilIcon',
-		enumList:[{val:'noIcon', dispName: '[no icon]'}, {val:'stencilIcon', dispName: '[stencil icon]'}, {val:'imageIcon', dispName: '[image icon]'}]},
+	{name:'shapeStyle', dispName:'Shape (Style)', type:'enum', defVal:'solid',
+		enumList:[{val:'solid', dispName: 'Solid'},{val:'strikethrough', dispName: 'Strikethrough'},{val:'double', dispName: 'Double'}, {val:'dashed', dispName: 'Dashed'}
+		//,{val:'multiple', dispName: 'Multiple'}
+	]},
+	{name:'shapeMultiplicity', dispName: 'Multiplicity', type: 'bool', defVal: false},
 	{name:'colorFamily', dispName:'Color', type:'enum', defVal:'blue',
 		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
-	{name:'colorFillIcon', dispName:'Fill (Icon)', type:'enum', defVal:'medium',
+	{name:'colorFillIcon', dispName:'Color (Corner)', type:'enum', defVal:'medium',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
-	{name:'colorFillText', dispName:'Fill (Text)', type:'enum', defVal:'white',
+	{name:'colorFillText', dispName:'Color (Title bar)', type:'enum', defVal:'white',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'white', dispName: 'White'}, {val:'veryLight', dispName: 'Very Light'}]},
-	{name:'colorFillContainer', dispName:'Fill (Container)', type:'enum', defVal:'white',
+	{name:'colorFillContainer', dispName:'Color (Container)', type:'enum', defVal:'white',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'white', dispName: 'White'}, {val:'veryLight', dispName: 'Very Light'}]},
-	{name:'positionText', dispName:'Position (Text)', type:'enum', defVal:'bottom',
+	{name:'iconImage', dispName:'Icon', type:'enum', defVal:'stencilIcon',
+		enumList:[{val:'noIcon', dispName: 'No'}, {val:'stencilIcon', dispName: 'Yes'}, 
+		{val:'stencilIcon_Rotate90', dispName: 'Yes (Rotate 90)'}, {val:'stencilIcon_Rotate180', dispName: 'Yes (Rotate 180)'}, {val:'stencilIcon_Rotate270', dispName: 'Yes (Rotate 270)'},
+		{val:'stencilIcon_FlipH', dispName: 'Yes (Flip Horizontal)'}, {val:'stencilIcon_FlipV', dispName: 'Yes (Flip Vertical)'},
+		]},
+	{name:'positionText', dispName:'Label (Position)', type:'enum', defVal:'bottom',
 		enumList:[{val:'bottom', dispName: 'Bottom'}, {val:'top', dispName: 'Top'}, {val:'left', dispName: 'Left'}, {val:'right', dispName: 'Right'}]},
+
+	// Tag
+	{name:'tag', dispName:'Tag', type:'enum', defVal:'noTag',
+		enumList:[
+		{val:'noTag', dispName: 'None'}, {val:'circle', dispName: 'Circle'}, {val:'diamond', dispName: 'Diamond'}, 
+		{val:'square', dispName: 'Square'}, {val:'triangle', dispName: 'Triangle'}, {val:'hexagon', dispName: 'Hexagon'}, {val:'octagon', dispName: 'Octagon'}]},
+	{name:'tagColorFamily', dispName:'Tag (Color)', type:'enum', defVal:'black',
+		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}]},
+	{name:'tagColorFill', dispName:'Tag (Fill)', type:'enum', defVal:'medium',
+		enumList:[{val:'white', dispName: 'White'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
 	];
 
 mxCellRenderer.registerShape(mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE, mxIBM2MondrianBase);
@@ -298,9 +379,9 @@ mxIBM2MondrianBase.prototype.textSpacing = 4;
 /**
  * Variable: targetSystemRadius
  *
- * Default radius for rounded corner of Target System element. Default is 20.
+ * Default radius for rounded corner of Target System element. Default is 24.
  */
-mxIBM2MondrianBase.prototype.targetSystemRadius = 20;
+mxIBM2MondrianBase.prototype.targetSystemRadius = 24;
 
 /**
  * Variable: textSpacingTop
@@ -344,19 +425,6 @@ mxIBM2MondrianBase.prototype.iconSpacing = 12;
  */
 mxIBM2MondrianBase.prototype.titleBarHeight = 48;
 
-/**
- * Variable: shapeWidthIconView
- *
- * Default width and height for the titleBarHeight. Default is 48.
- */
-mxIBM2MondrianBase.prototype.shapeWidthIconView = 48;
-
-/**
- * Variable: shapeHeightIconView
- *
- * Default width and height for the titleBarHeight. Default is 48.
- */
-mxIBM2MondrianBase.prototype.shapeHeightIconView = 48;
 
 /**
  * Variable: titleBarWidthMinimum
@@ -372,11 +440,11 @@ mxIBM2MondrianBase.prototype.titleBarWidthMinimum = 144;
  */
 mxIBM2MondrianBase.prototype.init = function(container)
 {
-	if(Editor.config != null && Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE])
-	{
-		for (var key in Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE]['icon_stencil_libraries']) {
-			mxStencilRegistry.loadStencilSet(
-				Editor.config[mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE]['icon_stencil_libraries'][key]);
+	let mondrianAttributes = ['Element-ID', 'Element-Name','Icon-Name','Tag-Text'];
+	for (attributeIndex = 0; attributeIndex < mondrianAttributes.length; attributeIndex++ ) {
+		if(!this.state.cell.hasAttribute(mondrianAttributes[attributeIndex]))
+		{
+			this.state.cell.setAttribute(mondrianAttributes[attributeIndex],'')
 		}
 	}
 
@@ -406,42 +474,44 @@ mxIBM2MondrianBase.prototype.colorConversion = function(colorValue)
 	}
 }
 
+// Function to convert diagrams to current version if breaking changes have been introduced
 mxIBM2MondrianBase.prototype.templateConversion = function()
 {
 	try {
 		if(this.state != null)
 		{
+
+			if(this.state.cell.hasAttribute('Modifier-Text'))
+			{
+				this.state.cell.setAttribute('Tag-Text', this.state.cell.getAttribute('Modifier-Text',''));
+				this.state.cell.getValue().removeAttribute('Modifier-Text');
+			}
+
 			let styleCurrent = null;
 			let styleUpdate = false;
 		
 			if(this.state.view.graph.model != null && this.state.cell != null)
 				styleCurrent = this.state.view.graph.model.getStyle(this.state.cell);
 		
-			//const shapeVersion = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION);
-		
-			//if(shapeVersion == 'undefined')
-			//{
-			//}
 			if(styleCurrent != null)
-				styleUpdate = (styleCurrent.indexOf('swatch_') > 0)
+				styleUpdate = (styleCurrent.indexOf('modifier') > 0)
 		
 			if(styleUpdate)
 			{
-				newStyle = styleCurrent.replace(/swatch_10/g, 'veryLight');
-				newStyle = newStyle.replace(/swatch_30/g, 'light');
-				newStyle = newStyle.replace(/swatch_40/g, 'medium');
-				newStyle = newStyle.replace(/swatch_50/g, 'dark');
-		
-				//console.log(newStyle);
+				newStyle = styleCurrent.replace(/noModifier/g, 'noTag');
+				newStyle = newStyle.replace(/modifier/g, 'tag');
+
 				this.state.view.graph.model.beginUpdate();
 				try
 				{
-					if(this.state.style['colorFillIcon'] != null)
-						this.state.style['colorFillIcon'] = this.colorConversion(this.state.style['colorFillIcon']);
-					if(this.state.style['colorFillText'] != null)
-						this.state.style['colorFillText'] = this.colorConversion(this.state.style['colorFillText']);
-					if(this.state.style['colorFillContainer'] != null)
-						this.state.style['colorFillContainer'] = this.colorConversion(this.state.style['colorFillContainer']);
+					if(this.state.style['modifier'] != null)
+						this.state.style['tag'] = this.state.style['modifier'].replace(/noModifier/g, 'noTag');
+
+					if(this.state.style['modifierColorFamily'] != null)
+						this.state.style['tagColorFamily'] = this.state.style['modifierColorFamily'];
+
+					if(this.state.style['modifierColorFill'] != null)
+						this.state.style['tagColorFill'] = this.state.style['modifierColorFill'];
 
 					this.state.view.graph.model.setStyle(this.state.cell, newStyle);
 				}
@@ -477,7 +547,13 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 					const currentIconName = (currentIconAttribute != null) ? currentIconAttribute.value : null;
 					const previousIconName = (previousIconAttribute != null) ?  previousIconAttribute.value : null;
 					
-					if(currentIconName != previousIconName)
+					const currentCMTextAttribute = evt.properties.change.value.attributes.getNamedItem('Tag-Text');
+					const previousCMTextAttribute = evt.properties.change.previous.attributes.getNamedItem('Tag-Text');
+	
+					const currentCMText = (currentCMTextAttribute != null) ? currentCMTextAttribute.value : null;
+					const previousCMText = (previousCMTextAttribute != null) ?  previousCMTextAttribute.value : null;
+
+					if(currentIconName != previousIconName || currentCMText != previousCMText)
 						this.redraw();
 				}
 				else if(evt.properties.change.constructor.name === 'mxStyleChange' && (evt.properties.change.cell.id === this.cellID))
@@ -586,9 +662,10 @@ mxIBM2MondrianBase.prototype.getStyleValue = function(style, key)
  */
 mxIBM2MondrianBase.prototype.redraw = function()
 {
-	this.version = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION_DEFAULT);	
+	this.version = 'v2';//mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION, mxIBM2MondrianBase.prototype.cst.MONDRIAN_VERSION_DEFAULT);	
 	this.shapeType = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);	
 	this.shapeLayout = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT);
+	this.shapeStyle = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_STYLE, mxIBM2MondrianBase.prototype.cst.SHAPE_STYLE_DEFAULT);
 	this.shapeMultiplicity = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_MULTIPLICITY, mxIBM2MondrianBase.prototype.cst.SHAPE_MULTIPLICITY_DEFAULT);
 	this.iconImage = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE_DEFAULT);
 	this.colorFamily = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.COLOR_FAMILY_DEFAULT);
@@ -618,17 +695,30 @@ mxIBM2MondrianBase.prototype.cellMustRestyle = function(currentStyle, newStyle)
 mxIBM2MondrianBase.prototype.paintVertexShape = function(c, x, y, w, h)
 {
 	this.shapeVisualDefinition = mxIBM2MondrianBase.prototype.getShapeVisualDefinition(
+		this,
 		this.version,
-		this.shapeType, this.shapeLayout,
-		this.colorFamily, this.colorFillIcon, this.colorFillText, this.colorFillContainer);
+		this.shapeType, this.shapeLayout, this.shapeStyle, w, h,
+		this.colorFamily, this.colorFillIcon, this.colorFillText, this.colorFillContainer,
+		this.iconImage);
 
 	c.translate(x, y);
-	
-	this.paintContainer(c, x, y, w, h);
-	this.paintTitleBar(c, x, y, w, h);
-	this.paintIconBox(c, x, y, w, h);
-	this.paintIcon(c, x, y, w, h);
-	this.paintShape(c, x, y, w, h);
+
+	this.paintContainer(c);
+	this.paintTitleBar(c);
+	this.paintCorner(c);
+	this.paintIcon(c);
+	this.paintShape(c);
+	this.paintTag(c);
+
+	// if the fontColor is Black or White the color is controlled by visualization rules
+	fontColor = this.style.fontColor;
+	if(fontColor != this.shapeVisualDefinition.text.color && (fontColor === '#000000' || fontColor === '#FFFFFF' || fontColor === '#ffffff' || fontColor === 'undefined'))
+	{
+		this.style.fontColor = this.shapeVisualDefinition.text.color;
+		styleCurrent = this.state.view.graph.model.getStyle(this.state.cell);
+		newStyle = mxUtils.setStyle(styleCurrent, 'fontColor', this.style.fontColor);
+		this.state.view.graph.model.setStyle(this.state.cell, newStyle);
+	}
 };
 
 /**
@@ -636,10 +726,12 @@ mxIBM2MondrianBase.prototype.paintVertexShape = function(c, x, y, w, h)
  * 
  * Generic background painting implementation.
  */
-mxIBM2MondrianBase.prototype.paintContainer = function(c, x, y, w, h)
+mxIBM2MondrianBase.prototype.paintContainer = function(c)
 {
-	const endContainer = h - this.titleBarHeight;
+	const endContainer = this.shapeVisualDefinition.shape.height - this.titleBarHeight;
 	const startContainer = this.titleBarHeight;
+	const containerWidth = this.shapeVisualDefinition.shape.width;
+	const containerHeight = this.shapeVisualDefinition.shape.height;
 
 	if(this.shapeLayout != 'collapsed' && endContainer > 0)
 	{
@@ -648,18 +740,18 @@ mxIBM2MondrianBase.prototype.paintContainer = function(c, x, y, w, h)
 			c.setFillColor(this.shapeVisualDefinition.container.color);
 			c.begin();
 			c.moveTo(0, startContainer);
-			c.lineTo(w, startContainer);
-			c.lineTo(w, h - this.cornerRadius);
-			c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, w - this.cornerRadius, h);
-			c.lineTo(this.cornerRadius, h);
-			c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, 0, h - this.cornerRadius);
+			c.lineTo(containerWidth, startContainer);
+			c.lineTo(containerWidth, containerHeight - this.cornerRadius);
+			c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, containerWidth - this.cornerRadius, containerHeight);
+			c.lineTo(this.cornerRadius, containerHeight);
+			c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, 0, containerHeight - this.cornerRadius);
 			c.lineTo(0, startContainer);
 			c.close();
 			c.fill();
 		}
 		else {
 			c.setFillColor(this.shapeVisualDefinition.container.color);
-			c.rect(0, startContainer, w, endContainer);
+			c.rect(0, startContainer, containerWidth, endContainer);
 			c.fill();
 		}	
 	}
@@ -670,23 +762,24 @@ mxIBM2MondrianBase.prototype.paintContainer = function(c, x, y, w, h)
  * 
  * Generic background painting implementation.
  */
-mxIBM2MondrianBase.prototype.paintTitleBar = function(c, x, y, w, h)
+mxIBM2MondrianBase.prototype.paintTitleBar = function(c)
 {
-	if(this.shapeLayout === 'expanded' && this.shapeVisualDefinition.titleBar.color != 'none')
+	let titleBarWidth = this.shapeVisualDefinition.shape.width;
+	let titleBarHeight = this.titleBarHeight;
+
+	if((this.shapeLayout === 'expanded' || this.shapeType === 'ts') && this.shapeVisualDefinition.titleBar.color != 'none')
 	{
-		const minHeight = Math.min(h, this.titleBarHeight);
 		if(this.shapeType === 'ln' || this.shapeType === 'lc')
 		{
-			
-			if (h > this.titleBarHeight)
+			if (this.shapeVisualDefinition.shape.height > titleBarHeight)
 			{
 				c.setFillColor(this.shapeVisualDefinition.titleBar.color);
 				c.begin();
 				c.moveTo(this.cornerRadius, 0);
-				c.lineTo(w - this.cornerRadius, 0);
-				c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, w, this.cornerRadius);
-				c.lineTo(w, minHeight);
-				c.lineTo(0, minHeight);
+				c.lineTo(titleBarWidth - this.cornerRadius, 0);
+				c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, titleBarWidth, this.cornerRadius);
+				c.lineTo(titleBarWidth, titleBarHeight);
+				c.lineTo(0, titleBarHeight);
 				c.lineTo(0, this.cornerRadius);
 				c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, this.cornerRadius, 0);
 				c.close();
@@ -695,26 +788,14 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c, x, y, w, h)
 			else
 			{
 				c.setFillColor(this.shapeVisualDefinition.titleBar.color);
-				c.roundrect(0, 0, w, minHeight, this.cornerRadius, this.cornerRadius);
+				c.roundrect(0, 0, titleBarWidth, titleBarHeight, this.cornerRadius, this.cornerRadius);
 				c.fill();
 			}
 		}
 		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
 		{
 			c.setFillColor(this.shapeVisualDefinition.titleBar.color);
-			c.rect(0, 0, w, minHeight);
-			c.fill();
-		}
-		else if(this.shapeType === 'ts')
-		{
-			c.setFillColor(this.shapeVisualDefinition.titleBar.color);
-			c.begin();
-			c.moveTo(this.targetSystemRadius, 0);
-			c.lineTo(w - this.targetSystemRadius, 0);
-			c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, w - this.targetSystemRadius, minHeight);
-			c.lineTo(this.targetSystemRadius, minHeight);
-			c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
-			c.close();
+			c.rect(0, 0, titleBarWidth, titleBarHeight);
 			c.fill();
 		}
 		else {
@@ -724,66 +805,57 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c, x, y, w, h)
 };
 
 /**
- * Function: paintIconBox
+ * Function: paitCorner
  * 
  * Generic background painting implementation.
  */
-mxIBM2MondrianBase.prototype.paintIconBox = function(c, x, y, w, h)
+mxIBM2MondrianBase.prototype.paintCorner = function(c)
 {
-	const minWidth = Math.min(w, this.getIconBoxWidth());
-	const minHeight = Math.min(h, this.titleBarHeight);
+	let cornerWidth = this.shapeVisualDefinition.corner.width;
+	let cornerHeight = this.shapeVisualDefinition.corner.height;
 
-	if(minWidth > 0)
+	if(this.shapeVisualDefinition.corner.visible || this.shapeType === 'ts')
 	{
+		const doubleStyleOffset = (this.shapeVisualDefinition.outerLine.secondLine) ? 3 : 0;
+
 		c.setFillColor(this.shapeVisualDefinition.corner.color);
+		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
 
 		if(this.shapeType === 'actor')
 		{
-			c.ellipse(0, 0, minWidth, minHeight);
+			c.ellipse(doubleStyleOffset, doubleStyleOffset, cornerWidth-doubleStyleOffset*2, cornerHeight-doubleStyleOffset*2); 
 		}
 		else if(this.shapeType === 'ts')
 		{
-			if(w <= 64)
-			{
-				c.begin();
-				c.moveTo(this.targetSystemRadius, 0);
-				c.lineTo(minWidth - this.targetSystemRadius, 0);
-				c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, minWidth - this.targetSystemRadius, minHeight);
-				c.lineTo(this.targetSystemRadius, minHeight);
-				c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
-				c.close();
-			}
-			else
-			{
-				c.begin();
-				c.moveTo(this.targetSystemRadius, 0);
-				c.lineTo(minWidth, 0);
-				c.lineTo(minWidth, minHeight);
-				c.lineTo(this.targetSystemRadius, minHeight);
-				c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
-				c.close();
-			}
+			cornerWidth = this.shapeVisualDefinition.shape.width;
+			c.begin();
+			c.moveTo(this.targetSystemRadius, doubleStyleOffset);
+			c.lineTo(cornerWidth - this.targetSystemRadius, doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, cornerWidth - this.targetSystemRadius, cornerHeight);
+			c.lineTo(this.targetSystemRadius, cornerHeight - doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, this.targetSystemRadius, doubleStyleOffset);
+			c.close();
 		}
 		else if(this.shapeType === 'ln' || this.shapeType === 'lc') // Logical Node or Logical Component
 		{
-			if(w <= this.shapeWidthIconView)
+			if(this.shapeVisualDefinition.shape.layout === 'collapsed')
 			{
-				c.roundrect(0, 0, minWidth, minHeight, this.cornerRadius, this.cornerRadius);
+				c.roundrect(doubleStyleOffset, doubleStyleOffset, this.shapeVisualDefinition.shape.width - 2*doubleStyleOffset, this.shapeVisualDefinition.shape.height - 2*doubleStyleOffset, this.cornerRadius - doubleStyleOffset, this.cornerRadius - doubleStyleOffset);
 			}
 			else
 			{
 				c.begin();
 				c.moveTo(this.cornerRadius, 0);
-				c.lineTo(minWidth, 0);
-				c.lineTo(minWidth, minHeight);
-				if (h > this.titleBarHeight)
+				c.lineTo(cornerWidth, 0);
+				c.lineTo(cornerWidth, cornerHeight);
+				if (this.shapeVisualDefinition.shape.container)
 				{
-					c.lineTo(0, minHeight);
+					c.lineTo(0, cornerHeight);
 				}
 				else
 				{
-					c.lineTo(this.cornerRadius, minHeight);
-					c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, 0, minHeight - this.cornerRadius);
+					c.lineTo(this.cornerRadius, cornerHeight);
+					c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, 0, cornerHeight - this.cornerRadius);
 				}
 				c.lineTo(0, this.cornerRadius);	
 				c.arcTo(this.cornerRadius, this.cornerRadius, 0, 0, 1, this.cornerRadius, 0);
@@ -792,10 +864,13 @@ mxIBM2MondrianBase.prototype.paintIconBox = function(c, x, y, w, h)
 		}
 		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
 		{
-			c.rect(0, 0, minWidth, minHeight);
+			c.rect(doubleStyleOffset, doubleStyleOffset, cornerWidth - 2*doubleStyleOffset, cornerHeight - 2*doubleStyleOffset);
 		}
 		
-		c.fill();
+		if(this.shapeVisualDefinition.shape.layout === 'expanded' && (this.shapeType != 'group' && this.shapeType != 'ts'))
+			c.fillAndStroke();
+		else
+			c.fill();
 	}
 };
 
@@ -804,29 +879,109 @@ mxIBM2MondrianBase.prototype.paintIconBox = function(c, x, y, w, h)
  * 
  * Generic background painting implementation.
  */
-mxIBM2MondrianBase.prototype.paintShape = function(c, x, y, w, h)
+mxIBM2MondrianBase.prototype.paintShape = function(c)
 {
-	var shapeWidth = w;
-	var shapeHeigth = h;
-	var componentDecoratorOffset = -4;
-	var componentDecoratorHeight = 4;
-	var componentDecoratorWidth = 8;
+	let shapeWidth = this.shapeVisualDefinition.shape.width;
+	let shapeHeigth = this.shapeVisualDefinition.shape.height;
+	let componentDecoratorOffset = -4;
+	let componentDecoratorHeight = 4;
+	let componentDecoratorWidth = 8;
+	let dashPattern = '6 6';
 
-	if(this.shapeLayout == 'collapsed' || this.shapeType === 'actor')
-	{
-		shapeWidth = this.getIconBoxWidth();
-		shapeHeigth = this.getIconBoxWidth();
-	}
+	const WHITE = '#ffffff';
+	const doubleStyleOffset = 3;
+
+	let doRestore = false;
 	
+	c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+
 	if(this.shapeType === 'actor')
 	{
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+			c.setDashed(false, false);
+
+			// WHITE LINE
+			c.setStrokeWidth(doubleStyleOffset);
+			c.setStrokeColor(WHITE);
+			c.ellipse(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth-doubleStyleOffset, shapeHeigth-doubleStyleOffset);
+			c.stroke();
+
+			// DOUBLE LINE
+			c.setStrokeWidth(1);
+			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+			c.ellipse(doubleStyleOffset, doubleStyleOffset, shapeWidth + -2*doubleStyleOffset, shapeHeigth + -2*doubleStyleOffset);
+			c.stroke();
+
+			c.restore();
+		}
+
+		// Base
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			doRestore = true;
+			c.save();
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
+
 		c.ellipse(0, 0, shapeWidth, shapeHeigth);
 		c.stroke();
+
+		this.paintShapeMultiplicity(c);
+
+		if(doRestore)
+			c.restore();
+		
 	}
 	else if(this.shapeType === 'ts')
 	{
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
+		{
+			c.save();
+			c.setDashed(false, false);
+
+			// WHITE LINE 
+			c.setStrokeWidth(doubleStyleOffset);
+			c.setStrokeColor(WHITE);
+
+			c.begin();
+			c.moveTo(this.targetSystemRadius, doubleStyleOffset/2);
+			c.lineTo(shapeWidth - this.targetSystemRadius, doubleStyleOffset/2);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset/2, this.targetSystemRadius - doubleStyleOffset/2, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset/2);
+			c.lineTo(this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset/2);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset/2, this.targetSystemRadius - doubleStyleOffset/2, 0, 0, 1, this.targetSystemRadius, doubleStyleOffset/2);
+			c.close();
+			c.stroke();
+
+			// DOUBLE LINE
+			c.setStrokeWidth(1);
+			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+
+			c.begin();
+			c.moveTo(this.targetSystemRadius, doubleStyleOffset);
+			c.lineTo(shapeWidth - this.targetSystemRadius, doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, shapeWidth - this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset);
+			c.lineTo(this.targetSystemRadius, this.titleBarHeight - doubleStyleOffset);
+			c.arcTo(this.targetSystemRadius - doubleStyleOffset, this.targetSystemRadius - doubleStyleOffset, 0, 0, 1, this.targetSystemRadius, doubleStyleOffset);
+			c.close();
+			c.stroke();
+
+			c.restore();
+		}
+
+		// Base
+		if(this.shapeVisualDefinition.outerLine.dashed)
+		{
+			doRestore = true;
+			c.save();
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
+
 		c.begin();
 		c.moveTo(this.targetSystemRadius, 0);
 		c.lineTo(shapeWidth - this.targetSystemRadius, 0);
@@ -835,107 +990,360 @@ mxIBM2MondrianBase.prototype.paintShape = function(c, x, y, w, h)
 		c.arcTo(this.targetSystemRadius, this.targetSystemRadius, 0, 0, 1, this.targetSystemRadius, 0);
 		c.close();
 		c.stroke();
+
+		this.paintShapeMultiplicity(c);
+
+		if(doRestore)
+			c.restore();		
 	}
-	else if(this.shapeType === 'ln' || this.shapeType === 'lc') // Logical Node or Logical Component
+	else
 	{
-		if (h > this.titleBarHeight)
+		// Style: Double
+		if(this.shapeVisualDefinition.outerLine.secondLine)
 		{
-			c.setStrokeColor(this.shapeVisualDefinition.dividerLine.color);
-			c.begin();
-			c.moveTo(0, this.titleBarHeight);
-			c.lineTo(shapeWidth, this.titleBarHeight);		
+			c.save();
+			c.setDashed(false, false);
+
+			// WHITE LINE 
+			c.setStrokeWidth(doubleStyleOffset);
+			c.setStrokeColor(WHITE);
+			if(this.shapeType === 'ln' || this.shapeType === 'lc')
+				c.roundrect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset, this.cornerRadius - doubleStyleOffset/2, this.cornerRadius - doubleStyleOffset/2);
+			else
+				c.rect(doubleStyleOffset/2, doubleStyleOffset/2, shapeWidth - doubleStyleOffset, shapeHeigth - doubleStyleOffset);
 			c.stroke();
+
+			// DOUBLE LINE
+			c.setStrokeWidth(1);
+			c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);			
+			if(this.shapeType === 'ln' || this.shapeType === 'lc')
+				c.roundrect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset, this.cornerRadius - doubleStyleOffset, this.cornerRadius - doubleStyleOffset);
+			else
+				c.rect(doubleStyleOffset, doubleStyleOffset, shapeWidth - 2*doubleStyleOffset, shapeHeigth - 2*doubleStyleOffset);
+			c.stroke();
+
+			c.restore();
 		}
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-		c.roundrect(0, 0, shapeWidth, shapeHeigth, this.cornerRadius, this.cornerRadius);
-		c.stroke();
 		
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rounded');
-
-		if(this.shapeType === 'lc')
+		// Container
+		if (this.shapeVisualDefinition.shape.container)
 		{
-			c.setFillColor(this.shapeVisualDefinition.decorator.component.color);
-			c.rect(componentDecoratorOffset, 12, componentDecoratorWidth, componentDecoratorHeight);
-			c.fillAndStroke();
-			c.rect(componentDecoratorOffset, 32, componentDecoratorWidth, componentDecoratorHeight);
-			c.fillAndStroke();
-		}
-	}
-	else if(this.shapeType === 'pn' || this.shapeType === 'pc') // Prescribed Node or Prescribed Component
-	{
-		if (h > this.titleBarHeight)
-		{
+			c.save();
 			c.setStrokeColor(this.shapeVisualDefinition.dividerLine.color);
+			c.setDashed(false);
+			c.setStrokeWidth(1);
 			c.begin();
 			c.moveTo(0, this.titleBarHeight);
 			c.lineTo(shapeWidth, this.titleBarHeight);		
 			c.stroke();
+			c.restore();
 		}
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-		c.rect(0, 0, shapeWidth, shapeHeigth);
-		c.stroke();
-
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rectangular');
-
-		if(this.shapeType === 'pc')
+		
+		// Base
+		if(this.shapeVisualDefinition.outerLine.dashed)
 		{
+			doRestore = true;
+			c.save();
+			c.setDashed(true, true);
+			c.setDashPattern(dashPattern);
+		}
+		if(this.shapeType === 'ln' || this.shapeType === 'lc')
+			c.roundrect(0, 0, shapeWidth, shapeHeigth, this.cornerRadius, this.cornerRadius);
+		else
+			c.rect(0, 0, shapeWidth, shapeHeigth);
+
+		c.stroke();
+	
+		this.paintShapeMultiplicity(c);
+
+		if(doRestore)
+			c.restore();		
+
+		// Component decorator
+		if(this.shapeType === 'lc' || this.shapeType === 'pc')
+		{
+			c.save();
+			c.setDashed(false);
 			c.setFillColor(this.shapeVisualDefinition.decorator.component.color);
 			c.rect(componentDecoratorOffset, 12, componentDecoratorWidth, componentDecoratorHeight);
 			c.fillAndStroke();
 			c.rect(componentDecoratorOffset, 32, componentDecoratorWidth, componentDecoratorHeight);
 			c.fillAndStroke();
+			c.restore();
 		}
-	}
-	else if(this.shapeType === 'group')
-	{
-		c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
-		c.rect(0, 0, shapeWidth, shapeHeigth);
-		c.stroke();
-
-		this.paintShapeMultiplicity(c, shapeWidth, shapeHeigth, 'rectangular');
-
+		
+		//Bar decorator
 		if(this.shapeVisualDefinition.bar.visible)
 		{
 			c.setFillColor(this.shapeVisualDefinition.outerLine.color);
 			c.rect(0, 0, this.shapeVisualDefinition.bar.width, this.titleBarHeight);
-			c.fill();	
+			c.fillAndStroke();
 		}
+	}
+
+	if(this.shapeVisualDefinition.style.type === 'strikethrough')
+	{
+		let leftCornerX = (this.shapeVisualDefinition.shape.layout === 'expanded') ? this.shapeVisualDefinition.corner.width : 0;
+		let leftCornerY = 0;
+		let rightCornerX = shapeWidth
+		let rightCornerY = this.titleBarHeight;
+
+		c.setStrokeColor(this.shapeVisualDefinition.style.color);
+		c.begin();
+		
+		if(this.shapeType === 'actor')
+		{
+			let h = 24; // x coordinate of circle center
+			let k = 24; // y coordinate of circle center
+			let r = 24; // radius of circle
+			let angle = 135;
+
+			leftCornerX = h + r*Math.cos(angle * (Math.PI/180));
+			leftCornerY = k - r*Math.sin(angle * (Math.PI/180));
+
+			angle = 315;
+			rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
+			rightCornerY = k - r*Math.sin(angle * (Math.PI/180));
+		}
+		else if(this.shapeType === 'ts')
+		{
+			if(this.shapeVisualDefinition.shape.layout === 'collapsed')
+			{
+				let h = 24; // x coordinate of circle center
+				let k = 24; // y coordinate of circle center
+				let r = 24; // radius of circle
+				let angle = 125;
+	
+				leftCornerX = h + r*Math.cos(angle * (Math.PI/180));
+				leftCornerY = k - r*Math.sin(angle * (Math.PI/180));
+	
+				h = 40;
+				angle = 305;
+				rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
+				rightCornerY = k - r*Math.sin(angle * (Math.PI/180));	
+			}
+			else
+			{
+				leftCornerX = this.targetSystemRadius;
+				rightCornerX = rightCornerX - this.targetSystemRadius;
+			}
+
+		}
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		{
+			let h = 8; // x coordinate of circle center
+			let k = 8; // y coordinate of circle center
+			let r = 8; // radius of circle
+			let angle = 135;
+
+			if(this.shapeVisualDefinition.shape.layout === 'expanded' && this.shapeVisualDefinition.corner.visible)
+			{
+				//do nothing
+			}
+			else
+			{
+				leftCornerX = h + r*Math.cos(angle * (Math.PI/180));
+				leftCornerY = k - r*Math.sin(angle * (Math.PI/180));
+			}
+
+			h = rightCornerX - 8;
+			k = rightCornerY - 8;
+
+			angle = 315;
+			rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
+			rightCornerY = k - r*Math.sin(angle * (Math.PI/180));
+		}
+		else if(this.shapeType === 'group')
+		{
+			leftCornerX = this.shapeVisualDefinition.bar.width;
+			rightCornerY = this.shapeVisualDefinition.shape.height;
+		}
+
+		c.moveTo(leftCornerX, leftCornerY);
+		c.lineTo(rightCornerX, rightCornerY);
+		c.stroke();
 	}
 };
 
-mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, shapeHeigth, shapeOuterShape)
+mxIBM2MondrianBase.prototype.paintTag = function(c)
+{
+	if(this.shapeVisualDefinition.tag.visible)
+	{
+		let fontSize = 12;
+		let characterWidth = (6/10) * fontSize;
+		let tagOuterBoxSingle = {
+			circle: {width: 14, height:14},
+			diamond: {width: 14, height:14},
+			square: {width: 12, height:12},
+			triangle: {width: 14, height:13.5},
+			hexagon: {width: 15, height:13},
+			octagon: {width: 13, height:13},
+		};
+		let outerBoxSingleWidth = tagOuterBoxSingle[this.shapeVisualDefinition.tag.shape].width;
+		let outerBoxSingleHeight = tagOuterBoxSingle[this.shapeVisualDefinition.tag.shape].height;
+
+		let tagText = this.shapeVisualDefinition.tag.text;
+		let textLength = (tagText != null) ? tagText.length : 0;
+		let extraTextWidth = (textLength > 1) ? characterWidth * (textLength - 1) + 4 : 0;
+
+		let tagHeight = outerBoxSingleHeight;
+		let tagWidth = outerBoxSingleWidth + extraTextWidth;
+		let topTagY = -1 * tagHeight/2;
+		let bottomTagY = tagHeight/2;
+		
+		let rightTagX = (this.shapeVisualDefinition.shape.layout === 'collapsed') ? (this.shapeVisualDefinition.shape.width/2 + tagWidth/2) : this.shapeVisualDefinition.shape.width - 16;
+		let leftTagX = rightTagX - tagWidth;
+		let centerTagX = (rightTagX + leftTagX)/2;
+
+		c.setFillColor(this.shapeVisualDefinition.tag.fill.color);
+		c.setStrokeColor(this.shapeVisualDefinition.tag.line.color);
+		c.setDashed(false);
+		c.setStrokeWidth(1);
+
+		if(this.shapeVisualDefinition.tag.shape === 'circle')
+		{
+			let circleRadius = 7;
+			c.begin();
+			c.moveTo(leftTagX + circleRadius, topTagY);
+			c.lineTo(rightTagX - circleRadius, topTagY);
+			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, rightTagX - circleRadius, bottomTagY);
+			c.lineTo(leftTagX + circleRadius, bottomTagY);
+			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, leftTagX + circleRadius, topTagY);
+			c.close();
+		}
+		else if(this.shapeVisualDefinition.tag.shape === 'diamond')
+		{
+			c.begin();
+			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX, 0);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/2, bottomTagY);
+			c.lineTo(leftTagX, 0);
+			c.close();
+		}
+		else if(this.shapeVisualDefinition.tag.shape === 'square')
+		{
+			c.begin();
+			c.moveTo(leftTagX, topTagY);
+			c.lineTo(rightTagX, topTagY);
+			c.lineTo(rightTagX, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY);
+			c.lineTo(leftTagX, topTagY);
+			c.close();
+		}
+		else if(this.shapeVisualDefinition.tag.shape === 'triangle')
+		{
+			c.begin();
+			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
+			c.lineTo(rightTagX, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/2, topTagY);
+			c.close();
+		}
+		else if(this.shapeVisualDefinition.tag.shape === 'hexagon')
+		{
+			c.begin();
+			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX, 0);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX, 0);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);		
+			c.close();
+		}
+		else if(this.shapeVisualDefinition.tag.shape === 'octagon')
+		{
+			c.begin();
+			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
+			c.lineTo(rightTagX, topTagY + outerBoxSingleHeight/4);
+			c.lineTo(rightTagX, bottomTagY - outerBoxSingleHeight/4);
+			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
+			c.lineTo(leftTagX, bottomTagY - outerBoxSingleHeight/4);
+			c.lineTo(leftTagX, topTagY + outerBoxSingleHeight/4);
+			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);			
+			c.close();
+		}
+
+		c.fillAndStroke();
+
+		if(tagText != null)
+		{
+			c.setFontColor(this.shapeVisualDefinition.tag.textColor);
+			c.setFontSize(fontSize);
+			c.setFontFamily('IBM Plex Mono');
+			c.text(centerTagX, -1, 0, 14, tagText, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE, 0, null, 0, 0, 0);	
+		}
+	}
+}
+
+mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
 {
 	if(this.shapeMultiplicity)
 	{
-		const multiplicityOffset = 8;
+		const shapeWidth = this.shapeVisualDefinition.shape.width;
+		const shapeHeigth = this.shapeVisualDefinition.shape.height;
 		const multiplicitySpacing = 4;
 		const cornerRadius = 8;
+		const circleRadius = 24;
 
-		if(shapeOuterShape === 'rectangular')
+		let lineNumbers = [1, 2]; 
+
+		//c.setStrokeColor(this.shapeVisualDefinition.outerLine.color);
+		//if(this.shapeVisualDefinition.outerLine.dashed)
+		//{
+		//	c.setDashed(true, true);
+		//	c.setDashPattern('6 6');
+		//}
+
+		if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'group')
 		{
 			c.begin();
-			c.moveTo(multiplicityOffset, -1 * multiplicitySpacing);
-			c.lineTo(shapeWidth + multiplicitySpacing, -1 * multiplicitySpacing);
-			c.lineTo(shapeWidth + multiplicitySpacing, shapeHeigth - multiplicityOffset);	
-	
-			c.moveTo(2 * multiplicityOffset, -2 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 2 * multiplicitySpacing, -2 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 2 * multiplicitySpacing, shapeHeigth - 2 * multiplicityOffset);	
+			for(let idx = 0; idx < lineNumbers.length; idx++)
+			{
+				c.moveTo((lineNumbers[idx] + 1) * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.lineTo(shapeWidth + lineNumbers[idx] * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.lineTo(shapeWidth + lineNumbers[idx] * multiplicitySpacing, shapeHeigth - (lineNumbers[idx] + 1) * multiplicitySpacing);	
+			}
 			c.stroke();
 		}
-		else if(shapeOuterShape === 'rounded')
+		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
 		{
 			c.begin();
-			c.moveTo(multiplicityOffset, -1 * multiplicitySpacing);
-			c.lineTo(shapeWidth + multiplicitySpacing - cornerRadius, -1 * multiplicitySpacing);
-			c.arcTo(cornerRadius, cornerRadius, 0, 0, 1, shapeWidth + multiplicitySpacing, cornerRadius -1 * multiplicitySpacing);
-			c.lineTo(shapeWidth + multiplicitySpacing, shapeHeigth - multiplicityOffset);	
-	
-			c.moveTo(2 * multiplicityOffset, -2 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 2 * multiplicitySpacing - cornerRadius, -2 * multiplicitySpacing);
-			c.arcTo(cornerRadius, cornerRadius, 0, 0, 1, shapeWidth + 2 * multiplicitySpacing, cornerRadius -2 * multiplicitySpacing);
-			c.lineTo(shapeWidth + 2 * multiplicitySpacing, shapeHeigth - 2 * multiplicityOffset);	
+			for(let idx = 0; idx < lineNumbers.length; idx++)
+			{
+				c.moveTo((lineNumbers[idx] + 1) * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.lineTo(shapeWidth + lineNumbers[idx] * multiplicitySpacing - cornerRadius, -lineNumbers[idx] * multiplicitySpacing);
+				c.arcTo(cornerRadius, cornerRadius, 0, 0, 1, shapeWidth + lineNumbers[idx] * multiplicitySpacing, cornerRadius - lineNumbers[idx] * multiplicitySpacing);
+				c.lineTo(shapeWidth + lineNumbers[idx] * multiplicitySpacing, shapeHeigth - (lineNumbers[idx] + 1) * multiplicitySpacing);	
+			}
 			c.stroke();
+		}
+		else if(this.shapeType === 'actor')
+		{
+			c.begin();
+			for(let idx = 0; idx < lineNumbers.length; idx++)
+			{
+				c.moveTo(shapeWidth/2 + lineNumbers[idx] * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + lineNumbers[idx] * multiplicitySpacing, shapeHeigth/2 - lineNumbers[idx] * multiplicitySpacing);	
+			}
+			c.stroke();
+		}
+		else if (this.shapeType === 'ts')
+		{
+			c.begin();
+			for(let idx = 0; idx < lineNumbers.length; idx++)
+			{
+				c.moveTo(circleRadius + (lineNumbers[idx] - 1) * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.lineTo(shapeWidth - circleRadius + lineNumbers[idx] * multiplicitySpacing, -lineNumbers[idx] * multiplicitySpacing);
+				c.arcTo(circleRadius, circleRadius, 0, 0, 1, shapeWidth + lineNumbers[idx] * multiplicitySpacing, shapeHeigth/2 - lineNumbers[idx] * multiplicitySpacing);	
+			}
+
+			c.stroke();	
 		}
 	}
 }
@@ -944,75 +1352,90 @@ mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c, shapeWidth, sh
  * Function: paintIcon
  * 
  * Generic background painting implementation.
+ * Two options are provide to show an Icon:
+ * 	  1) Via a Stencil, where the Icon-Name data attribute must contain the name of the shape available in the Stencil
+ *    2) Via the image style property
+ * 
+ * Option 2 is deprecated and will be removed in future. If both options are used on the same Shape, the Stencil Icon is used 
  */
-mxIBM2MondrianBase.prototype.paintIcon = function(c, x, y, w, h)
+mxIBM2MondrianBase.prototype.paintIcon = function(c)
 {
-	var positionX = this.iconSpacing;
-	var positionY = this.iconSpacing;
+	let positionX = this.iconSpacing;
+	let positionY = this.iconSpacing;
 
 	if(this.shapeType === 'ts')
 	{
 		if(this.shapeLayout === 'collapsed')
-			positionX = this.targetSystemRadius;
+			positionX = 20;
 		else
-			positionX = h - (this.targetSystemRadius * 2);
+			positionX = this.iconSpacing;
 	}
 	else if(this.shapeType === 'group')
 	{
 		positionX = this.shapeVisualDefinition.bar.width + this.iconSpacing;
 	}
 
-	if(this.iconImage === 'stencilIcon')
+	if(this.shapeVisualDefinition.icon.visible)
 	{
-		var iconStencilName = this.state.cell.getAttribute('Icon-Name',null);
-		if(iconStencilName != null && iconStencilName != '')
-		{
-			var bgSt1 = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.' + iconStencilName);
-			if(bgSt1 == null)
-				bgSt1 = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.undefined');
+		let iconStencilName = this.state.cell.getAttribute('Icon-Name',null);
+		let iconImageStyle = this.image || 'undefined';
 
+		// Determine what Icon to show
+		let showStencilIcon = (iconStencilName != null && iconStencilName != '');
+		let stencilIconIsUndefined = (iconStencilName == 'undefined');
+
+		let showImageIcon = (iconImageStyle != null && iconImageStyle != '' && iconImageStyle != 'undefined');
+
+		// Retrieve the stencil from the registry 
+		let iconStencil = null;
+		if(showStencilIcon)
+		{
+			iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.' + iconStencilName);
+
+			if(iconStencil == null) // the iconStencilName cannot be found, so the 'undefined' Icon is retrieved
+			{
+				iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.undefined');
+				stencilIconIsUndefined = true;
+			}
+
+			showStencilIcon = (iconStencil != null); // only show the Icon if a stencil is found
+		}
+
+		// Make final call what Icon to show
+		if(showStencilIcon && !stencilIconIsUndefined) // stencil is found and it is not the 'undefined' stencil -> never use the Image Style
+			showImageIcon = false;
+		else if(showStencilIcon && stencilIconIsUndefined && showImageIcon) // stencil is found, but it is the 'undefined stencil and there is an Image Style set -> use the Image Style
+			showStencilIcon = false;
+		
+
+		if(showStencilIcon || showImageIcon)
+		{
 			c.save();
-			c.setStrokeColor('none');
-			c.setFillColor(this.shapeVisualDefinition.icon.color);
-			c.setDashed(false);
-			bgSt1.strokewidth = 1;
-			bgSt1.drawShape(c, this, positionX, positionY, this.iconSize, this.iconSize);
+			let canvasCenterX = positionX + this.iconSize/2;
+			let canvasCenterY = 24;
+		
+			// rotate icon
+			c.rotate(this.shapeVisualDefinition.icon.rotate, this.shapeVisualDefinition.icon.flipH, this.shapeVisualDefinition.icon.flipV, 
+				canvasCenterX, canvasCenterY);
+			
+			if(showStencilIcon)
+			{
+				c.setStrokeColor('none');
+				c.setFillColor(this.shapeVisualDefinition.icon.color);
+				c.setDashed(false);
+	
+				iconStencil.strokewidth = 1;
+				iconStencil.drawShape(c, this, positionX, positionY, this.iconSize, this.iconSize);	
+			}
+			else if(showImageIcon)
+			{
+				c.image(positionX, positionY, this.iconSize, this.iconSize, this.image, true, false, false);
+			}
+			
 			c.restore();
 		}
 	}
-	else if(this.iconImage === 'imageIcon' && this.image != null && this.image != '')
-	{
-		c.image(positionX, positionY, this.iconSize, this.iconSize, this.image, true, false, false);
-	}
-	else
-	{
-		// do nothing
-	}
 };
-
-mxIBM2MondrianBase.prototype.getIconBoxWidth = function()
-{
-	if(this.iconImage === 'noIcon')
-	{
-		return this.shapeVisualDefinition.bar.width;
-	}
-	else
-	{
-		switch(this.shapeType)
-		{
-			case 'ts':
-				if(this.shapeLayout === 'collapsed')
-					return (2 * this.targetSystemRadius + this.iconSize);
-				else
-					return (2 * this.iconSpacing + this.iconSize - 4);
-			case 'group':
-				return (this.iconSpacing + this.iconSize + this.shapeVisualDefinition.bar.width);
-			default:
-				return (2 * this.iconSpacing + this.iconSize);
-		}
-	}
-};
-
 
 /**
  * Function: getStyle
@@ -1021,12 +1444,13 @@ mxIBM2MondrianBase.prototype.getIconBoxWidth = function()
  */
 var shapeStyle = {};
 mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, positionText, iconImage)
-{
+{	
 	if(shapeType === 'group')
 	{
 		style = mxUtils.setStyle(style, 'container', 1);
 		style = mxUtils.setStyle(style, 'collapsible', 0);
 		style = mxUtils.setStyle(style, 'recursiveResize', 0);
+		style = mxUtils.setStyle(style, 'expand', 0);
 
 		if(shapeLayout === 'collapsed') // a group can only be expanded so should ignore the shapeLayout setting
 			style = mxUtils.setStyle(style, 'shapeLayout', 'expanded');
@@ -1045,13 +1469,19 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 			shapeStyle.labelPosition = mxConstants.ALIGN_CENTER;
 			shapeStyle.verticalAlign = mxConstants.ALIGN_MIDDLE;
 			if(shapeType === 'ts' && iconImage === 'noIcon') // Target Shape without Icon has text centered
+			{
 				shapeStyle.align = mxConstants.ALIGN_CENTER;
+				shapeStyle.spacingLeft = this.textSpacingLeft;
+				shapeStyle.spacingRight = shapeStyle.spacingLeft;
+			}
 			else
+			{
 				shapeStyle.align = mxConstants.ALIGN_LEFT;
-
+				shapeStyle.spacingLeft = this.textSpacingLeft;
+				shapeStyle.spacingRight = this.textSpacingRight;	
+			}
+				
 			shapeStyle.spacing = 0;
-			shapeStyle.spacingLeft = this.textSpacingLeft;
-			shapeStyle.spacingRight = this.textSpacingRight;
 			shapeStyle.spacingTop = 0;//this.textSpacingTop;
 			shapeStyle.spacingBottom = 0;
 			style = mxUtils.setStyle(style, mxConstants.STYLE_LABEL_WIDTH, null); // remove the label width since this is controlled by the bounding box
@@ -1110,7 +1540,7 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 				shapeStyle.spacing = 0;
 				shapeStyle.spacingLeft = 0;
 				shapeStyle.spacingRight = 0;
-				shapeStyle.spacingTop = this.textSpacing;
+				shapeStyle.spacingTop = this.textSpacing - 4; //draw.io adds 4px padding
 				shapeStyle.spacingBottom = 0;
 				//shapeStyle.labelWidth = labelWidth;
 				shapeStyle.positionText = 'bottom';
@@ -1208,9 +1638,10 @@ mxIBM2MondrianBase.prototype.getRectangle = function(rect, shapeType, shapeLayou
  */
 mxIBM2MondrianBase.prototype.getLabelBounds = function(rect)
 {
-	return new mxRectangle(rect.x + this.getIconBoxWidth() * this.scale, 
+	return new mxRectangle(
+					rect.x + this.shapeVisualDefinition.corner.width * this.scale, 
 					rect.y,
-					rect.width -  (this.getIconBoxWidth() * this.scale),
+					rect.width -  (this.shapeVisualDefinition.corner.width * this.scale),
 					this.titleBarHeight * this.scale);
 };
 
@@ -1244,28 +1675,28 @@ mxIBM2MondrianBase.prototype.getConstraints = function(style, w, h)
 		
 		var connectionConstraint = null;
 		// Left side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(0, pointPosition), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(0, connectionPositions[pointIndex]), false);
 			constr.push(connectionConstraint);	
 		}
 
 		// Right side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(1, pointPosition), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(1, connectionPositions[pointIndex]), false);
 			connectionConstraint.dx = dXoffSet;
 			constr.push(connectionConstraint);	
 		}
 
 		// Top side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(pointPosition, 0), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(connectionPositions[pointIndex], 0), false);
 			connectionConstraint.dy = -1 * dYoffSet;
 			constr.push(connectionConstraint);	
 		}
 
 		// Bottom side
-		for (pointPosition of connectionPositions) {
-			connectionConstraint = new mxConnectionConstraint(new mxPoint(pointPosition, 1), false);
+		for (pointIndex = 0; pointIndex < connectionPositions.length; pointIndex++) {
+			connectionConstraint = new mxConnectionConstraint(new mxPoint(connectionPositions[pointIndex], 1), false);
 			constr.push(connectionConstraint);	
 		}
 
@@ -1285,22 +1716,22 @@ mxIBM2MondrianBase.prototype.destroy = function()
 	}
 }
 
-//var vertexHandlerUnion = mxVertexHandler.prototype.union;
-//mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, scale, tr, constrained)
-//{
-//  var rect = vertexHandlerUnion.apply(this, arguments);
-//
-//  if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
-//  {
-//	const shapeType = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);
-//	const shapeLayout = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT);
-//	rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout, 'mxVertexHandler');
-//  }
-//
-//  return rect;
-//};
+let _union = mxVertexHandler.prototype.union;
+mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, scale, tr, constrained)
+{  	
+	let rect = _union.apply(this, arguments); 
 
-//mxVertexHandler.prototype.livePreview = true;
+	if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
+	{
+		const shapeType = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);
+		const shapeLayout = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT);
+		rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout, 'mxVertexHandler');
+	}
+
+	return rect;
+};
+
+let _createCustomeHandles = mxVertexHandler.prototype.createCustomHandles;
 mxVertexHandler.prototype.createCustomHandles = function()
 {
 	if(this.state.style['shape'] === mxIBM2MondrianBase.prototype.cst.MONDRIAN_BASE)
@@ -1357,5 +1788,5 @@ mxVertexHandler.prototype.createCustomHandles = function()
 		return [textHandle];
 	}
 
-	return null;
+	return _createCustomeHandles.call(this);
 };
