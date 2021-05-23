@@ -3542,7 +3542,7 @@ Sidebar.prototype.createEdgeTemplateFromCells = function(cells, width, height, t
 Sidebar.prototype.addPaletteFunctions = function(id, title, expanded, fns)
 {
 	this.addPalette(id, title, expanded, mxUtils.bind(this, function(content)
-	{
+	{	
 		for (var i = 0; i < fns.length; i++)
 		{
 			content.appendChild(fns[i](content));

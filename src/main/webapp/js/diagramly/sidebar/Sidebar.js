@@ -1180,7 +1180,7 @@
 		this.addCitrixPalette();
 		this.addGCP2Palette();
 		this.addIBM2MondrianPalette();
-		//this.addIBM2CloudPalette();
+		this.addIBM2CloudPalette();
 		this.addIBMPalette();
 		this.addNetworkPalette();
 		this.addOfficePalette();

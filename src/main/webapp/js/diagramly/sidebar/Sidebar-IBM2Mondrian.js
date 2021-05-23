@@ -75,6 +75,11 @@
 
 	Sidebar.prototype.addIBM2MondrianPalette = function(sidebarConfigFileURLs, addSidebarBase = true)
 	{
+		this.GenerateIBM2MondrianPalette(sidebarConfigFileURLs, addSidebarBase);
+	}
+
+	Sidebar.prototype.GenerateIBM2MondrianPalette = function(sidebarConfigFileURLs, addSidebarBase = true)
+	{
 		let mondrianEditorExtensions = Sidebar.prototype.addIBM2MondrianEditorExtensions() || [];
 
 		sidebarConfigFileURLs = sidebarConfigFileURLs || [];
@@ -85,7 +90,7 @@
 			let baseUrl = (new RegExp(/^.*\//)).exec(window.location.href)[0];
 
 			sidebarConfigFileURLs.splice(0,0,{id: 'ibm2mondrian', name: 'IBM' , url:  baseUrl + 'js/diagramly/sidebar/IBM2MondrianBase.json'});
-			//sidebarConfigFileURLs.splice(1,0,{id: 'ibm2', name: 'IBM' , url: baseUrl + 'js/diagramly/sidebar/IBM2MondrianDefined.json'});
+			//sidebarConfigFileURLs.splice(1,0,{id: 'ibm2cloud', name: 'IBM' , url: baseUrl + 'js/diagramly/sidebar/IBM2MondrianCloud.json'});
 		}
 		
 		if(mondrianEditorExtensions.Sidebars != null)
@@ -107,10 +112,10 @@
 
 			try
 			{
-				let sidebarFileText = mxUtils.load(filename).getText();;
-				let sidebarConfigs = JSON.parse(sidebarFileText);;
-				let sidebarVariables = sidebarConfigs.Variables;;
-		
+				let sidebarFileText = mxUtils.load(filename).getText();
+				let sidebarConfigs = JSON.parse(sidebarFileText);
+				let sidebarVariables = sidebarConfigs.Variables;
+				
 				for(let sidebarKey in sidebarConfigs.Sidebars)
 				{
 					let sidebar = sidebarConfigs.Sidebars[sidebarKey]; 
@@ -159,7 +164,6 @@
 					}
 			
 					const sidebarFullName = sidebarMainName + " / " + sidebarKey;
-
 					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
 					this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
 				}
