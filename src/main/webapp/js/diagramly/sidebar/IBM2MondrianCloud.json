@@ -10,7 +10,7 @@
                 "Account": {"icon": "account-group", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Access Group": {"icon": "access-group", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Resource Group": {"icon": "resource-group", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
-                  },
+            },
         
             "VPC Groups" : {
                 "VPC": {"icon": "virtual-private-cloud", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -21,7 +21,7 @@
                 "Endpoints (Prescribed)": {"icon": "ibm--cloud--vpc--endpoints", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Security Group": {"icon": "security", "format": "$GROUP_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Flow Logs": {"icon": "flow-logs-for-vpc", "format": "$GROUP_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
-                  },
+            },
         
             "Kubernetes Groups" : {
                 "Kubernetes Cluster": {"icon": "kubernetes", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -81,7 +81,8 @@
                 "Dedicated Host": {"icon": "ibm--cloud--dedicated--host", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Mobile Device": {"icon": "mobile", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Desktop Computer": {"icon": "screen", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
-        },
+            }
+	},
         
         "Data": {
             "*": {
