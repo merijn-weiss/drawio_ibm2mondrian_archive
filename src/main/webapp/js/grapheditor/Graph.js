@@ -2759,7 +2759,7 @@ Graph.prototype.initLayoutManager = function()
 				stackLayout.marginTop = style['marginTop'] || 0;
 				stackLayout.marginBottom = style['marginBottom'] || 0;
 				stackLayout.allowGaps = style['allowGaps'] || 0;
-				stackLayout.fill = true;
+				stackLayout.fill = mxUtils.getValue(style, 'stackFill', '1') == '1' || false;
 				
 				if (stackLayout.allowGaps)
 				{
