@@ -75,6 +75,10 @@
 
 	Sidebar.prototype.addIBM2MondrianPalette = function(sidebarConfigFileURLs, addSidebarBase = true)
 	{
+		let baseURL = (new RegExp(/^.*\//)).exec(window.location.href)[0];
+		let stencilURL = baseURL + 'stencils/ibm/ibm2mondrian_batch_1.xml'; //TEMP
+		mxStencilRegistry.loadStencilSet(stencilURL); //TEMP
+
 		this.GenerateIBM2MondrianPalette(sidebarConfigFileURLs, addSidebarBase);
 	}
 
@@ -164,7 +168,7 @@
 					}
 			
 					const sidebarFullName = sidebarMainName + " / " + sidebarKey;
-					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
+					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey);
 					this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
 				}
 			}
