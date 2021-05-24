@@ -174,7 +174,7 @@ mxIBM2MondrianBase.prototype.getColorSwatch = function(colorFamily, colorIntensi
 	}
 }
 
-mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayout, width, height)
+mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayout, shapeSubLayout, width, height)
 {
 		let minRectWidth = 0;
 		let minRectHeight = 0;
@@ -210,7 +210,7 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 		}
 		else if(shapeLayout === 'expanded')
 		{
-			minRectWidth = 144;
+			minRectWidth = (shapeType === 'actor') ? 48 : 144;
 			minRectHeight = (shapeType === 'lg' || shapeType === 'pg') ? 64 : 48;
 			
 			titleBarHeight = 48;
@@ -221,15 +221,28 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 		}
 		else if(shapeLayout === 'legend')
 		{
-			minRectWidth = 48;
+			minRectWidth = 64;
 			minRectHeight = 16;
 
-			shapeWidth = (shapeType === 'ts') ? 20 : 16;
+			if(shapeType === 'legendBaseItem')
+			{
+				shapeWidth = 32;
+				lableBoundOffsetLeft = 40;
+			}
+			else if(shapeType === 'ts')
+			{
+				shapeWidth = 20;
+				lableBoundOffsetLeft = 24;
+			}
+			else
+			{
+				shapeWidth = 16;
+				lableBoundOffsetLeft = 24;
+			}
+				
+			titleBarHeight = 16;
 			shapeHeight = 16;
 			shapeRadius = (shapeType === 'ts' || shapeType === 'actor') ? 8 : 4;
-
-			titleBarHeight = 16;
-			lableBoundOffsetLeft = 24;
 
 			barWidth = 2;
 			barHeight = 12;
@@ -259,7 +272,7 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 // The ShapeVisualDefinition contains all properties that define color of various parts of the Shape
 mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 							thisShape,
-							shapeType, shapeLayout, shapeSubLayout, shapeStyle, width, height,
+							shapeType, shapeLayout, shapeSubLayout, shapeStyle, shapeMultiplicity, width, height,
 							colorFamily, colorFillIcon, colorFillText, colorFillContainer,
 							iconImage) {
 	// basic colors
@@ -268,8 +281,9 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 
 	// VD properties
 	let shapeVD = {
-		shape: {visible:false, type: shapeType, layout: shapeLayout, width: null, height: null, radius: null, multiplicitySpacing: null, leftOffSet: null},
+		shape: {visible:false, type: shapeType, layout: shapeLayout, width: null, height: null, radius: null, leftOffSet: null},
 		style: {type: shapeStyle, color: null},
+		multiplicity: {visible: shapeMultiplicity, spacing: null},
 		outerLine: {color: null, colorSwatch: null, dashed: (shapeStyle === 'dashed'), secondLine: (shapeStyle === 'double'), secondLineOffSet: null},
 		bar: {visible: false, color: null, width: null, height: null},
 		corner: {visible: false, color: null, colorSwatch: null, width: null, height: null},
@@ -282,27 +296,52 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 		tag: {visible: false, shape: 'circle', fill: {color: null, colorSwatch: null}, line: {color: null, colorSwatch: null}, text: null, textColor: null},
 	};
 
+	// if the shape is set to legend some of the style properties get overridden
+	shapeVD.shape.type = (shapeVD.shape.layout == 'legend' && (shapeSubLayout != 'shape' && shapeSubLayout != 'shapeAndStyle') && shapeSubLayout != 'icon') ? 'legendBaseItem': shapeVD.shape.type;
+	
+	if(shapeVD.shape.type === 'legendBaseItem' || shapeSubLayout === 'shape')
+	{
+		if(shapeSubLayout === 'color' || shapeSubLayout === 'shape')
+		{
+			shapeVD.style.type = 'solid';
+			shapeVD.outerLine.dashed = false;
+			shapeVD.outerLine.secondLine = false;
+			shapeVD.multiplicity.visible = false;
+		}
+
+		if(shapeSubLayout === 'color')
+		{
+			colorFillIcon = (colorFillIcon === 'medium' || colorFillIcon === 'dark') ? colorFillIcon : 'medium';
+		}
+		else if(shapeSubLayout === 'shape' || shapeSubLayout === 'style')
+		{
+			colorFamily = 'gray';
+			colorFillIcon = 'noColor';
+		}		
+	}
+	
 	//shape
-	shapeVD.shape.visible = (shapeLayout === 'expanded' || shapeLayout === 'collapsed' || (shapeLayout === 'legend' && shapeSubLayout === 'shape'));
+	shapeVD.shape.visible = (shapeLayout === 'expanded' || shapeLayout === 'collapsed' || (shapeLayout === 'legend' && (shapeSubLayout != 'tag' && shapeSubLayout != 'icon')));
 
 	//shape dimensions
-	let dimensions = mxIBM2MondrianBase.prototype.getShapeDimensions(shapeType, shapeLayout, width, height);
+	let dimensions = mxIBM2MondrianBase.prototype.getShapeDimensions(shapeVD.shape.type, shapeLayout, shapeSubLayout, width, height);
 	shapeVD.shape.width = dimensions.shapeWidth;
 	shapeVD.shape.height = dimensions.shapeHeight;
 	shapeVD.shape.radius = dimensions.shapeRadius;
-	shapeVD.shape.multiplicitySpacing = dimensions.multiplicitySpacing;
 	shapeVD.shape.leftOffSet = dimensions.shapeLeftOffSet;
 
 	//outerLine
-	shapeVD.outerLine.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'outerLine', shapeLayout, shapeType);
+	shapeVD.outerLine.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'outerLine', shapeLayout, shapeVD.shape.type);
 	shapeVD.outerLine.secondLineOffSet = dimensions.secondLineOffSet;
+
+	shapeVD.multiplicity.spacing = dimensions.multiplicitySpacing;
 
 	//titleBar
 	shapeVD.titleBar.visible = (shapeVD.shape.visible && shapeLayout === 'expanded' && colorFillText != 'noColor');
-	if(shapeType === 'ts')
-		shapeVD.titleBar.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
+	if(shapeVD.shape.type === 'ts')
+		shapeVD.titleBar.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'corner', shapeLayout, shapeVD.shape.type);
 	else
-		shapeVD.titleBar.colorSwatch = this.getColorSwatch(colorFamily, colorFillText, 'titleBar', shapeLayout, shapeType);
+		shapeVD.titleBar.colorSwatch = this.getColorSwatch(colorFamily, colorFillText, 'titleBar', shapeLayout, shapeVD.shape.type);
 
 	// icon
 	shapeVD.icon.visible = (shapeLayout === 'expanded' || shapeLayout === 'collapsed' || (shapeLayout === 'legend' && shapeSubLayout === 'icon')) && (iconImage != 'noIcon');
@@ -329,24 +368,28 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 		}
 
 	//bar & corner
-	shapeVD.corner.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'corner', shapeLayout, shapeType);
+	shapeVD.corner.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'corner', shapeLayout, shapeVD.shape.type);
 	shapeVD.corner.visible = shapeVD.shape.visible && (shapeVD.icon.visible || shapeVD.corner.colorSwatch != 'noColor');
 	shapeVD.corner.width = dimensions.minRectHeight;
 	shapeVD.corner.height = dimensions.minRectHeight;
 
 	shapeVD.bar.colorSwatch = shapeVD.outerLine.colorSwatch;
-	shapeVD.bar.visible = (shapeType === 'pg' || shapeType === 'lg') && (colorFillIcon != 'noColor'); // color fill is a workaround to enable hiding the bar
+	shapeVD.bar.visible = (shapeVD.shape.type === 'pg' || shapeVD.shape.type === 'lg') && ((colorFillIcon != 'noColor') || (shapeVD.shape.layout == 'legend' && shapeSubLayout === 'shape')); // color fill is a workaround to enable hiding the bar
 	shapeVD.bar.width = (shapeVD.bar.visible) ? dimensions.barWidth : 0;
 	shapeVD.bar.height = dimensions.barHeight;
 
 	if(shapeVD.corner.visible)
 	{
-		if(shapeType === 'ts')
+		if(shapeVD.shape.type === 'ts')
 		{
 			if(shapeLayout === 'collapsed')
 				shapeVD.corner.width = (2 * shapeVD.shape.radius + 16);
 			else if(shapeLayout === 'expanded')
 				shapeVD.corner.width = (shapeVD.icon.visible) ? (shapeVD.icon.spacing + shapeVD.icon.size - 4) : 0;
+		}
+		else if(shapeVD.shape.type === 'legendBaseItem')
+		{
+			shapeVD.corner.width = 32;
 		}
 		else
 		{
@@ -361,10 +404,10 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 
 	//container
 	shapeVD.container.visible = shapeVD.shape.visible && (shapeVD.shape.layout === 'expanded') && (shapeVD.shape.height - dimensions.titleBarHeight > 0);
-	shapeVD.container.colorSwatch = this.getColorSwatch(colorFamily, colorFillContainer, 'container', shapeLayout, shapeType);
+	shapeVD.container.colorSwatch = this.getColorSwatch(colorFamily, colorFillContainer, 'container', shapeLayout, shapeVD.shape.type);
 
 	//dividerLine
-	shapeVD.dividerLine.visible = shapeVD.container.visible && (shapeType !== 'pg' && shapeType != 'lg');
+	shapeVD.dividerLine.visible = shapeVD.container.visible && (shapeVD.shape.type !== 'pg' && shapeVD.shape.type != 'lg');
 	shapeVD.dividerLine.colorSwatch = (shapeVD.titleBar.colorSwatch === 'swatch_10') ? 'swatch_30' : 'swatch_20';
 
 	// Get the HEX values for each Shape part
@@ -392,7 +435,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 		shapeVD.text.labelBoundsOffSetLeft = shapeVD.corner.width;
 		shapeVD.style.color = shapeVD.outerLine.color;
 
-		if(shapeType === 'ts')
+		if(shapeVD.shape.type === 'ts')
 		{
 			if(shapeVD.style.type === 'strikethrough')
 				shapeVD.style.color = (this.isDarkColor(shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : shapeVD.outerLine.color;
@@ -416,10 +459,10 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 		let tagColorFamily = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY_DEFAULT);
 		let tagColorFill = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL_DEFAULT);
 		
-		shapeVD.tag.fill.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tag', shapeLayout, shapeType);
+		shapeVD.tag.fill.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tag', shapeLayout, shapeVD.shape.type);
 		shapeVD.tag.fill.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.fill.colorSwatch];
 
-		shapeVD.tag.line.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tagLine', shapeLayout, shapeType);
+		shapeVD.tag.line.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tagLine', shapeLayout, shapeVD.shape.type);
 		shapeVD.tag.line.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.line.colorSwatch];
 
 		shapeVD.tag.text = thisShape.state.cell.getAttribute('Tag-Text',null);
@@ -433,8 +476,11 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'shapeType', dispName:'Shape', type:'enum', defVal:'pn',
 		enumList:[{val:'actor', dispName: 'Actor'}, {val:'ts', dispName: 'Target System'}, {val:'ln', dispName: 'Logical Node'}, {val:'lc', dispName: 'Logical Component'}, {val:'lg', dispName: 'Logical Group'}, {val:'pn', dispName: 'Prescribed Node'}, {val:'pc', dispName: 'Prescribed Component'}, {val:'pg', dispName: 'Prescribed Group'}]},
 	{name:'shapeLayout', dispName:'Shape (Layout)', type:'enum', defVal:'expanded',
-		enumList:[{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},
-		{val:'legend:shape', dispName: 'Legend (Shape & Style)'}, {val:'legend:icon', dispName: 'Legend (Icon)'}, {val:'legend:tag', dispName: 'Legend (Tag)'}]},
+		enumList:[
+			{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},
+			{val:'legend:color', dispName: 'Legend (Color)'}, {val:'legend:shape', dispName: 'Legend (Shape)'}, {val:'legend:style', dispName: 'Legend (Style)'},
+			{val:'legend:icon', dispName: 'Legend (Icon)'}, {val:'legend:tag', dispName: 'Legend (Tag)'},
+			{val:'legend:shapeAndStyle', dispName: 'Legend (Shape, Style & Color)'}]},
 	{name:'shapeStyle', dispName:'Shape (Style)', type:'enum', defVal:'solid',
 		enumList:[{val:'solid', dispName: 'Solid'},{val:'strikethrough', dispName: 'Strikethrough'},{val:'double', dispName: 'Double'}, {val:'dashed', dispName: 'Dashed'}
 	]},
@@ -657,14 +703,17 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 	
 						const shapeLayoutCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[0];
 						const shapeLayoutPrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[0];
-	
+
+						const shapeSubLayoutCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[1];
+						const shapeSubLayoutPrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[1];
+
 						const positionTextCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.POSITION_TEXT);
 						const positionTextPrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.POSITION_TEXT);
 	
 						const iconImageCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE);
 						const iconImagePrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE);
 	
-						var styleMustUpdate = (shapeTypeCurrent != shapeTypePrevious) || (shapeLayoutCurrent != shapeLayoutPrevious || (positionTextCurrent != positionTextPrevious) || iconImageCurrent != iconImagePrevious);
+						var styleMustUpdate = (shapeTypeCurrent != shapeTypePrevious) || (shapeLayoutCurrent != shapeLayoutPrevious || (positionTextCurrent != positionTextPrevious) || iconImageCurrent != iconImagePrevious || shapeSubLayoutCurrent != shapeSubLayoutPrevious);
 						if(styleMustUpdate)
 						{
 							// Define the new style
@@ -680,7 +729,7 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 							const geoCurrent = evt.properties.change.cell.geometry;
 							var newRect = mxIBM2MondrianBase.prototype.getRectangle(
 								new mxRectangle(geoCurrent.x, geoCurrent.y, geoCurrent.width, geoCurrent.height), 
-									shapeTypeCurrent, shapeLayoutCurrent);
+									shapeTypeCurrent, shapeLayoutCurrent, shapeSubLayoutCurrent);
 					
 							geoMustUpdate = mxIBM2MondrianBase.prototype.cellMustResize(geoCurrent, newRect);
 						}
@@ -788,7 +837,7 @@ mxIBM2MondrianBase.prototype.paintVertexShape = function(c, x, y, w, h)
 {
 	this.shapeVisualDefinition = mxIBM2MondrianBase.prototype.getShapeVisualDefinition(
 		this,
-		this.shapeType, this.shapeLayout, this.shapeSubLayout, this.shapeStyle, w, h,
+		this.shapeType, this.shapeLayout, this.shapeSubLayout, this.shapeStyle, this.shapeMultiplicity, w, h,
 		this.colorFamily, this.colorFillIcon, this.colorFillText, this.colorFillContainer,
 		this.iconImage);
 
@@ -869,7 +918,7 @@ mxIBM2MondrianBase.prototype.paintContainer = function(c)
 		const endContainer = svd.shape.height - svd.text.labelBoundsHeight;
 		const startContainer = svd.text.labelBoundsHeight;
 
-		if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 		{
 			c.setFillColor(svd.container.color);
 			c.begin();
@@ -901,7 +950,7 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c)
 	let svd = this.shapeVisualDefinition; 
 	if(svd.titleBar.visible)
 	{
-		if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 		{
 			if (svd.container.visible)
 			{
@@ -924,13 +973,7 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c)
 				c.fill();
 			}
 		}
-		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg')
-		{
-			c.setFillColor(svd.titleBar.color);
-			c.rect(0, 0, svd.shape.width, svd.text.labelBoundsHeight);
-			c.fill();
-		}
-		else if(this.shapeType === 'lg')
+		else if(svd.shape.type === 'lg')
 		{
 			c.setFillColor(svd.titleBar.color);
 			c.begin();
@@ -943,9 +986,12 @@ mxIBM2MondrianBase.prototype.paintTitleBar = function(c)
 			c.close();
 			c.fill();
 		}
-		else {
-			//do nothing
-		}	
+		else
+		{
+			c.setFillColor(svd.titleBar.color);
+			c.rect(0, 0, svd.shape.width, svd.text.labelBoundsHeight);
+			c.fill();
+		}
 	}
 };
 
@@ -959,21 +1005,18 @@ mxIBM2MondrianBase.prototype.paintCorner = function(c)
 	let svd = this.shapeVisualDefinition; 
 	if(svd.corner.visible)
 	{
-		let cornerWidth = svd.corner.width;
-		let cornerHeight = svd.corner.height;
-			
 		const doubleStyleOffset = (svd.outerLine.secondLine) ? svd.outerLine.secondLineOffSet : 0;
 		c.setFillColor(svd.corner.color);
 
-		if(this.shapeType === 'actor')
+		if(svd.shape.type === 'actor')
 		{
 			mxIBM2MondrianBase.prototype.paintActor(c, svd.shape.width, doubleStyleOffset);
 		}
-		else if(this.shapeType === 'ts')
+		else if(svd.shape.type === 'ts')
 		{
-			mxIBM2MondrianBase.prototype.paintTS(c, svd.shape.width, cornerHeight, svd.shape.radius, doubleStyleOffset, svd.shape.leftOffSet);
+			mxIBM2MondrianBase.prototype.paintTS(c, svd.shape.width, svd.corner.height, svd.shape.radius, doubleStyleOffset, svd.shape.leftOffSet);
 		}
-		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		else if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 		{
 			if(svd.shape.layout === 'collapsed' || svd.shape.layout === 'legend')
 			{
@@ -983,25 +1026,25 @@ mxIBM2MondrianBase.prototype.paintCorner = function(c)
 			{
 				c.begin();
 				c.moveTo(svd.shape.radius, 0);
-				c.lineTo(cornerWidth, 0);
-				c.lineTo(cornerWidth, cornerHeight);
+				c.lineTo(svd.corner.width, 0);
+				c.lineTo(svd.corner.width, svd.corner.height);
 				if (svd.container.visible)
 				{
-					c.lineTo(0, cornerHeight);
+					c.lineTo(0, svd.corner.height);
 				}
 				else
 				{
-					c.lineTo(svd.shape.radius, cornerHeight);
-					c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, 0, cornerHeight - svd.shape.radius);
+					c.lineTo(svd.shape.radius, svd.corner.height);
+					c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, 0, svd.corner.height - svd.shape.radius);
 				}
 				c.lineTo(0, svd.shape.radius);	
 				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.radius, 0);
 				c.close();	
 			}		
 		}
-		else if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg' || this.shapeType === 'lg')
+		else
 		{
-			mxIBM2MondrianBase.prototype.paintRect(c, cornerWidth, cornerHeight, doubleStyleOffset);
+			mxIBM2MondrianBase.prototype.paintRect(c, svd.corner.width, svd.corner.height, doubleStyleOffset);
 		}
 		
 		c.fill();
@@ -1035,13 +1078,13 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.setStrokeWidth(doubleStyleOffset);
 			c.setStrokeColor(WHITE);
 
-			if(this.shapeType === 'actor')
+			if(svd.shape.type === 'actor')
 				mxIBM2MondrianBase.prototype.paintActor(c, svd.shape.width, doubleStyleOffset/2);
-			else if(this.shapeType === 'ts')
+			else if(svd.shape.type === 'ts')
 				mxIBM2MondrianBase.prototype.paintTS(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset/2, svd.shape.leftOffSet);
-			else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+			else if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 				mxIBM2MondrianBase.prototype.paintRoundRect(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset/2);
-			else if(this.shapeType === 'lg')
+			else if(svd.shape.type === 'lg')
 				mxIBM2MondrianBase.prototype.paintLG(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset/2);
 			else
 				mxIBM2MondrianBase.prototype.paintRect(c, svd.shape.width, svd.shape.height, doubleStyleOffset/2);
@@ -1052,13 +1095,13 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.setStrokeWidth(1);
 			c.setStrokeColor(svd.outerLine.color);			
 
-			if(this.shapeType === 'actor')
+			if(svd.shape.type === 'actor')
 				mxIBM2MondrianBase.prototype.paintActor(c, svd.shape.width, doubleStyleOffset);
-			else if(this.shapeType === 'ts')
+			else if(svd.shape.type === 'ts')
 				mxIBM2MondrianBase.prototype.paintTS(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset, svd.shape.leftOffSet);
-			else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+			else if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 				mxIBM2MondrianBase.prototype.paintRoundRect(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset);
-			else if(this.shapeType === 'lg')
+			else if(svd.shape.type === 'lg')
 				mxIBM2MondrianBase.prototype.paintLG(c, svd.shape.width, svd.shape.height, svd.shape.radius, doubleStyleOffset);
 			else
 				mxIBM2MondrianBase.prototype.paintRect(c, svd.shape.width, svd.shape.height, doubleStyleOffset);
@@ -1093,19 +1136,19 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.setDashPattern(dashPattern);
 		}
 
-		if(this.shapeType === 'actor')
+		if(svd.shape.type === 'actor')
 		{
 			mxIBM2MondrianBase.prototype.paintActor(c, svd.shape.width);
 		}
-		else if(this.shapeType === 'ts')
+		else if(svd.shape.type === 'ts')
 		{
 			mxIBM2MondrianBase.prototype.paintTS(c, svd.shape.width, svd.shape.height, svd.shape.radius, 0, svd.shape.leftOffSet);
 		}
-		else if(this.shapeType === 'ln' || this.shapeType === 'lc')
+		else if(svd.shape.type === 'ln' || svd.shape.type === 'lc')
 		{
 			mxIBM2MondrianBase.prototype.paintRoundRect(c, svd.shape.width, svd.shape.height, svd.shape.radius);
 		}
-		else if(this.shapeType === 'lg')
+		else if(svd.shape.type === 'lg')
 		{
 			mxIBM2MondrianBase.prototype.paintLG(c, svd.shape.width, svd.shape.height, svd.shape.radius);
 		}
@@ -1122,7 +1165,7 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.restore();		
 
 	// Component decorator
-		if(this.shapeType === 'lc' || this.shapeType === 'pc')
+		if(svd.shape.type === 'lc' || svd.shape.type === 'pc')
 		{
 			c.save();
 			c.setDashed(false);
@@ -1152,7 +1195,7 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 			c.setStrokeColor(svd.style.color);
 			c.begin();
 			
-			if(this.shapeType === 'actor')
+			if(svd.shape.type === 'actor')
 			{
 				let h = svd.shape.radius; // x coordinate of circle center
 				let k = svd.shape.radius; // y coordinate of circle center
@@ -1166,7 +1209,7 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 				rightCornerX = h + r*Math.cos(angle * (Math.PI/180));
 				rightCornerY = k - r*Math.sin(angle * (Math.PI/180));
 			}
-			else if(this.shapeType === 'ts')
+			else if(svd.shape.type === 'ts')
 			{
 				if(svd.shape.layout === 'collapsed' || svd.shape.layout === 'legend')
 				{
@@ -1190,14 +1233,14 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 				}
 
 			}
-			else if(this.shapeType === 'ln' || this.shapeType === 'lc' || this.shapeType === 'lg')
+			else if(svd.shape.type === 'ln' || svd.shape.type === 'lc' || svd.shape.type === 'lg')
 			{
 				let h = svd.shape.radius; // x coordinate of circle center
 				let k = svd.shape.radius; // y coordinate of circle center
 				let r = svd.shape.radius; // radius of circle
 				let angle = 135;
 
-				if(this.shapeType === 'lg')
+				if(svd.shape.type === 'lg')
 				{
 					leftCornerX = svd.bar.width;
 					rightCornerY = svd.shape.height;
@@ -1226,7 +1269,7 @@ mxIBM2MondrianBase.prototype.paintShape = function(c)
 					rightCornerY = k - r*Math.sin(angle * (Math.PI/180));	
 				}
 			}
-			else if(this.shapeType === 'pg')
+			else if(svd.shape.type === 'pg')
 			{
 				leftCornerX = svd.bar.width;
 				rightCornerY = svd.shape.height;
@@ -1373,54 +1416,54 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 mxIBM2MondrianBase.prototype.paintShapeMultiplicity = function(c)
 {
 	let svd = this.shapeVisualDefinition;
-	if(this.shapeMultiplicity)
+	if(svd.multiplicity.visible)
 	{
 		let lineNumbers = [1, 2];
 
-		if(this.shapeType === 'pn' || this.shapeType === 'pc' || this.shapeType === 'pg')
+		if(svd.shape.type === 'ln' || svd.shape.type === 'lc' || svd.shape.type === 'lg')
 		{
 			c.begin();
 			for(let idx = 0; idx < lineNumbers.length; idx++)
 			{
-				c.moveTo((lineNumbers[idx] + 1) * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing, svd.shape.height - (lineNumbers[idx] + 1) * svd.shape.multiplicitySpacing);	
+				c.moveTo((lineNumbers[idx] + 1) * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing - svd.shape.radius, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing, svd.shape.radius - lineNumbers[idx] * svd.multiplicity.spacing);
+				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing, svd.shape.height - (lineNumbers[idx] + 1) * svd.multiplicity.spacing);	
 			}
 			c.stroke();
 		}
-		else if(this.shapeType === 'ln' || this.shapeType === 'lc' || this.shapeType === 'lg')
+		else if(svd.shape.type === 'actor')
 		{
 			c.begin();
 			for(let idx = 0; idx < lineNumbers.length; idx++)
 			{
-				c.moveTo((lineNumbers[idx] + 1) * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing - svd.shape.radius, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing, svd.shape.radius - lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing, svd.shape.height - (lineNumbers[idx] + 1) * svd.shape.multiplicitySpacing);	
+				c.moveTo(svd.shape.width/2 + lineNumbers[idx] * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing, svd.shape.height/2 - lineNumbers[idx] * svd.multiplicity.spacing);	
 			}
 			c.stroke();
 		}
-		else if(this.shapeType === 'actor')
+		else if (svd.shape.type === 'ts')
 		{
 			c.begin();
 			for(let idx = 0; idx < lineNumbers.length; idx++)
 			{
-				c.moveTo(svd.shape.width/2 + lineNumbers[idx] * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + lineNumbers[idx] * svd.shape.multiplicitySpacing, svd.shape.height/2 - lineNumbers[idx] * svd.shape.multiplicitySpacing);	
-			}
-			c.stroke();
-		}
-		else if (this.shapeType === 'ts')
-		{
-			c.begin();
-			for(let idx = 0; idx < lineNumbers.length; idx++)
-			{
-				c.moveTo(svd.shape.radius + svd.shape.leftOffSet + (lineNumbers[idx] - 1) * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.lineTo(svd.shape.width + svd.shape.leftOffSet - svd.shape.radius + lineNumbers[idx] * svd.shape.multiplicitySpacing, -lineNumbers[idx] * svd.shape.multiplicitySpacing);
-				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + svd.shape.leftOffSet + lineNumbers[idx] * svd.shape.multiplicitySpacing, svd.shape.height/2 - lineNumbers[idx] * svd.shape.multiplicitySpacing);				
+				c.moveTo(svd.shape.radius + svd.shape.leftOffSet + (lineNumbers[idx] - 1) * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.lineTo(svd.shape.width + svd.shape.leftOffSet - svd.shape.radius + lineNumbers[idx] * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.arcTo(svd.shape.radius, svd.shape.radius, 0, 0, 1, svd.shape.width + svd.shape.leftOffSet + lineNumbers[idx] * svd.multiplicity.spacing, svd.shape.height/2 - lineNumbers[idx] * svd.multiplicity.spacing);				
 			}
 		
 			c.stroke();	
+		}
+		else
+		{
+			c.begin();
+			for(let idx = 0; idx < lineNumbers.length; idx++)
+			{
+				c.moveTo((lineNumbers[idx] + 1) * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing, -lineNumbers[idx] * svd.multiplicity.spacing);
+				c.lineTo(svd.shape.width + lineNumbers[idx] * svd.multiplicity.spacing, svd.shape.height - (lineNumbers[idx] + 1) * svd.multiplicity.spacing);	
+			}
+			c.stroke();
 		}
 	}
 }
@@ -1443,9 +1486,9 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 		let positionX = svd.icon.spacing;
 		let positionY = svd.icon.spacing;
 
-		if(this.shapeLayout === 'collapsed' && this.shapeType === 'ts')
+		if(svd.shape.layout === 'collapsed' && svd.shape.type === 'ts')
 			positionX = 20;
-		else if((this.shapeLayout === 'collapsed' || this.shapeLayout === 'EXPANDED') && (this.shapeType === 'pg' || this.shapeType === 'lg'))
+		else if((svd.shape.layout === 'collapsed' || svd.shape.layout === 'expanded') && (svd.shape.type === 'pg' || svd.shape.type === 'lg'))
 			positionX = svd.bar.width + svd.icon.spacing;
 
 		let iconStencilName = this.state.cell.getAttribute('Icon-Name',null) || 'undefined';
@@ -1631,11 +1674,11 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
  * 
  * Returns the rectangle based on shapeType & shapeLayout.
  */
-mxIBM2MondrianBase.prototype.getRectangle = function(rect, shapeType, shapeLayout)
+mxIBM2MondrianBase.prototype.getRectangle = function(rect, shapeType, shapeLayout, shapeSubLayout)
 {
 	if(shapeType != null)
 	{
-		let dimensions = mxIBM2MondrianBase.prototype.getShapeDimensions(shapeType, shapeLayout, rect.width, rect.height);
+		let dimensions = mxIBM2MondrianBase.prototype.getShapeDimensions(shapeType, shapeLayout, shapeSubLayout, rect.width, rect.height);
 
 		if(shapeLayout === 'collapsed')
 		{
@@ -1687,12 +1730,14 @@ mxIBM2MondrianBase.prototype.getLabelBounds = function(rect)
  */
 mxIBM2MondrianBase.prototype.getConstraints = function(style, w, h)
 {
-	if(this.shapeLayout === 'legend')
+	let svd = this.shapeVisualDefinition;
+
+	if(svd.shape.layout === 'legend')
 		return null;
 
 	var constr = [];
 
-	if(this.shapeType === 'actor')
+	if(svd.shape.type === 'actor')
 	{
 		var step = 30;
 		var h = 0.5; // x coordinate of circle center
@@ -1708,8 +1753,8 @@ mxIBM2MondrianBase.prototype.getConstraints = function(style, w, h)
 	else
 	{
 		const connectionPositions = [0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9];
-		const dXoffSet = (this.shapeType != 'ts' && this.shapeMultiplicity) ? 8 : 0;
-		const dYoffSet = (this.shapeType != 'ts' && this.shapeMultiplicity) ? 8 : 0;
+		const dXoffSet = (svd.shape.type != 'ts' && svd.multiplicity.visible) ? 8 : 0;
+		const dYoffSet = (svd.shape.type != 'ts' && svd.multiplicity.visible) ? 8 : 0;
 		
 		var connectionConstraint = null;
 		// Left side
@@ -1763,7 +1808,8 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 	{
 		const shapeType = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE_DEFAULT);
 		const shapeLayout = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT).split(':')[0];
-		rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout);
+		const shapeSubLayout = mxUtils.getValue(this.state.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT).split(':')[1];
+		rect = mxIBM2MondrianBase.prototype.getRectangle(rect, shapeType, shapeLayout, shapeSubLayout);
 	}
 
 	return rect;
@@ -1913,9 +1959,25 @@ mxIBM2MondrianLegend.prototype.init = function(container)
 			this.state.cell.setAttribute(mondrianAttributes[attributeIndex],'')
 		}
 	}
-
 	mxShape.prototype.init.apply(this, arguments); 
 };
+
+/**
+ * Function: redraw
+ *
+ * Reconfigures this shape. This will update the attributees of the Shape.
+ */
+ mxIBM2MondrianLegend.prototype.redraw = function()
+ {
+	let childCells = this.state.cell.children;
+	let legendDimensions = mxIBM2MondrianLegend.prototype.getDimensions(childCells, mxUtils.getValue(this.style, 'legendLayout', 'verticalTB'));
+	let geo = this.state.cell.geometry;
+	geo.width = legendDimensions.width;
+	geo.height = legendDimensions.height;
+	this.state.view.graph.model.setGeometry(this.state.cell, geo);
+
+	 mxShape.prototype.redraw.apply(this, arguments);
+ };
 
 mxIBM2MondrianLegend.prototype.paintVertexShape = function(c, x, y, w, h)
 {	
@@ -1925,6 +1987,7 @@ mxIBM2MondrianLegend.prototype.paintVertexShape = function(c, x, y, w, h)
 	let textColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[0]).swatch_50;
 	let strokeColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[1]).swatch_50;
 	let fillColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[2]).swatch_50;
+
 
 	c.translate(x, y);
 	c.setFillColor(fillColor);
@@ -1943,6 +2006,35 @@ mxIBM2MondrianLegend.prototype.paintVertexShape = function(c, x, y, w, h)
 		newStyle = mxUtils.setStyle(styleCurrent, 'fontColor', this.style.fontColor);
 		this.state.view.graph.model.setStyle(this.state.cell, newStyle);
 	}
+};
+
+mxIBM2MondrianLegend.prototype.getDimensions = function(childCells, legendLayout)
+{
+	let isHorizontal = (legendLayout == 'horizontal' || legendLayout == 'horizontalTB');
+	let showTitle = (legendLayout == 'verticalTB' || legendLayout == 'horizontalTB');;
+	let marginTop = (showTitle) ? mxIBM2MondrianLegend.legendTitelbar : mxIBM2MondrianLegend.legendPadding;
+
+	let width = 2 * mxIBM2MondrianLegend.legendPadding;
+	let height = marginTop;
+
+	if(childCells != null)
+	{
+		for (let j = 0; j < childCells.length; j++)
+		{
+			if(isHorizontal)
+			{
+				width = width + childCells[j].geometry.width + mxIBM2MondrianLegend.legendPadding;
+				height = Math.max(height, childCells[j].geometry.height + marginTop + mxIBM2MondrianLegend.legendPadding);	
+			}
+			else
+			{
+				width = Math.max(width, childCells[j].geometry.width + 2 * mxIBM2MondrianLegend.legendPadding);
+				height = height + childCells[j].geometry.height + mxIBM2MondrianLegend.legendPadding;	
+			}
+		}	
+	}
+
+	return {width, height};
 };
 
 mxIBM2MondrianLegend.prototype.getLabelBounds = function(rect)
