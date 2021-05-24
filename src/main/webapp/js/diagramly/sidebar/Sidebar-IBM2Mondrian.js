@@ -168,7 +168,7 @@
 					}
 			
 					const sidebarFullName = sidebarMainName + " / " + sidebarKey;
-					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey)
+					this.setCurrentSearchEntryLibrary(sidebarID, sidebarID + sidebarKey);
 					this.addPaletteFunctions(sidebarID + sidebarKey, sidebarFullName, false, sbEntries);
 				}
 			}

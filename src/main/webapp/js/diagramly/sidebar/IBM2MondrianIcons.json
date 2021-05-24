@@ -1,6 +1,6 @@
 {
     "Sidebars":{
-        "Icons: Batch 1":{
+        "Icons Batch 1":{
             "*":
             {
 "application--mobile": {"icon": "application--mobile", "$STOCK_ICON_DEFAULT_PROPERTIES": null, "format": "$STOCK_ICON"},

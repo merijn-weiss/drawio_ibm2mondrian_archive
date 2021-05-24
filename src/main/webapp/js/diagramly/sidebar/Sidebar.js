@@ -38,7 +38,7 @@
 	Sidebar.prototype.ibm2cloud = ['Groups', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Management', 'Services', 'Network', 'Security', 'Storage', 'Users'];
 
     Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
-	Sidebar.prototype.ibm2icons = ['IBM Icons'];
+	Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
 
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
@@ -322,7 +322,7 @@
 	Sidebar.prototype.isEntryVisible = function(key)
 	{
 		var config = this.getConfigurationById(key);
-		
+
 		if (config != null)
 		{
 			var id = (config.libs != null) ? ((config.prefix || '') + config.libs[0]) : key;
