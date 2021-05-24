@@ -2,45 +2,45 @@
     "Sidebars":{
         "Groups":{
             "Cloud Groups" : {
-                "IBM Cloud": {"icon": "ibm-cloud", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Region": {"icon": "location", "format": "$GROUP_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Zone": {"icon": "data--center", "format": "$GROUP_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Cloud Services": {"icon": "cloud-services", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Classic Infrastructure": {"icon": "infrastructure-classic", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Account": {"icon": "group--account", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Access Group": {"icon": "group--access", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Resource Group": {"icon": "group--resource", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+                "IBM Cloud": {"icon": "ibm-cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Region": {"icon": "location", "format": "$LG_FORMAT_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Zone": {"icon": "data--center", "format": "$LG_FORMAT_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Cloud Services": {"icon": "cloud-services", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Classic Infrastructure": {"icon": "infrastructure--classic", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Account": {"icon": "group--account", "format": "$LG_FORMAT_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Access Group": {"icon": "group--access", "format": "$LG_FORMAT_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Resource Group": {"icon": "group--resource", "format": "$LG_FORMAT_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
             "VPC Groups" : {
-                "General VPC": {"icon": "virtual-private-cloud", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IBM VPC": {"icon": "virtual-private-cloud--alt", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "General Subnet : ACL": {"icon": "locked", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IBM Subnet : ACL": {"icon": "ibm--cloud--subnets", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Instance Group": {"icon": "autoscaling", "format": "$GROUP_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IBM Endpoints": {"icon": "ibm-cloud--vpc-endpoints", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security Group": {"icon": "security", "format": "$GROUP_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Flow Logs": {"icon": "flow-logs-vpc", "format": "$GROUP_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+                "General VPC": {"icon": "virtual-private-cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IBM VPC": {"icon": "virtual-private-cloud--alt", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "General Subnet : ACL": {"icon": "locked", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IBM Subnet : ACL": {"icon": "ibm--cloud--subnets", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Instance Group": {"icon": "autoscaling", "format": "$LG_FORMAT_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IBM Endpoints": {"icon": "ibm-cloud--vpc-endpoints", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Group": {"icon": "security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Flow Logs": {"icon": "flow-logs-vpc", "format": "$LG_FORMAT_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
             "Kubernetes Groups" : {
-                "Kubernetes Cluster": {"icon": "kubernetes", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "OpenShift Cluster": {"icon": "logo--openshift", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Kubernetes Service": {"icon": "container-services", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Kubernetes Replica Set": {"icon": "replicate", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Kubernetes Pod": {"icon": "cube", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Kubernetes Namespace": {"icon": "border-none", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Kubernetes Cluster": {"icon": "kubernetes", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "OpenShift Cluster": {"icon": "logo--openshift", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Service": {"icon": "container-services", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Replica Set": {"icon": "replicate", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Pod": {"icon": "cube", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Namespace": {"icon": "border-none", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
             "Network Groups" : {
-                "Public Network": {"icon": "network--public", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Enterprise Network": {"icon": "network--enterprise", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Cloud Foundry": {"icon": "cloud-foundry--1", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Data Center": {"icon": "data--center", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Point of Presence": {"icon": "point-of-presence", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Overlay Network": {"icon": "network--overlay", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "VLAN": {"icon": "vlan", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IBM VLAN": {"icon": "vlan--ibm", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Public Network": {"icon": "network--public", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Enterprise Network": {"icon": "network--enterprise", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Cloud Foundry": {"icon": "cloud-foundry--1", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Data Center": {"icon": "data--center", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Point of Presence": {"icon": "point-of-presence", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Overlay Network": {"icon": "network--overlay", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VLAN": {"icon": "vlan", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IBM VLAN": {"icon": "vlan--ibm", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
             }
         },
         "Applications": {
@@ -266,12 +266,14 @@
         "$LN_FORMAT_EXPANDED": {"type": "ln", "layout": "expanded", "container": "container_transparent"},
         "$LC_FORMAT_COLLAPSED": {"type": "lc", "layout": "collapsed", "container": "container_transparent"},
         "$LC_FORMAT_EXPANDED": {"type": "lc", "layout": "expanded", "container": "container_transparent"},
+        "$LG_FORMAT_CONTAINER": {"type": "lg", "layout": "expanded", "container": "container_transparent"},
+        "$LG_FORMAT_NO_CONTAINER": {"type": "lg", "layout": "expanded", "container": "no_container_transparent"},
         "$PN_FORMAT_COLLAPSED": {"type": "pn", "layout": "collapsed", "container": "container_transparent"},
         "$PN_FORMAT_EXPANDED": {"type": "pn", "layout": "expanded", "container": "container_transparent"},
         "$PC_FORMAT_COLLAPSED": {"type": "pc", "layout": "collapsed", "container": "container_transparent"},
         "$PC_FORMAT_EXPANDED": {"type": "pc", "layout": "expanded", "container": "container_transparent"},
-        "$GROUP_CONTAINER": {"type": "group", "layout": "expanded", "container": "container_transparent"},
-        "$GROUP_NO_CONTAINER": {"type": "group", "layout": "expanded", "container": "no_container_transparent"},
+        "$PG_FORMAT_CONTAINER": {"type": "pg", "layout": "expanded", "container": "container_transparent"},
+        "$PG_FORMAT_NO_CONTAINER": {"type": "pg", "layout": "expanded", "container": "no_container_transparent"},
 
         "$APPLICATIONS_COLOR": {"family": "purple", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$COMPUTE_COLOR": {"family": "magenta", "fillIcon": null, "fillText": null, "fillContainer": null},
