@@ -37,7 +37,8 @@
 
 	Sidebar.prototype.ibm2cloud = ['Groups', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Management', 'Services', 'Network', 'Security', 'Storage', 'Users'];
 
-        Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+    Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+	Sidebar.prototype.ibm2icons = ['IBM Icons'];
 
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
@@ -127,6 +128,7 @@
 	                                   {id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm},
 	                                   {id: 'ibm2cloud', prefix: 'ibm2cloud', libs: Sidebar.prototype.ibm2cloud},
 	                                   {id: 'ibm2mondrian', prefix: 'ibm2mondrian', libs: Sidebar.prototype.ibm2mondrian},
+									   {id: 'ibm2icons', prefix: 'ibm2icons', libs: Sidebar.prototype.ibm2icons},
 	                                   {id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis},
 	                                   {id: 'cumulus', libs: ['cumulus']},
 	                                   {id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip},
@@ -496,6 +498,7 @@
             			          {title: 'Google Cloud Platform', id: 'gcp2', image: IMAGE_PATH + '/sidebar-gcp2.png'},
             			          {title: 'IBM Base (New)', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
             			          {title: 'IBM Cloud (New)', id: 'ibm2cloud', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+								  {title: 'IBM Icons (New)', id: 'ibm2icons', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
             			          {title: 'IBM (Deprecated)', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
             			          {title: 'Kubernetes', id: 'kubernetes', image: IMAGE_PATH + '/sidebar-kubernetes.png'},
             			          {title: 'Network', id: 'network', image: IMAGE_PATH + '/sidebar-network.png'},
@@ -1181,6 +1184,7 @@
 		this.addGCP2Palette();
 		this.addIBM2MondrianPalette();
 		this.addIBM2CloudPalette();
+		this.addIBM2IconPalette();
 		this.addIBMPalette();
 		this.addNetworkPalette();
 		this.addOfficePalette();

@@ -8,7 +8,7 @@
 
 		this.addIBM2MondrianPalette([JSON.parse(sideBarConfig)], addSidebarBase = false);
 
-		let stencilURL = baseURL + 'stencils/ibm2cloud.xml';
-		mxStencilRegistry.loadStencilSet(stencilURL);
+		//let stencilURL = baseURL + 'stencils/ibm2cloud.xml';
+		//mxStencilRegistry.loadStencilSet(stencilURL);
 	};
 })();
