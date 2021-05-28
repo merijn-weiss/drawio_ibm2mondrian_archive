@@ -110,7 +110,7 @@
                 "Call Manager": {"icon": "call-manager", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Service Management": {"icon": "it-service-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "GUI Management": {"icon": "gui-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Flow Logs": {"icon": "flow-logs-vpc", "format": "$LG_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Flow Logs": {"icon": "flow-logs-vpc", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Logging": {"icon": "logging", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Monitoring": {"icon": "monitoring", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Operational Chat": {"icon": "chat--operation", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
