@@ -12,8 +12,8 @@
                 "Zone": {"icon": "data--center", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Public Network": {"icon": "network--public", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Enterprise Network": {"icon": "network--enterprise", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Instance Group": {"icon": "autoscaling", "format": "$LG_FORMAT_CONTAINER", "color": "$GROUP_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security Group": {"icon": "security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null),
+                "Instance Group": {"icon": "autoscaling", "format": "$LG_FORMAT_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Group": {"icon": "security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Cloud Services": {"icon": "cloud-services", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Classic Infrastructure": {"icon": "infrastructure--classic", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
             },
