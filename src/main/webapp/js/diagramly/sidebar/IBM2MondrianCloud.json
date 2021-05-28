@@ -128,7 +128,7 @@
                 "Hybrid Networking": {"icon": "hybrid-networking--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Internet": {"icon": "wikis", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Internet Services": {"icon": "ibm-cloud-internet-services", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Message Queue": {"icon": "message-queue", "format": "$LN_FORMAT_COLLAPSED", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Message Queue": {"icon": "message-queue", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
             "Load Balancers": {
@@ -217,12 +217,12 @@
         "Storage": {
             "*": {
                 "Block Storage": {"icon": "block-storage--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Block Volume": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Block Volume": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Storage": {"icon": "file-storage--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "File System": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "File System": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Object Storage": {"icon": "object-storage--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Object Bucket": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "BLOB": {"icon": "data-blob", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Object Bucket": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "BLOB": {"icon": "data-blob", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null}
 	    },
 
             "Services": {
