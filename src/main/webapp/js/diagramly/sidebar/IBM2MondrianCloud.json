@@ -202,15 +202,15 @@
 	    },
 
             "Gateways": {
-                "Gateway": {"icon": "gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "API Gateway": {"icon": "api-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "Mail Gateway": {"icon": "mail-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "Public Gateway": {"icon": "public-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "Security Gateway": {"icon": "security-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "Transit Gateway": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "User Access Gateway": {"icon": "user-access-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "VPN Gateway": {"icon": "vpn-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITYCOLOR", "$DEFAULT_PROPERTIES": null},
-                "Data Diode": {"icon": "data-diode", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Gateway": {"icon": "gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "API Gateway": {"icon": "api-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Mail Gateway": {"icon": "mail-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Public Gateway": {"icon": "public-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Gateway": {"icon": "security-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Transit Gateway": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "User Access Gateway": {"icon": "user-access-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPN Gateway": {"icon": "vpn-gateway", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Data Diode": {"icon": "data-diode", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
             }
         },
         
