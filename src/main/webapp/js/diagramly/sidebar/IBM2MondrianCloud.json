@@ -1,7 +1,7 @@
 {
     "Sidebars":{
         "Groups":{
-            "*" : {
+            "General" : {
                 "Cloud": {"icon": "default", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Cloud": {"icon": "ibm-cloud", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "VPC": {"icon": "virtual-private-cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -42,7 +42,7 @@
         },
 
         "Applications": {
-            "*": {
+            "General": {
                 "Application": {"icon": "application", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Automation Script": {"icon": "script", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Call Application": {"icon": "call-application", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -76,7 +76,7 @@
 	},
         
         "Data": {
-            "*": {
+            "General": {
                 "Database": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Data Backup": {"icon": "data-backup", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
             },
@@ -104,7 +104,7 @@
         },
         
         "Management": {
-            "*": {
+            "General": {
                 "Alerting": {"icon": "alerting", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Auditing": {"icon": "auditing", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Call Manager": {"icon": "call-manager", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -118,7 +118,7 @@
         },
         
         "Network": {
-            "*": {
+            "General": {
                 "CDN": {"icon": "content-delivery-network", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Direct Link": {"icon": "direct-link", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "DNS Service": {"icon": "dns-services", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -165,7 +165,7 @@
         },
         
         "Security": {
-            "*": {
+            "General": {
                 "Code Signing Service": {"icon": "code-signing-serice", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Integrity Management": {"icon": "file-integrity", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Protected": {"icon": "protected-file", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -215,7 +215,7 @@
         },
         
         "Storage": {
-            "*": {
+            "General": {
                 "Block Storage": {"icon": "block-storage--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Block Volume": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Storage": {"icon": "file-storage--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -239,7 +239,7 @@
         },
         
         "Users": {
-            "*": {
+            "General": {
                 "User": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Administrator User": {"icon": "it-administrator", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Service Desk User": {"icon": "it-service-desk", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
