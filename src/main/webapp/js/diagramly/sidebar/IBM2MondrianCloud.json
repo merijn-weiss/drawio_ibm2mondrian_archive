@@ -229,7 +229,7 @@
                 "Block Storage Application": {"icon": "block-storage", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Container Registry": {"icon": "container-registry", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Data Accessor": {"icon": "data-accessor", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "File Storage Application": {"icon": "default", "file-storage": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "File Storage Application": {"icon": "file-storage", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Image Repository": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Image Service": {"icon": "image-service", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Object Storage Accessor": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
