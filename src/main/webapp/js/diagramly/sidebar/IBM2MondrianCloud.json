@@ -24,7 +24,7 @@
                 "Kubernetes Service": {"icon": "container-services", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Kubernetes Replica Set": {"icon": "replicate", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Kubernetes Pod": {"icon": "cube", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Kubernetes Namespace": {"icon": "border-none", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Namespace": {"icon": "border--none", "format": "$LG_FORMAT_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Cloud Foundry": {"icon": "cloud-foundry--1", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
@@ -198,8 +198,7 @@
                 "Classic Firewall": {"icon": "classic-firewall", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Network ACL": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Network ACL Rules": {"icon": "subnet-acl-rules", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security Group Rules": {"icon": "rule", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Firewall": {"icon": "firewall", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Security Group Rules": {"icon": "rule", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
 	    },
 
             "Gateways": {
