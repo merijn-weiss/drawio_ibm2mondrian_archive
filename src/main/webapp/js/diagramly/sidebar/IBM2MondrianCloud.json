@@ -231,7 +231,7 @@
                 "Data Accessor": {"icon": "data-accessor", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Storage Application": {"icon": "default", "file-storage": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Image Repository": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Image Service": {"icon": "image-service", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Image Service": {"icon": "image-service", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Object Storage Accessor": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Object Storage Application": {"icon": "object-storage", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Object Storage Slicestor": {"icon": "slisor", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null}
