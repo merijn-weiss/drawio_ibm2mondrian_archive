@@ -2,7 +2,7 @@
     "Sidebars":{
         "Groups":{
             "*" : {
-                "Cloud": {"icon": "default", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Cloud": {"icon": "cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Cloud": {"icon": "ibm-cloud", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "VPC": {"icon": "virtual-private-cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM VPC": {"icon": "virtual-private-cloud--alt", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -200,7 +200,7 @@
         },
 
         "Kubernetes": {
-	    "Paks": {
+	    "Cloud Paks": {
         	"Application": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
         	"Business Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Data": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
