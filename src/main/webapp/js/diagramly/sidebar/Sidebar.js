@@ -35,7 +35,7 @@
 
 	Sidebar.prototype.ibm = ['Analytics', 'Applications', 'Blockchain', 'Data', 'DevOps', 'Infrastructure', 'Management', 'Miscellaneous', 'Security', 'Social', 'Users', 'VPC', 'Boxes', 'Connectors'];
 
-	Sidebar.prototype.ibm2cloud = ['Groups', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Management', 'Services', 'Network', 'Security', 'Storage', 'Users'];
+	Sidebar.prototype.ibm2cloud = ['Groups', 'Actors', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Kubernetes', 'Management', 'Network', 'Security', 'Storage'];
 
     Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
 	Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
