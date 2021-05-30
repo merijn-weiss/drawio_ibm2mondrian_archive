@@ -135,6 +135,20 @@
                 "Vehicle Servces": {"icon": "vehicle--services", "format": "$LN_FORMAT_COLLAPSED", "color": "$INDUSTRY_COLOR", "$DEFAULT_PROPERTIES": null}
             }
         },
+
+        "Kubernetes": {
+	    "Cloud Paks": {
+        	"Application": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+        	"Business Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Data": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Integration": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Multicloud Management": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Network Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "System": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Watson AIOps": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+	},
         
         "Management": {
             "*": {
@@ -201,20 +215,6 @@
 
         },
 
-        "Kubernetes": {
-	    "Cloud Paks": {
-        	"Application": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-        	"Business Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Data": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Integration": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Multicloud Management": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Network Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "System": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Watson AIOps": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null}
-            }
-	},
-        
         "Security": {
             "*": {
                 "Code Signing Service": {"icon": "code-signing-service", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
