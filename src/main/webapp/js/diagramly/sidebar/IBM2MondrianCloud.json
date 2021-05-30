@@ -165,11 +165,11 @@
             },
         
             "Devices": {
-                "Bridge": {"icon": "arrows-horizontal", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
+                "Bridge": {"icon": "arrows--horizontal", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
                 "Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
                 "Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
                 "Backend Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
-                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "multiplicity": true, "multiplicity": true, "$DEFAULT_PROPERTIES": null},
+                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "multiplicity": true, "$DEFAULT_PROPERTIES": null},
                 "Unified Communications": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
                 "Voice Router": {"icon": "voice-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
                 "Wifi Bridge": {"icon": "wifi-bridge", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": false, "$DEFAULT_PROPERTIES": null},
