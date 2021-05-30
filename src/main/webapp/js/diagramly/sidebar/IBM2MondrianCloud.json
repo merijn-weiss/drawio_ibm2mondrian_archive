@@ -300,7 +300,7 @@
     },
     
     "Variables":{
-        "multiplicity": false, "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": ""},
+        "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": ""},
         "$DEFAULT_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$DEFAULT_TEXT_DETAIL": {"font": "", "position": null},
 
