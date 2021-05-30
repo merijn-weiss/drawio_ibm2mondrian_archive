@@ -99,7 +99,7 @@
                 "Virtual Server Classic": {"icon": "instance--classic", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
 	    },
 
-            "Physical": {
+            "Devices": {
                 "Desktop Computer": {"icon": "screen", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Dedicated Host": {"icon": "ibm--cloud--dedicated--host", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Mobile Device": {"icon": "mobile", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
