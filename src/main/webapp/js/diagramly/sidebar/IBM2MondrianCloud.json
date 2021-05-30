@@ -44,7 +44,7 @@
         "Actors": {
             "*": {
                 "User": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Users": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_MULTIPLICITY_PROPERTIES": null},
+                "Users": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$MULTIPLICITY_DEFAULT_PROPERTIES": null},
                 "Group": {"icon": "group", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Events": {"icon": "events", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Administrator User": {"icon": "user--admin", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -169,7 +169,7 @@
                 "Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Backend Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_MULTIPLICITY_PROPERTIES": null},
+                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$MULTIPLICITY_DEFAULT_PROPERTIES": null},
                 "Unified Communications": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Voice Router": {"icon": "voice-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Wifi Bridge": {"icon": "wifi-bridge", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -301,7 +301,7 @@
     
     "Variables":{
         "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": false},
-        "$DEFAULT_MULTIPLICITY_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": true},
+        "$MULTIPLICITY_DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": true},
         "$DEFAULT_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$DEFAULT_TEXT_DETAIL": {"font": "", "position": null},
 
