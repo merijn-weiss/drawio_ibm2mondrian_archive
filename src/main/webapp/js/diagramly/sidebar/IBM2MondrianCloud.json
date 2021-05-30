@@ -89,14 +89,7 @@
         },
         
         "Compute": {
-            "Physical": {
-                "Desktop Computer": {"icon": "screen", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Dedicated Host": {"icon": "ibm--cloud--dedicated--host", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Mobile Device": {"icon": "mobile", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Physical Server": {"icon": "bare-metal-server", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
-	    },
-
-            "Virtual": {
+            "*": {
                 "Virtual Server": {"icon": "virtual-machine", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Virtual Server": {"icon": "instance--virtual", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Virtual Server Profile Bx": {"icon": "instance--bx", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -104,7 +97,14 @@
                 "Virtual Server Profile Mx": {"icon": "instance--mx", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Virtual Desktop": {"icon": "virtual-desktop", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Virtual Server Classic": {"icon": "instance--classic", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
-            }
+	    },
+
+            "Physical": {
+                "Desktop Computer": {"icon": "screen", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Dedicated Host": {"icon": "ibm--cloud--dedicated--host", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Mobile Device": {"icon": "mobile", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Physical Server": {"icon": "bare-metal-server", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
+	    }
 	},
         
         "Data": {
