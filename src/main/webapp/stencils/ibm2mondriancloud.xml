@@ -5766,6 +5766,44 @@
         <fill/>
     </foreground>
 </shape>
+<shape aspect="variable" h="31.265" name="password" strokewidth="inherit" w="32">
+    <connections/>
+    <foreground>
+        <path>
+            <move x="21.215" y="0.001"/>
+            <arc large-arc-flag="0" rx="10.047" ry="10.047" sweep-flag="0" x="11.599" x-axis-rotation="0" y="12.967"/>
+            <line x="0" y="24.566"/>
+            <line x="0" y="31.265"/>
+            <line x="6.699" y="31.265"/>
+            <line x="18.299" y="19.666"/>
+            <arc large-arc-flag="1" rx="10.049" ry="10.049" sweep-flag="0" x="21.215" x-axis-rotation="0" y="0.001"/>
+            <close/>
+            <move x="21.215" y="17.866"/>
+            <arc large-arc-flag="0" rx="7.83" ry="7.83" sweep-flag="1" x="18.946" x-axis-rotation="0" y="17.529"/>
+            <line x="17.665" y="17.141"/>
+            <line x="16.719" y="18.087"/>
+            <line x="13.167" y="21.639"/>
+            <line x="11.628" y="20.1"/>
+            <line x="10.049" y="21.679"/>
+            <line x="11.589" y="23.218"/>
+            <line x="9.818" y="24.989"/>
+            <line x="8.278" y="23.449"/>
+            <line x="6.699" y="25.028"/>
+            <line x="8.239" y="26.568"/>
+            <line x="5.774" y="29.032"/>
+            <line x="2.233" y="29.032"/>
+            <line x="2.233" y="25.491"/>
+            <line x="13.178" y="14.546"/>
+            <line x="14.124" y="13.6"/>
+            <line x="13.736" y="12.319"/>
+            <arc large-arc-flag="1" rx="7.816" ry="7.816" sweep-flag="1" x="21.215" x-axis-rotation="0" y="17.866"/>
+            <close/>
+        </path>
+        <fill/>
+        <ellipse h="4.466" w="4.466" x="20.098" y="6.701"/>
+        <fill/>
+    </foreground>
+</shape>
 <shape aspect="variable" h="32" name="phone--application" strokewidth="inherit" w="32">
     <connections/>
     <foreground>
