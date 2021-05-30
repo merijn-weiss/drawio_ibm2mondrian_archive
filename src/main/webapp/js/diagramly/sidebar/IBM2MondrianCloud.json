@@ -5,7 +5,7 @@
                 "Cloud": {"icon": "default", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Cloud": {"icon": "ibm-cloud", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "VPC": {"icon": "virtual-private-cloud", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IBM VPC": {"icon": "virtual-private-cloud--alt", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null),
+                "IBM VPC": {"icon": "virtual-private-cloud--alt", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Subnet : ACL": {"icon": "locked", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Subnet : ACL": {"icon": "ibm-cloud--subnets", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Region": {"icon": "location", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
