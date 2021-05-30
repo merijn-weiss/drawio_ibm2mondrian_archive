@@ -135,7 +135,7 @@
         },
         
         "Management": {
-            "*: {
+            "*": {
                 "Alerting": {"icon": "alerting", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Auditing": {"icon": "auditing", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Call Manager": {"icon": "call-manager", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
