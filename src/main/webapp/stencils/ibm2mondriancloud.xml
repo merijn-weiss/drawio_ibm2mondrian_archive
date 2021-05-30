@@ -147,6 +147,39 @@
         <fill/>
     </foreground>
 </shape>
+<shape aspect="variable" h="32" name="arrows--horizontal" strokewidth="inherit" w="32">
+    <connections/>
+    <foreground>
+        <path>
+            <move x="9.88" y="30.12"/>
+            <line x="5.107" y="25.333"/>
+            <line x="32" y="25.333"/>
+            <line x="32" y="22.667"/>
+            <line x="5.107" y="22.667"/>
+            <line x="9.88" y="17.88"/>
+            <line x="8" y="16"/>
+            <line x="0" y="24"/>
+            <line x="8" y="32"/>
+            <line x="9.88" y="30.12"/>
+            <close/>
+        </path>
+        <fill/>
+        <path>
+            <move x="32" y="8"/>
+            <line x="24" y="0"/>
+            <line x="22.12" y="1.88"/>
+            <line x="26.893" y="6.667"/>
+            <line x="0" y="6.667"/>
+            <line x="0" y="9.333"/>
+            <line x="26.893" y="9.333"/>
+            <line x="22.12" y="14.12"/>
+            <line x="24" y="16"/>
+            <line x="32" y="8"/>
+            <close/>
+        </path>
+        <fill/>
+    </foreground>
+</shape>
 <shape aspect="variable" h="32" name="autoscaling" strokewidth="inherit" w="32">
     <connections/>
     <foreground>

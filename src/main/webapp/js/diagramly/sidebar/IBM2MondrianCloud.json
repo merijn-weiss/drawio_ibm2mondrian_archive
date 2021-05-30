@@ -154,21 +154,20 @@
                 "CDN": {"icon": "content-delivery-network", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Direct Link": {"icon": "direct-link", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "DNS Service": {"icon": "dns-services", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "DNS Server": {"icon": "dns-server", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Domain": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "DNS Server": {"icon": "server--dns", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Edge Node": {"icon": "edge-node--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Floating IP": {"icon": "floating-ip", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Hybrid Networking": {"icon": "hybrid-networking--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Internet": {"icon": "wikis", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Internet Services": {"icon": "ibm-cloud-internet-services", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Internet Services": {"icon": "ibm-cloud--internet-services", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Message Queue": {"icon": "message-queue", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
             },
         
             "Devices": {
                 "Bridge": {"icon": "arrows-horizontal", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Backend Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "multiplicity": true},
                 "Unified Communications": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Voice Router": {"icon": "voice-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Wifi Bridge": {"icon": "wifi-bridge", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -177,7 +176,7 @@
                 "Wifi Router": {"icon": "wifi-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "L2 Switch": {"icon": "switch-layer-2", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "L3 Switch": {"icon": "switch-layer-3", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Backend L2 Switch": {"icon": "switch-layer-2", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend L2 Switch": {"icon": "switch-layer-2", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_PROPERTIES": null},
                 "VLAN": {"icon": "vlan", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM VLAN": {"icon": "vlan--ibm", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Proxy Server": {"icon": "server--proxy", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -216,10 +215,12 @@
         
         "Security": {
             "*": {
-                "Code Signing Service": {"icon": "code-signing-serice", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Code Signing Service": {"icon": "code-signing-service", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "File Integrity Management": {"icon": "file-integrity", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "File Protected": {"icon": "protected-file", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "File Unprotected": {"icon": "unprotected-file", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Document Protected": {"icon": "document--protected", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Document Signed": {"icon": "document--signed", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Document Security": {"icon": "document--security", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Document Unprotected": {"icon": "document--unprotected", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Intrusion Detection System": {"icon": "intrusion-prevention", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Intrusion Prevention System": {"icon": "intrusion-prevention", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Security Services": {"icon": "security-services", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -233,17 +234,16 @@
                 "Certificate": {"icon": "policy", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Credentials": {"icon": "credentials", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Encryption": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "ID Management": {"icon": "id-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Fingerprint Recognition": {"icon": "fingerprint-recognition", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Hardware Security Module": {"icon": "hardware-security-module", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Identity Access Management": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Identity Access Management": {"icon": "id-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Network Admission Control": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Signed Document": {"icon": "signed-document", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Signed Document": {"icon": "document--signed", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "SIM Card": {"icon": "sim-card", "format": "$PN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "SSH Key": {"icon": "password", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Two-Factor Authentication": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "VPN Connection": {"icon": "vpn-connection", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
-                "VPN Policy": {"icon": "vpn-policy", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Two-Factor Authentication": {"icon": "two-factor-authentication", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPN Connection": {"icon": "vpn--connection", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPN Policy": {"icon": "vpn--policy", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
 	    },
 
             "Firewalls": {
@@ -319,6 +319,7 @@
         "$PG_FORMAT_NO_CONTAINER": {"type": "pg", "layout": "expanded", "container": "no_container_transparent"},
 
         "$APPLICATIONS_COLOR": {"family": "purple", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$BACKEND_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$COMPUTE_COLOR": {"family": "magenta", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$DATA_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$DEVOPS_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
