@@ -44,32 +44,12 @@
         "Actors": {
             "*": {
                 "User": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Users": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$MULTIPLICITY_DEFAULT_PROPERTIES": null},
                 "Group": {"icon": "group", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Events": {"icon": "events", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Administrator User": {"icon": "user--admin", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Service Desk User": {"icon": "service-desk", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Military User": {"icon": "user--military", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "User Collaboration": {"icon": "collaborate", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null}
-	    },
-
-	    "Devices": {
-                "Devices": {"icon": "devices", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Laptop": {"icon": "laptop", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Mobile": {"icon": "mobile", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Tablet": {"icon": "tablet", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null}
-	    },
-
-	    "Locations": {
-                "Air": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Country Flag": {"icon": "flag", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Enterprise": {"icon": "enterprise", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Land Deployed": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Land Foot": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Land Mobile": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Location": {"icon": "location", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Navy Ship": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Navy Submarine": {"icon": "default", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null}
 	    }
 	},
 
@@ -112,17 +92,6 @@
             "*": {
                 "Database": {"icon": "data--base", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Data Backup": {"icon": "data-backup", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
-            },
-        
-            "Databases": {
-                "DataStax": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "EnterpriseDB": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "ElasticDB": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "ETCD": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "MongoDB": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "PostreSQL": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "RabbitDB": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Redis": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
             }
         },
         
@@ -136,20 +105,6 @@
             }
         },
 
-        "Kubernetes": {
-	    "Cloud Paks": {
-        	"Application": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-        	"Business Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Data": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Integration": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Multicloud Management": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Network Automation": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "System": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Watson AIOps": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null}
-            }
-	},
-        
         "Management": {
             "*": {
                 "Alerting": {"icon": "alerting", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
