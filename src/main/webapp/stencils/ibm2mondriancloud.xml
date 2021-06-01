@@ -6206,6 +6206,42 @@
         <fill/>
     </foreground>
 </shape>
+<shape aspect="variable" h="29.714" name="screen" strokewidth="inherit" w="32">
+    <connections/>
+    <foreground>
+        <path>
+            <move x="29.714" y="0"/>
+            <line x="2.286" y="0"/>
+            <arc large-arc-flag="0" rx="2.286" ry="2.286" sweep-flag="0" x="0" x-axis-rotation="0" y="2.286"/>
+            <line x="0" y="20.571"/>
+            <arc large-arc-flag="0" rx="2.286" ry="2.286" sweep-flag="0" x="2.286" x-axis-rotation="0" y="22.857"/>
+            <line x="11.429" y="22.857"/>
+            <line x="11.429" y="27.429"/>
+            <line x="6.857" y="27.429"/>
+            <line x="6.857" y="29.714"/>
+            <line x="25.143" y="29.714"/>
+            <line x="25.143" y="27.429"/>
+            <line x="20.571" y="27.429"/>
+            <line x="20.571" y="22.857"/>
+            <line x="29.714" y="22.857"/>
+            <arc large-arc-flag="0" rx="2.286" ry="2.286" sweep-flag="0" x="32" x-axis-rotation="0" y="20.571"/>
+            <line x="32" y="2.286"/>
+            <arc large-arc-flag="0" rx="2.286" ry="2.286" sweep-flag="0" x="29.714" x-axis-rotation="0" y="0"/>
+            <close/>
+            <move x="18.286" y="27.429"/>
+            <line x="13.714" y="27.429"/>
+            <line x="13.714" y="22.857"/>
+            <line x="18.286" y="22.857"/>
+            <close/>
+            <move x="29.714" y="20.571"/>
+            <line x="2.286" y="20.571"/>
+            <line x="2.286" y="2.286"/>
+            <line x="29.714" y="2.286"/>
+            <close/>
+        </path>
+        <fill/>
+    </foreground>
+</shape>
 <shape aspect="variable" h="32" name="script" strokewidth="inherit" w="27.422">
     <connections/>
     <foreground>
