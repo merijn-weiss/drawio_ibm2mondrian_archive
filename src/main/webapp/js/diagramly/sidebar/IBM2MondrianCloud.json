@@ -44,7 +44,7 @@
             "*": {
                 "User": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Group": {"icon": "group", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Events": {"icon": "events", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Event": {"icon": "events", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Administrator User": {"icon": "user--admin", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IT Service Desk User": {"icon": "service-desk", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Military User": {"icon": "user--military", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -59,7 +59,6 @@
                 "Call Application": {"icon": "phone--application", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "CLI Application": {"icon": "terminal", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "GUI Application": {"icon": "gui", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Load Balancer Application": {"icon": "load-balancer--applications", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Mobile Application": {"icon": "application--mobile", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Serverless Application": {"icon": "function", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Virtual Application": {"icon": "application--virtual", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -80,7 +79,7 @@
 
             "Devices": {
                 "Desktop Computer": {"icon": "screen", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Dedicated Host": {"icon": "ibm--cloud--dedicated--host", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Dedicated Host": {"icon": "ibm-cloud--dedicated-host", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Mobile Device": {"icon": "mobile", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Physical Server": {"icon": "bare-metal-server", "format": "$PN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
 	    }
@@ -105,15 +104,15 @@
 
         "Management": {
             "*": {
-                "Alerting": {"icon": "alerting", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Auditing": {"icon": "auditing", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Alerting": {"icon": "cloud--alerting", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Auditing": {"icon": "cloud--auditing", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Call Manager": {"icon": "call-manager", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "IT Service Management": {"icon": "it-service-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "GUI Management": {"icon": "gui-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IT Service Management": {"icon": "cloud--service-management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "GUI Management": {"icon": "gui--management", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Flow Logs": {"icon": "flow-logs-vpc", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Logging": {"icon": "logging", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Monitoring": {"icon": "monitoring", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Operational Chat": {"icon": "chat--operation", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Logging": {"icon": "cloud--logging", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Monitoring": {"icon": "cloud--monitoring", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Operational Chat": {"icon": "chat--operational", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
             }
         },
         
@@ -134,14 +133,14 @@
             "Devices": {
                 "Bridge": {"icon": "arrows--horizontal", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$MULTIPLICITY_DEFAULT_PROPERTIES": null},
                 "Backend Router": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Backend Router Group": {"icon": "router", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$MULTIPLICITY_DEFAULT_PROPERTIES": null},
-                "Voice Router": {"icon": "voice-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Voice Router": {"icon": "router--voice", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Wifi Bridge": {"icon": "wifi-bridge", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Wifi Bridge Alt": {"icon": "wifi-bridge--alt", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Wifi Controller": {"icon": "wifi--controller", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Wifi Router": {"icon": "wifi-router", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Wifi Router": {"icon": "router--wifi", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "L2 Switch": {"icon": "switch-layer-2", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "L3 Switch": {"icon": "switch-layer-3", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Backend L2 Switch": {"icon": "switch-layer-2", "format": "$LN_FORMAT_COLLAPSED", "color": "$BACKEND_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -154,15 +153,14 @@
             },
 
             "Load Balancers": {
-                "Load Balancer on VPC": {"icon": "load-balancer-on-vpc", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Load Balancer Listener": {"icon": "load-balancer-listener", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Load Balancer Pool": {"icon": "load-balancer-pool", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Application Load Balancer": {"icon": "application-load-balancer", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Classic Load Balancer": {"icon": "classic-load-balancer", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Global Load Balancer": {"icon": "global-load-balancer", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Load Balancer": {"icon": "load-balancer-on-vpc", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Local Load Balancer": {"icon": "local-load-balancer", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Network Load Balancer": {"icon": "network-load-balancer", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+                "Load Balancer on VPC": {"icon": "load-balancer--vpc", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Load Balancer Listener": {"icon": "load-balancer--listener", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Load Balancer Pool": {"icon": "load-balancer--pool", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Application Load Balancer": {"icon": "load-balancer--application", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Classic Load Balancer": {"icon": "load-balancer--classic", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Global Load Balancer": {"icon": "load-balancer--global", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Local Load Balancer": {"icon": "load-balancer--local", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Network Load Balancer": {"icon": "load-balancer--network", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
 	    }
 
         },
