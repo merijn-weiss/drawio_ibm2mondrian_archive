@@ -9,7 +9,7 @@
                 "Subnet : ACL": {"icon": "locked", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "IBM Subnet : ACL": {"icon": "ibm-cloud--subnets", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Region": {"icon": "location", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Zone": {"icon": "data--center", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Zone": {"icon": "data--base--alt", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Instance Group": {"icon": "autoscaling", "format": "$LG_FORMAT_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Security Group": {"icon": "group--security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Classic Infrastructure": {"icon": "infrastructure--classic", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
