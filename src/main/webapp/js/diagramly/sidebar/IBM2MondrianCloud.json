@@ -10,7 +10,7 @@
                 "Region": {"icon": "location", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Zone": {"icon": "data--center", "format": "$LG_FORMAT_CONTAINER", "color": "$LOCATION_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Instance Group": {"icon": "autoscaling", "format": "$LG_FORMAT_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
-                "Security Group": {"icon": "security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Group": {"icon": "group--security", "format": "$LG_FORMAT_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Classic Infrastructure": {"icon": "infrastructure--classic", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Cloud Foundry": {"icon": "cloud-foundry--1", "format": "$PG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
                 "Cloud Services": {"icon": "cloud-services", "format": "$LG_FORMAT_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
@@ -262,17 +262,17 @@
 
         "$APPLICATIONS_COLOR": {"family": "purple", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$BACKEND_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$COMPUTE_COLOR": {"family": "magenta", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$DATA_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$DEVOPS_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$COMPUTE_COLOR": {"family": "green", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DATA_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DEVOPS_COLOR": {"family": "magenta", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$GROUP_COLOR": {"family": "teal", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$INDUSTRY_COLOR": {"family": "orange", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$INDUSTRY_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$LOCATION_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$MANAGEMENT_COLOR": {"family": "teal", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$NETWORK_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$NETWORK_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$SECURITY_COLOR": {"family": "red", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$SERVICES_COLOR": {"family": "green", "fillIcon": null, "fillText": null, "fillContainer": null},
-        "$STORAGE_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$STORAGE_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$USER_COLOR": {"family": "black", "fillIcon": null, "fillText": null, "fillContainer": null}
     }
 }
