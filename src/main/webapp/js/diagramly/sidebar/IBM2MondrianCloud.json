@@ -298,8 +298,8 @@
     },
     
     "Variables":{
-        "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": false},
-        "$MULTIPLICITY_DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": true},
+        "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": ""},
+        "$MULTIPLICITY_DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": ";shapeMultiplicity=1;"},
         "$DEFAULT_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
         "$DEFAULT_TEXT_DETAIL": {"font": "", "position": null},
 
