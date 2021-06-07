@@ -35,9 +35,10 @@
 
 	Sidebar.prototype.ibm = ['Analytics', 'Applications', 'Blockchain', 'Data', 'DevOps', 'Infrastructure', 'Management', 'Miscellaneous', 'Security', 'Social', 'Users', 'VPC', 'Boxes', 'Connectors'];
 
-	Sidebar.prototype.ibm2 = ['Groups', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Management', 'Services', 'Network', 'Security', 'Storage', 'Users'];
+	Sidebar.prototype.ibm2cloud = ['Groups', 'Actors', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Kubernetes', 'Management', 'Network', 'Security', 'Storage'];
 
-	Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+    Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+	Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
 
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
@@ -81,7 +82,7 @@
 	Sidebar.prototype.aws4 = ['Arrows', 'General Resources', 'Illustrations', 'Groups', 'Analytics', 'Application Integration', 'AR VR', 'Cost Management', 'Blockchain', 
 							  'Business Applications', 'EC2 Instance Types', 'Compute', 'Containers', 'Customer Enablement', 'Customer Engagement',
 							  'Database', 'End User Computing', 'Developer Tools', 'Game Tech', 'Internet of Things', 'IoT Things', 'IoT Resources', 'Machine Learning', 'Management Governance',
-							  'Media Services', 'Migration Transfer', 'Mobile', 'Network Content Delivery', 'Quantum Technologies', 'Robotics', 'Satellite', 'Security Identity Compliance', 'Storage'];
+							  'Media Services', 'Migration Transfer', 'Mobile', 'Network Content Delivery', 'Quantum Technologies', 'Robotics', 'Satellite', 'Serverless', 'Security Identity Compliance', 'Storage'];
 
 	Sidebar.prototype.office = ['Clouds', 'Communications', 'Concepts', 'Databases', 'Devices', 'Security', 'Servers', 'Services', 'Sites', 'Users'];
 
@@ -122,11 +123,12 @@
 	                                   {id: 'sitemap'}, {id:'c4'}, {id: 'dfd'}, {id: 'threatModeling'}, {id : 'kubernetes'}, {id : 'cisco19', prefix: 'cisco19', libs: Sidebar.prototype.cisco19},
 	                                   {id: 'mscae', prefix: 'mscae', libs: ['Companies', 'EnterpriseFlat', 'IntuneFlat', 'OMSFlat', 'System CenterFlat', 'AI and ML Service', 'Analytics Service', 'Compute Service', 'Compute Service VM', 'Container Service', 'Databases Service', 'DevOps Service', 'General Service', 'Identity Service', 'Integration Service', 'Internet of Things Service', 'Intune Service', 'Management and Governance Service', 'Management and Governance Service Media', 'Migrate Service', 'Mixed Reality Service', 'Mobile Service', 'Networking Service', 'Other Category Service', 'Security Service', 'Storage Service', 'Web Service']},
 	                                   {id: 'active_directory'},
-	                                   {id: 'bpmn', prefix: 'bpmn', libs: [''/*prefix is library*/, 'Gateways', 'Events']},
+	                                   {id: 'bpmn2', prefix: 'bpmn2', libs: ['General', 'Tasks', 'Choreographies', 'Events', 'Gateways']},
 	                                   {id: 'clipart', prefix: null, libs: ['computer', 'finance', 'clipart', 'networking', 'people', 'telco']},
 	                                   {id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm},
-	                                   {id: 'ibm2', prefix: 'ibm2', libs: Sidebar.prototype.ibm2},
+	                                   {id: 'ibm2cloud', prefix: 'ibm2cloud', libs: Sidebar.prototype.ibm2cloud},
 	                                   {id: 'ibm2mondrian', prefix: 'ibm2mondrian', libs: Sidebar.prototype.ibm2mondrian},
+									   {id: 'ibm2icons', prefix: 'ibm2icons', libs: Sidebar.prototype.ibm2icons},
 	                                   {id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis},
 	                                   {id: 'cumulus', libs: ['cumulus']},
 	                                   {id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip},
@@ -320,7 +322,7 @@
 	Sidebar.prototype.isEntryVisible = function(key)
 	{
 		var config = this.getConfigurationById(key);
-		
+
 		if (config != null)
 		{
 			var id = (config.libs != null) ? ((config.prefix || '') + config.libs[0]) : key;
@@ -494,9 +496,10 @@
             			          {title: 'Cumulus', id: 'cumulus', image: IMAGE_PATH + '/sidebar-cumulus.png'},
             			          {title: 'Citrix', id: 'citrix', image: IMAGE_PATH + '/sidebar-citrix.png'},
             			          {title: 'Google Cloud Platform', id: 'gcp2', image: IMAGE_PATH + '/sidebar-gcp2.png'},
-            			          {title: 'IBM 2.0 Base', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
-            			          {title: 'IBM 2.0 Defined', id: 'ibm2', image: IMAGE_PATH + '/sidebar-ibm2.png'},
-            			          {title: 'IBM 1.0', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
+            			          {title: 'IBM Base (New)', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
+            			          {title: 'IBM Cloud (New)', id: 'ibm2cloud', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+								  {title: 'IBM Icons (New)', id: 'ibm2icons', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+            			          {title: 'IBM (Deprecated)', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
             			          {title: 'Kubernetes', id: 'kubernetes', image: IMAGE_PATH + '/sidebar-kubernetes.png'},
             			          {title: 'Network', id: 'network', image: IMAGE_PATH + '/sidebar-network.png'},
             			          {title: 'Office', id: 'office', image: IMAGE_PATH + '/sidebar-office.png'},
@@ -506,7 +509,7 @@
             			{title: mxResources.get('business'),
             			entries: [{title: 'ArchiMate 3.0', id: 'archimate3', image: IMAGE_PATH + '/sidebar-archimate3.png'},
             			          {title: mxResources.get('archiMate21'), id: 'archimate', image: IMAGE_PATH + '/sidebar-archimate.png'},
-            			          {title: mxResources.get('bpmn'), id: 'bpmn', image: IMAGE_PATH + '/sidebar-bpmn.png'},
+            			          {title: mxResources.get('bpmn') + ' 2.0', id: 'bpmn2', image: IMAGE_PATH + '/sidebar-bpmn.png'},
             			          {title: mxResources.get('sysml'), id: 'sysml', image: IMAGE_PATH + '/sidebar-sysml.png'},
             			          {title: 'Value Stream Mapping', id: 'lean_mapping', image: IMAGE_PATH + '/sidebar-leanmapping.png'}]},
             			{title: mxResources.get('other'),
@@ -1180,7 +1183,8 @@
 		this.addCitrixPalette();
 		this.addGCP2Palette();
 		this.addIBM2MondrianPalette();
-		this.addIBM2Palette();
+		this.addIBM2CloudPalette();
+		this.addIBM2IconPalette();
 		this.addIBMPalette();
 		this.addNetworkPalette();
 		this.addOfficePalette();
@@ -1190,7 +1194,7 @@
 		this.addVVDPalette();
 		this.addArchimate3Palette();
 		this.addArchiMatePalette();
-		this.addBpmnPalette(dir, false);
+		this.addBpmn2Palette();
 		this.addSysMLPalette(sysml, dir);
 		this.addLeanMappingPalette();
 		this.addCabinetsPalette();
@@ -1302,12 +1306,6 @@
 			this.searchFileData = null;
 		}
 		
-		// Logs search terms for improving search results
-		if (!this.editorUi.isOffline() && page == 0)
-		{
-			EditorUi.logEvent({category: 'Shape', action: 'search', label: searchTerms});
-		}
-		
 		if (ICONSEARCH_PATH != null)
 		{
 			success = mxUtils.bind(this, function(results, len, more, terms)
@@ -1414,6 +1412,15 @@
 					
 					graph.addCell(target);
 					graph.getModel().setTerminal(graph.getSelectionCell(), target, false);
+					
+					if (evt == null || !mxEvent.isShiftDown(evt))
+					{
+						graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [target]));
+					}
+				}
+				catch (e)
+				{
+					this.editorUi.handleError(e);
 				}
 				finally
 				{
