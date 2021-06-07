@@ -162,7 +162,7 @@
 							sbEntries.push(this.addEntry(dt + shapeName.toLowerCase(), function() {
 								const shape = shapes[shapeName];
 								var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, shape.extra, shape.id, shapeName, shape.icon);
-								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName);
+								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName, false);
 							}));
 						}
 					}
