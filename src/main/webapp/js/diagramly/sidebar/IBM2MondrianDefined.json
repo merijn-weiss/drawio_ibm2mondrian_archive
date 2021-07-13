@@ -1,0 +1,249 @@
+{
+    "Sidebars":{
+        "Groups":{
+            "Cloud Groups" : {
+                "IBM Cloud": {"icon": "ibm-cloud", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Region": {"icon": "flag", "format": "$GROUP_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Region Alt": {"icon": "location", "format": "$GROUP_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Zone": {"icon": "data--base--alt", "format": "$GROUP_CONTAINER", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Cloud Services": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Classic Infrastructure": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Account": {"icon": "user", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Access Group": {"icon": "credentials", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Resource Group": {"icon": "collaborate", "format": "$GROUP_CONTAINER", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+                  },
+        
+            "VPC Groups" : {
+                "VPC": {"icon": "virtual-private-cloud", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPC Alt": {"icon": "virtual-private-cloud--alt", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Subnet : ACL": {"icon": "locked", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Subnet : ACL Alt": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Instance Group": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Endpoints": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Group": {"icon": "security", "format": "$GROUP_NO_CONTAINER", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+                  },
+        
+            "Kubernetes Groups" : {
+                "Kubernetes Cluster": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "OpenShift Cluster": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Service": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Replica Set": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Pod": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Kubernetes Namespace": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Network Groups" : {
+                "Public Network": {"icon": "events", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Enterprise Network": {"icon": "enterprise", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Cloud Foundry": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Data Center": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Point of Presence": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Overlay Network": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VLAN": {"icon": "default", "format": "$GROUP_CONTAINER", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        "Applications": {
+            "*": {
+                "Application": {"icon": "application", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Automation": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "CLI App": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Web App": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Microservice": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Mobile App": {"icon": "mobile", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Serverless App": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$APPLICATIONS_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Compute": {
+            "*": {
+                "Virtual Server": {"icon": "virtual-machine", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Virtual Server (Expanded)": {"icon": "virtual-machine", "format": "$LN_FORMAT_EXPANDED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Instance Group": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+            
+            "Compute Devices": {
+                "Physical Server": {"icon": "archive", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Physical Server (Expanded)": {"icon": "archive", "format": "$LN_FORMAT_EXPANDED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Dedicated Host": {"icon": "archive", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Mobile Device": {"icon": "mobile", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Tablet Device": {"icon": "tablet", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Laptop Device": {"icon": "laptop", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Desktop Computer": {"icon": "devices", "format": "$LN_FORMAT_COLLAPSED", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Web Browser": {"icon": "terminal", "format": "$ACTOR_FORMAT", "color": "$COMPUTE_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Data": {
+            "*": {
+                "Database": {"icon": "data--base", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Block Volume": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "File System": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Object Bucket": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "BLOB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Databases": {
+                "DataStax DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "EDB DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "ETCD DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Mongo DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "PostreSQL DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Rabbit DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Redis DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Elastc DB": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DATA_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "DevOps": {
+            "*": {
+                "Source Repository": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Artifacts Repository": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Continuous Integration": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Continuous Deployment": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Build Tool": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Test Tool": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$DEVOPS_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Industry": {
+            "Automotive": {
+                "Mobility Services": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Vehicle Services": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "In-Vehicle API": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Connected Car": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Connect Vehicle Insights": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Finance": {
+                "Clearinghouse": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Management": {
+            "*": {
+                "Alerting": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IT Service Management": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Logging": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Monitoring": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$MANAGEMENT_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Network": {
+            "*": {
+                "Floating IP": {"icon": "connect", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "CDN": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "DNS": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VLAN": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Hybrid Networking": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Internet": {"icon": "wikis", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Transit Gateway": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Internet Services": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Direct Link": {"icon": "default", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Network Devices": {
+                "Application LB": {"icon": "parent-child", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Network LB": {"icon": "parent-child", "format": "$PN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Global LB": {"icon": "network--2", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "LB Listener": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "LB Pool": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Public Gateway": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Edge Node": {"icon": "edge-node", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Router": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend Router": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend Router Group": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Switch": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Backend Switch": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$NETWORK_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Security": {
+            "*": {
+                "Code Signing Service": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Two-Factor Authentication": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "ID Management": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "File Integrity Management": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPN Connection": {"icon": "VPN", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "VPN Policy": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Rules": {"icon": "rule", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Network ACL": {"icon": "rule", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Services": {"icon": "rule", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Certificate": {"icon": "policy", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Credentials": {"icon": "credentials", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IAM": {"icon": "fingerprint-recognition", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Security Devices": {
+                "VPN Gateway": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IDS": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "IPS": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Bastion Host": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "HSM": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Security Gateway": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Firewall": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SECURITY_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Services": {
+            "*": {
+                "Message Queue": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "API Gateway": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Container Registry": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Virtual Image Repository": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$SERVICES_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Storage": {
+            "*": {
+                "Object Storage Accessor": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Object Storage Slicestor": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null}
+            },
+        
+            "Storage Devices": {
+                "Block Storage": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "File Storage": {"icon": "default", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Object Storage": {"icon": "object-storage", "format": "$LN_FORMAT_COLLAPSED", "color": "$STORAGE_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        },
+        
+        "Users": {
+            "*": {
+                "User": {"icon": "user", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Users": {"icon": "group", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Events": {"icon": "events", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null},
+                "Collaborate": {"icon": "collaborate", "format": "$ACTOR_FORMAT", "color": "$USER_COLOR", "$DEFAULT_PROPERTIES": null}
+            }
+        }
+    },
+    
+    "Variables":{
+        "$DEFAULT_PROPERTIES": {"id": "", "text": "$DEFAULT_TEXT_DETAIL", "extra": "", "multiplicity": false},
+        "$DEFAULT_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DEFAULT_TEXT_DETAIL": {"font": "", "position": null},
+
+        "$ACTOR_FORMAT": {"type": "actor", "layout": "collapsed", "container": "no_container_transparent"},
+        "$TS_FORMAT_COLLAPSED": {"type": "ts", "layout": "collapsed", "container": "container_transparent"},
+        "$TS_FORMAT_EXPANDED": {"type": "ts", "layout": "expanded", "container": "container_transparent"},
+        "$LN_FORMAT_COLLAPSED": {"type": "ln", "layout": "collapsed", "container": "container_transparent"},
+        "$LN_FORMAT_EXPANDED": {"type": "ln", "layout": "expanded", "container": "container_transparent"},
+        "$LC_FORMAT_COLLAPSED": {"type": "lc", "layout": "collapsed", "container": "container_transparent"},
+        "$LC_FORMAT_EXPANDED": {"type": "lc", "layout": "expanded", "container": "container_transparent"},
+        "$PN_FORMAT_COLLAPSED": {"type": "pn", "layout": "collapsed", "container": "container_transparent"},
+        "$PN_FORMAT_EXPANDED": {"type": "pn", "layout": "expanded", "container": "container_transparent"},
+        "$PC_FORMAT_COLLAPSED": {"type": "pc", "layout": "collapsed", "container": "container_transparent"},
+        "$PC_FORMAT_EXPANDED": {"type": "pc", "layout": "expanded", "container": "container_transparent"},
+        "$GROUP_CONTAINER": {"type": "group", "layout": "expanded", "container": "container_transparent"},
+        "$GROUP_NO_CONTAINER": {"type": "group", "layout": "expanded", "container": "no_container_transparent"},
+
+        "$APPLICATIONS_COLOR": {"family": "purple", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$COMPUTE_COLOR": {"family": "magenta", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DATA_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$DEVOPS_COLOR": {"family": "gray", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$MANAGEMENT_COLOR": {"family": "teal", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$NETWORK_COLOR": {"family": "blue", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$SECURITY_COLOR": {"family": "red", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$SERVICES_COLOR": {"family": "green", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$STORAGE_COLOR": {"family": "cyan", "fillIcon": null, "fillText": null, "fillContainer": null},
+        "$USER_COLOR": {"family": "black", "fillIcon": null, "fillText": null, "fillContainer": null}
+    }
+}

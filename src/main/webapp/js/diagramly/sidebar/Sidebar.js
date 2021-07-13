@@ -35,6 +35,12 @@
 
 	Sidebar.prototype.ibm = ['Analytics', 'Applications', 'Blockchain', 'Data', 'DevOps', 'Infrastructure', 'Management', 'Miscellaneous', 'Security', 'Social', 'Users', 'VPC', 'Boxes', 'Connectors'];
 
+	Sidebar.prototype.ibm2cloud = ['Groups', 'Actors', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Kubernetes', 'Management', 'Network', 'Security', 'Storage'];
+
+        Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+
+        Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
+
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
 	Sidebar.prototype.gcp = ['Cards', 'Big Data', 'Compute', 'Developer Tools', 'Extras', 'Identity and Security', 'Machine Learning', 'Management Tools', 'Networking', 'Storage Databases'];
@@ -121,6 +127,9 @@
 	                                   {id: 'bpmn2', prefix: 'bpmn2', libs: ['General', 'Tasks', 'Choreographies', 'Events', 'Gateways']},
 	                                   {id: 'clipart', prefix: null, libs: ['computer', 'finance', 'clipart', 'networking', 'people', 'telco']},
 	                                   {id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm},
+	                                   {id: 'ibm2cloud', prefix: 'ibm2cloud', libs: Sidebar.prototype.ibm2cloud},
+	                                   {id: 'ibm2mondrian', prefix: 'ibm2mondrian', libs: Sidebar.prototype.ibm2mondrian},
+	                                   {id: 'ibm2icons', prefix: 'ibm2icons', libs: Sidebar.prototype.ibm2icons},
 	                                   {id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis},
 	                                   {id: 'cumulus', libs: ['cumulus']},
 	                                   {id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip},
@@ -488,7 +497,10 @@
             			          {title: 'Cumulus', id: 'cumulus', image: IMAGE_PATH + '/sidebar-cumulus.png'},
             			          {title: 'Citrix', id: 'citrix', image: IMAGE_PATH + '/sidebar-citrix.png'},
             			          {title: 'Google Cloud Platform', id: 'gcp2', image: IMAGE_PATH + '/sidebar-gcp2.png'},
-            			          {title: 'IBM', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
+            			          {title: 'IBM Base (New)', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
+            			          {title: 'IBM Cloud (New)', id: 'ibm2cloud', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+            			          {title: 'IBM Icons (New)', id: 'ibm2icons', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+            			          {title: 'IBM (Deprecated)', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
             			          {title: 'Kubernetes', id: 'kubernetes', image: IMAGE_PATH + '/sidebar-kubernetes.png'},
             			          {title: 'Network', id: 'network', image: IMAGE_PATH + '/sidebar-network.png'},
             			          {title: 'Office', id: 'office', image: IMAGE_PATH + '/sidebar-office.png'},
@@ -1171,6 +1183,9 @@
 		this.addCumulusPalette();
 		this.addCitrixPalette();
 		this.addGCP2Palette();
+		this.addIBM2MondrianPalette();
+		this.addIBM2CloudPalette();
+		this.addIBM2IconPalette();
 		this.addIBMPalette();
 		this.addNetworkPalette();
 		this.addOfficePalette();
