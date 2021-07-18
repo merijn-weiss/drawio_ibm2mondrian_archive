@@ -458,11 +458,12 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	{
 		let tagColorFamily = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FAMILY_DEFAULT);
 		let tagColorFill = mxUtils.getValue(thisShape.style, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL, mxIBM2MondrianBase.prototype.cst.TAG_COLOR_FILL_DEFAULT);
-		
+		let tagColorLine = (tagColorFill == mxIBM2MondrianBase.prototype.colorIntensity.DARK || tagColorFill == mxIBM2MondrianBase.prototype.colorIntensity.MEDIUM) ? tagColorFill : colorFillIcon;
+
 		shapeVD.tag.fill.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tag', shapeLayout, shapeVD.shape.type);
 		shapeVD.tag.fill.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.fill.colorSwatch];
 
-		shapeVD.tag.line.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorFill, 'tagLine', shapeLayout, shapeVD.shape.type);
+		shapeVD.tag.line.colorSwatch = this.getColorSwatch(tagColorFamily, tagColorLine, 'tagLine', shapeLayout, shapeVD.shape.type);
 		shapeVD.tag.line.color = this.getSelectedColorSpecification(tagColorFamily)[shapeVD.tag.line.colorSwatch];
 
 		shapeVD.tag.text = thisShape.state.cell.getAttribute('Tag-Text',null);
@@ -1317,12 +1318,14 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 		
 		let rightTagX = 0;
 
-		if(svd.shape.layout === 'collapsed')
-			rightTagX = (svd.shape.width/2 + tagWidth/2);
-		else if(svd.shape.layout === 'legend')
+		const tagSpaceRight = -1 * (outerBoxSingleWidth/2);
+		//if(svd.shape.layout === 'collapsed')
+		//	rightTagX = (svd.shape.width/2 + tagWidth/2);
+		//else 
+		if(svd.shape.layout === 'legend')
 			rightTagX = tagWidth;
 		else 
-			rightTagX = svd.shape.width - 16;
+			rightTagX = svd.shape.width - tagSpaceRight;
 
 		if(svd.shape.layout === 'legend')
 			svd.text.labelBoundsOffSetLeft = tagWidth + 8;
@@ -1335,76 +1338,91 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 		c.setDashed(false);
 		c.setStrokeWidth(1);
 
-		if(svd.tag.shape === 'circle')
-		{
-			let circleRadius = 7;
-			c.begin();
-			c.moveTo(leftTagX + circleRadius, topTagY);
-			c.lineTo(rightTagX - circleRadius, topTagY);
-			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, rightTagX - circleRadius, bottomTagY);
-			c.lineTo(leftTagX + circleRadius, bottomTagY);
-			c.arcTo(circleRadius/2, circleRadius/2, 0, 0, 1, leftTagX + circleRadius, topTagY);
-			c.close();
-		}
-		else if(svd.tag.shape === 'diamond')
-		{
-			c.begin();
-			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
-			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
-			c.lineTo(rightTagX, tagCenter);
-			c.lineTo(rightTagX - outerBoxSingleWidth/2, bottomTagY);
-			c.lineTo(leftTagX + outerBoxSingleWidth/2, bottomTagY);
-			c.lineTo(leftTagX, tagCenter);
-			c.close();
-		}
-		else if(svd.tag.shape === 'square')
-		{
-			c.begin();
-			c.moveTo(leftTagX, topTagY);
-			c.lineTo(rightTagX, topTagY);
-			c.lineTo(rightTagX, bottomTagY);
-			c.lineTo(leftTagX, bottomTagY);
-			c.lineTo(leftTagX, topTagY);
-			c.close();
-		}
-		else if(svd.tag.shape === 'triangle')
-		{
-			c.begin();
-			c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY);
-			c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY);
-			c.lineTo(rightTagX, bottomTagY);
-			c.lineTo(leftTagX, bottomTagY);
-			c.lineTo(leftTagX + outerBoxSingleWidth/2, topTagY);
-			c.close();
-		}
-		else if(svd.tag.shape === 'hexagon')
-		{
-			c.begin();
-			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
-			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
-			c.lineTo(rightTagX, tagCenter);
-			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
-			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
-			c.lineTo(leftTagX, tagCenter);
-			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);		
-			c.close();
-		}
-		else if(svd.tag.shape === 'octagon')
-		{
-			c.begin();
-			c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY);
-			c.lineTo(rightTagX - outerBoxSingleWidth/4, topTagY);
-			c.lineTo(rightTagX, topTagY + outerBoxSingleHeight/4);
-			c.lineTo(rightTagX, bottomTagY - outerBoxSingleHeight/4);
-			c.lineTo(rightTagX - outerBoxSingleWidth/4, bottomTagY);
-			c.lineTo(leftTagX + outerBoxSingleWidth/4, bottomTagY);
-			c.lineTo(leftTagX, bottomTagY - outerBoxSingleHeight/4);
-			c.lineTo(leftTagX, topTagY + outerBoxSingleHeight/4);
-			c.lineTo(leftTagX + outerBoxSingleWidth/4, topTagY);			
-			c.close();
-		}
+		let tagVisualSpecs = [
+			{offSet: -1, fillColor: '#ffffff', strokeColor: '#ffffff', lineJoin: 'bevel'},
+			{offSet: 0, fillColor: svd.tag.fill.color, strokeColor: svd.tag.line.color, lineJoin: 'miter'}];
 
-		c.fillAndStroke();
+		let lineOffSet = 0;
+
+		for(let idx = 0; idx < tagVisualSpecs.length; idx++)
+		{
+			c.setStrokeColor(tagVisualSpecs[idx].strokeColor);
+			c.setFillColor(tagVisualSpecs[idx].fillColor);
+			c.setLineJoin(tagVisualSpecs[idx].lineJoin);
+			lineOffSet = tagVisualSpecs[idx].offSet;
+
+			if(svd.tag.shape === 'circle')
+			{
+				let circleRadius = 7;
+
+				c.begin();
+				c.moveTo(leftTagX + circleRadius, topTagY + lineOffSet);
+				c.lineTo(rightTagX - circleRadius, topTagY + lineOffSet);
+				c.arcTo(circleRadius - lineOffSet, circleRadius - lineOffSet, 0, 0, 1, rightTagX - circleRadius, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + circleRadius, bottomTagY - lineOffSet);
+				c.arcTo(circleRadius - lineOffSet, circleRadius - lineOffSet, 0, 0, 1, leftTagX + circleRadius, topTagY + lineOffSet);
+				c.close();
+			}
+			else if(svd.tag.shape === 'diamond')
+			{
+				c.begin();
+				c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY + lineOffSet);
+				c.lineTo(rightTagX - outerBoxSingleWidth/2, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet, tagCenter);
+				c.lineTo(rightTagX - outerBoxSingleWidth/2, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + outerBoxSingleWidth/2, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet, tagCenter);
+				c.close();
+			}
+			else if(svd.tag.shape === 'square')
+			{
+				c.begin();
+				c.moveTo(leftTagX + lineOffSet, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet, topTagY + lineOffSet);
+				c.close();
+			}
+			else if(svd.tag.shape === 'triangle')
+			{
+				c.begin();
+				c.moveTo(leftTagX + outerBoxSingleWidth/2, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet - outerBoxSingleWidth/2, topTagY + lineOffSet);
+				c.lineTo(rightTagX - 2 * lineOffSet, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + 2 * lineOffSet, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet + outerBoxSingleWidth/2, topTagY + lineOffSet);
+				c.close();
+			}
+			else if(svd.tag.shape === 'hexagon')
+			{
+				c.begin();
+				c.moveTo(leftTagX + outerBoxSingleWidth/4, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet/2 - outerBoxSingleWidth/4, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet, tagCenter);
+				c.lineTo(rightTagX - lineOffSet/2 - outerBoxSingleWidth/4, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet/2 + outerBoxSingleWidth/4, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet, tagCenter);
+				c.lineTo(leftTagX + lineOffSet/2 + outerBoxSingleWidth/4, topTagY + lineOffSet);
+				c.close();
+			}
+			else if(svd.tag.shape === 'octagon')
+			{
+				c.begin();
+				c.moveTo(leftTagX + lineOffSet/2 + outerBoxSingleWidth/4, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet/2 - outerBoxSingleWidth/4, topTagY + lineOffSet);
+				c.lineTo(rightTagX - lineOffSet, topTagY + lineOffSet/2 + outerBoxSingleHeight/4);
+				c.lineTo(rightTagX - lineOffSet, bottomTagY - lineOffSet/2 - outerBoxSingleHeight/4);
+				c.lineTo(rightTagX - lineOffSet/2 - outerBoxSingleWidth/4, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet/2 + outerBoxSingleWidth/4, bottomTagY - lineOffSet);
+				c.lineTo(leftTagX + lineOffSet, bottomTagY - lineOffSet/2 - outerBoxSingleHeight/4);
+				c.lineTo(leftTagX + lineOffSet, topTagY + lineOffSet/2 + outerBoxSingleHeight/4);
+				c.lineTo(leftTagX + lineOffSet/2 + outerBoxSingleWidth/4, topTagY + lineOffSet);			
+				c.close();
+			}
+			
+			c.fillAndStroke();					
+		}		
 
 		if(tagText != null)
 		{
