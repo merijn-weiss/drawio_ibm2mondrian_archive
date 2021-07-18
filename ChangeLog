@@ -1,3 +1,143 @@
+12-JUL-2021: 14.8.6
+
+- Disables pointerEvents style for images https://github.com/jgraph/drawio/issues/2121
+- [jira cloud] Disables Confluence embed option due to changes in auth token valdation
+- Improvements to Lucidchart import
+
+07-JUL-2021: 14.8.5
+
+- Fixes XSS attack on GoogleGadgetServlet. Thanks to Alfred Berg for report.
+- Updates to cs translations
+
+02-JUL-2021: 14.8.4
+
+- Fixes drag and drop for edge labels with selected parents
+- [conf cloud] Fixes recent and search in embed diagrams
+
+30-JUN-2021: 14.8.3
+
+- [conf cloud] Fixes save settings with current viewer status
+- Adds function for image export in viewer
+- Fixes possible NPE https://github.com/jgraph/drawio/issues/2115
+
+
+25-JUN-2021: 14.8.2
+
+- [conf cloud] Adds lightbox to simple viewer
+- [conf+jira cloud] Fixes export downloads https://github.com/jgraph/drawio/issues/2107
+- [conf cloud] Updates self import to support data:confluence/id and links
+
+24-JUN-2021: 14.8.1
+
+- Clones existing SVG for outline rendering
+- Fixes possible ignored gesture end in outline
+- Fixes unconnected edges z-index order in vsdx import
+- Fixes line jump handling in vsdx import
+- Improves locking https://github.com/jgraph/drawio/issues/2069
+- Fixes action states and cursors for locked cells
+- Fixes selection in locked layers
+- Updates French translations
+
+17-JUN-2021: 14.8.0
+
+- Adds bringForward and sendBackward actions
+- Fixes GraphViewer toolbar and border hiding in FF
+
+16-JUN-2021: 14.7.10
+
+- [jira cloud] Adds support for uploading zipped format diagrams
+- Fixes ignored locked layers, hover icons, shape picker clipping
+
+15-JUN-2021: 14.7.9
+
+- Adds minimize to shape picker in sketch theme
+- Fixes unicode char to HTML entity on some JVMs from Gliffy
+
+14-JUN-2021: 14.7.8
+
+- [conf cloud] Adds custom templates to sketch macro add template dialog
+- [conf cloud] Fixes minor issues with templates dialog
+- Prevents showing an empty viewer when configured layers are incorrect
+- [conf cloud] Fixes template and new dialog bugs and added no file type option
+- [conf cloud] Fixes Link dialog attachment links
+- [conf cloud] Fixes centering with hidden toolbar or simple viewer
+- Adds preview button in templates dialog
+- Adds pinch to zoom CSS preview for iOS (beta)
+- Prevents scrollbars on PDF and Image Export
+- [conf cloud] Fixes settings dialog hidden buttons with certain diagram height
+
+09-JUN-2021: 14.7.7
+
+- Fixes event handling for template previews
+- Adds modified check for open browser file in standalone mode
+- Adds select edges option in context menu
+- Adds delay for double tap edit trigger before context menu
+- Hides template preview when dialog is closed
+- Adds padding for touch events on window controls
+- Fixes status bar partially visible behind buttons
+- Fixes fit icon in minimal theme
+- Fixes window position constraints in sketch theme
+- Fixes ghost cells after resume in outline
+- Fixes event timing after freehand insert
+- Fixes initial stroke width and folding for outline
+- Adds context menu options for sketch theme on touch devices
+- Reduces use of formatted text in swimlane titles
+- Fixes background page and dark mode toggle in outline
+- Fixes zOrder after dialog click in sketch theme
+- Fixes order of graph relative to dialogs
+- Fixes in-place editor width after markup toggle
+- Fixes panning with freehand on touch in minimal theme
+
+04-JUN-2021: 14.7.6
+
+- Adds delete button in sketch theme
+
+03-JUN-2021: 14.7.5
+
+- Removes padding in outline
+- Enables decimal stokewidths
+- Fixes delayed preview issue
+- Adds outline option in sketch theme
+- Hides tooltip on scroll wheel events
+- Shift+tab stops editing with no selection
+- Fixes inconsistent mouse down handling for template preview
+- Fixes inconsistent gesture start for blank template entry
+- Fixes minor style issues for sketch theme
+- Adds previews for templates
+- Fixes picker toolbar overlap on small screens for sketch theme
+- Adds padding for window controls in sketch and minimal theme
+- Uses tab key to insert tabs in labels
+- Handles tab key based on text selection while editing
+
+02-JUN-2021: 14.7.4
+
+- Sets fonts color for note shape in sketch theme
+- Consistent freehand defaults for all themes
+- Escape stops freehand drawing
+- Fixes timeout error when UI fonts are overwritten in PDF export
+- Fixes overridden indent keystroke, uses alt+tab for tab
+- Fixes tab to stop editing
+
+29-MAY-2021: 14.7.3
+
+- Updates layer dot after model changes
+- Adds 4 spaces for shift+tab while editing labels
+- Adds shift+tab to insert tab
+- Fixes for sketch and dark theme
+- Adds support for additional OrgChart type in Lucidchart import
+- Adds dot to layer for selected cells [2027]
+- Fixes issues with live preview [2257]
+- Fixes rounding errors in segment connector [2257]
+- Updates ja translations
+
+26-MAY-2021: 14.7.2
+
+- [conf cloud] Enables sketch macro
+
+25-MAY-2021: 14.7.1
+
+- Fixes edges with zero height/width src/trg cell in vsdx import
+
 20-MAY-2021: 14.7.0
 
 - Updates RoughJS to 4.4.1 with preserveVertices option

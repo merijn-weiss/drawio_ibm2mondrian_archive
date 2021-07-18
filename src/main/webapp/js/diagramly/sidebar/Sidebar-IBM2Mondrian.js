@@ -161,7 +161,12 @@
 						for (let shapeName in shapes) {
 							sbEntries.push(this.addEntry(dt + shapeName.toLowerCase(), function() {
 								const shape = shapes[shapeName];
-								var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, shape.extra, shape.id, shapeName, shape.icon);
+
+								var id = (shape.hasOwnProperty('text') && shape.text.id != null) ? shape.text.id : shape.id;  /*NEW*/
+								var text = (shape.hasOwnProperty('tag') && shape.tag.text != null) ? shape.tag.text : '';  /*NEW*/
+								var extra = Sidebar.prototype.addIBM2MondrianExtraProperties(shape);  /*NEW*/ 
+
+								var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shape.format.container, shape.text.font, /*shape.extra*/ extra, /*shape.id*/ id, shapeName, shape.icon, /*NEW*/ text);
 								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName, false);
 							}));
 						}
@@ -182,7 +187,7 @@
 		this.setCurrentSearchEntryLibrary();
 	};
 
-	Sidebar.prototype.addIBM2MondrianVertexTemplateFactory = function(shapeType, shapeLayout, shapeColor, shapeContainer, styleFont, shapeExtraStyle, elementID, elementName, iconName)
+	Sidebar.prototype.addIBM2MondrianVertexTemplateFactory = function(shapeType, shapeLayout, shapeColor, shapeContainer, styleFont, shapeExtraStyle, elementID, elementName, iconName, /*NEW*/ tagText)
 	{
 		let MBS = Sidebar.prototype.IBM2MondrianBaseShape;
 		let fixedStandardSettings = ';html=1;whiteSpace=wrap;metaEdit=1;strokeWidth=1;collapsible=0;recursiveResize=0;expand=0';
@@ -270,8 +275,45 @@
 			bg.setAttribute('Element-ID', elementID);
 			bg.setAttribute('Element-Name', elementName);
 			bg.setAttribute('Icon-Name', iconName);
+			bg.setAttribute('Tag-Text', tagText);  /*NEW*/
 		}
 		
 		return bg;
 	}
+
+	/*NEW*/
+	Sidebar.prototype.addIBM2MondrianExtraProperties = function(shape)
+	{
+		var extra = shape.extra;
+
+		if(shape.hasOwnProperty('format'))
+		{
+			if(shape.format.multiplicity != null && shape.format.multiplicity == 1)
+				extra = extra + ";shapeMultiplicity=1"
+		}
+
+		if(shape.hasOwnProperty("color"))
+		{
+			if(shape.color.intensity != null)
+				extra = extra + ";colorFillIcon=" + shape.color.intensity
+
+			if(shape.color.background != null)
+					extra = extra + ";colorBackground=" + shape.color.background + ":" + shape.color.background
+		}
+
+		if(shape.hasOwnProperty("tag"))
+		{
+			if (shape.tag.form != null)
+				extra = extra + ";tag=" + shape.tag.form
+
+			if(shape.tag.family != null)
+				extra = extra + ";tagColorFamily=" + shape.tag.family
+
+			if(shape.tag.fill != null)
+				extra = extra + ";tagColorFill=" + shape.tag.fill
+		}
+
+		return extra;
+	}
+
 })();

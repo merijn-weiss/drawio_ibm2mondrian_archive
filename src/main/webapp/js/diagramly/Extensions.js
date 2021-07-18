@@ -5943,11 +5943,11 @@ LucidImporter = {};
 					dy = Math.abs(obj.Endpoint1.y - obj.Endpoint2.y);
 				}
 				
-				var strSize = mxUtils.getSizeForString(lblTxt);
+				var strSize = mxUtils.getSizeForString(lblTxt.replace(/\n/g, '<br>'));
 				
 				if (dx == 0 || dx < dy)
 				{
-					lab.geometry.offset = new mxPoint(-textArea.Side * (strSize.width / 2 + 5 + dx), 0);
+					lab.geometry.offset = new mxPoint(Math.sign(obj.Endpoint1.y - obj.Endpoint2.y) * textArea.Side * (strSize.width / 2 + 5 + dx), 0);
 				}
 				else
 				{
@@ -6891,6 +6891,11 @@ LucidImporter = {};
 	{
 		if (style != null && key != null)
 		{
+			if (key == mxConstants.STYLE_ALIGN + 'Global')
+			{
+				key = mxConstants.STYLE_ALIGN;
+			}
+			
 			if (style.includes(';' + key + '='))
 			{
 				return true;
@@ -6986,16 +6991,19 @@ LucidImporter = {};
 				
 				var brace = null;
 				var label = null;
+				var lbl = convertText(p);
+				//TODO Handle rotation of label correctly in all cases
+				var lblSize = p.Rotation? mxUtils.getSizeForString(lbl.replace(/\n/g, '<br>'), null, null, Math.abs(w - h * 0.125)) : {width: 0, height: 0};
 				
 				if (isRightBrace)
 				{
 					brace = new mxCell('', new mxGeometry(w - h * 0.125, 0,	h * 0.125, h), 'shape=curlyBracket;rounded=1;');
-					label = new mxCell('', new mxGeometry(0, 0,	w - h * 0.125, h), 'strokeColor=none;fillColor=none;');
+					label = new mxCell('', new mxGeometry(lblSize.height, -2 * lblSize.width, w - h * 0.125, h), 'strokeColor=none;fillColor=none;');
 				}
 				else
 				{
 					brace = new mxCell('', new mxGeometry(0, 0,	h * 0.125, h), 'shape=curlyBracket;rounded=1;flipH=1;');
-					label = new mxCell('', new mxGeometry(h * 0.125, 0,	w - h * 0.125, h), 'strokeColor=none;fillColor=none;');
+					label = new mxCell('', new mxGeometry(h * 0.125 - lblSize.height, lblSize.width, w - h * 0.125, h), 'strokeColor=none;fillColor=none;');
 				}
 				
 				v.style = "strokeColor=none;fillColor=none;"
@@ -7008,7 +7016,7 @@ LucidImporter = {};
 				addAllStyles(brace.style, p, a, brace);
 
 				label.vertex = true;
-				label.value = convertText(p);
+				label.value = lbl;
 				v.insert(label);
 				
 				label.style += 	
@@ -12445,6 +12453,7 @@ LucidImporter = {};
 				else
 				{
 					v.value = convertText(p.Title);
+					v.style += 'align=center;';
 					v.style += 
 						getLabelStyle(p.Title, isLastLblHTML);
 					v.style += addAllStyles(v.style, p, a, v, isLastLblHTML);
@@ -12470,7 +12479,9 @@ LucidImporter = {};
 
 				if (p.ShadedHeader)
 				{
-					v.style += 'fillColor=#e0e0e0;';
+					var st = getColor(p.FillColor);
+					var darkerClr = getDarkerClr(st, 0.85);
+					v.style += 'fillColor=' + darkerClr + ';';
 				}
 				else
 				{
@@ -13629,7 +13640,7 @@ LucidImporter = {};
 			var fields = props.FieldNames;
 			var layoutSettings = props.LayoutSettings;
 			var cellDefaultStyle = props.BlockItemDefaultStyle || {props: {}};
-			var edgeDefaultStyle = props.EdgeItemDefaultStyle || {props: {}};
+			var edgeDefaultStyle = props.EdgeItemDefaultStyle;
 			var parents = {};
 			var idPrefix = (objId || Date.now()) + '_';
 			
@@ -13706,19 +13717,34 @@ LucidImporter = {};
 			else
 			{
 				var dataId, derivative = props.ContractMap.derivative;
-				
-				for (var i = 0; i < derivative.length; i++)
+
+	 			if (derivative == null)
 				{
-					if (derivative[i].type == 'ForeignKeyGraph')
+					//We don't have enough samples of this format, TODO improve this
+					var people = props.ContractMap.c.People;
+					dataId = people.id;
+					dataId = dataId.substr(0, dataId.lastIndexOf('_'));
+					
+					for (var j = 0; j < fields.length; j++)
 					{
-						dataId = derivative[i].c[0].id;
-						dataId = dataId.substr(0, dataId.lastIndexOf('_'));
+						fields[j] = people.f[fields[j]] || fields[j];
 					}
-					else if (derivative[i].type == 'MappedGraph')
+				}
+				else
+				{
+					for (var i = 0; i < derivative.length; i++)
 					{
-						for (var j = 0; j < fields.length; j++)
+						if (derivative[i].type == 'ForeignKeyGraph')
 						{
-							fields[j] = derivative[i].nfs[fields[j]] || fields[j];
+							dataId = derivative[i].c[0].id;
+							dataId = dataId.substr(0, dataId.lastIndexOf('_'));
+						}
+						else if (derivative[i].type == 'MappedGraph')
+						{
+							for (var j = 0; j < fields.length; j++)
+							{
+								fields[j] = derivative[i].nfs[fields[j]] || fields[j];
+							}
 						}
 					}
 				}
@@ -13784,7 +13810,12 @@ LucidImporter = {};
 						var e = new mxCell('', new mxGeometry(0, 0, 100, 100), '');
 						e.geometry.relative = true;
 						e.edge = true;
-						updateCell(e, edgeDefaultStyle.props, graph, null, null, true);
+						
+						if (edgeDefaultStyle != null && edgeDefaultStyle.props != null)
+						{
+							updateCell(e, edgeDefaultStyle.props, graph, null, null, true);
+						}
+						
 						graph.addCell(e, chartGroup, null, src, trg);
 					}
 				}

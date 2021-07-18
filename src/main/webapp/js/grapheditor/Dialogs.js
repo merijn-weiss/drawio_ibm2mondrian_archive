@@ -1853,7 +1853,6 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 	div.style.position = 'absolute';
 	div.style.width = '100%';
 	div.style.height = '100%';
-	div.style.border = '1px solid whiteSmoke';
 	div.style.overflow = 'hidden';
 
 	this.window = new mxWindow(mxResources.get('outline'), div, x, y, w, h, true, true);
@@ -1870,7 +1869,7 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		var ih = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
 		
 		x = Math.max(0, Math.min(x, iw - this.table.clientWidth));
-		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
+		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - ((urlParams['sketch'] == '1') ? 3 : 48)));
 
 		if (this.getX() != x || this.getY() != y)
 		{
@@ -1897,119 +1896,59 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		outline.destroy();
 	}
 
-	this.window.addListener(mxEvent.RESIZE, mxUtils.bind(this, function()
-   	{
-		outline.update(false);
-		outline.outline.sizeDidChange();
-   	}));
-	
 	this.window.addListener(mxEvent.SHOW, mxUtils.bind(this, function()
 	{
 		this.window.fit();
-		outline.suspended = false;
-		outline.outline.refresh();
-		outline.update();
+		outline.setSuspended(false);
 	}));
 	
 	this.window.addListener(mxEvent.HIDE, mxUtils.bind(this, function()
 	{
-		outline.suspended = true;
+		outline.setSuspended(true);
 	}));
 	
 	this.window.addListener(mxEvent.NORMALIZE, mxUtils.bind(this, function()
 	{
-		outline.suspended = false;
-		outline.update();
+		outline.setSuspended(false);
 	}));
 			
 	this.window.addListener(mxEvent.MINIMIZE, mxUtils.bind(this, function()
 	{
-		outline.suspended = true;
+		outline.setSuspended(true);
 	}));
-
-	var outlineCreateGraph = outline.createGraph;
-	outline.createGraph = function(container)
-	{
-		var g = outlineCreateGraph.apply(this, arguments);
-		g.gridEnabled = false;
-		g.pageScale = graph.pageScale;
-		g.pageFormat = graph.pageFormat;
-		g.background = (graph.background == null || graph.background == mxConstants.NONE) ? graph.defaultPageBackgroundColor : graph.background;
-		g.pageVisible = graph.pageVisible;
-
-		var current = mxUtils.getCurrentStyle(graph.container);
-		div.style.backgroundColor = current.backgroundColor;
-		
-		return g;
-	};
-	
-	function update()
-	{
-		outline.outline.pageScale = graph.pageScale;
-		outline.outline.pageFormat = graph.pageFormat;
-		outline.outline.pageVisible = graph.pageVisible;
-		outline.outline.background = (graph.background == null || graph.background == mxConstants.NONE) ? graph.defaultPageBackgroundColor : graph.background;;
-		
-		var current = mxUtils.getCurrentStyle(graph.container);
-		div.style.backgroundColor = current.backgroundColor;
-
-		if (graph.view.backgroundPageShape != null && outline.outline.view.backgroundPageShape != null)
-		{
-			outline.outline.view.backgroundPageShape.fill = graph.view.backgroundPageShape.fill;
-		}
-		
-		outline.outline.refresh();
-	};
 
 	outline.init(div);
 
-	editorUi.editor.addListener('resetGraphView', update);
-	editorUi.addListener('pageFormatChanged', update);
-	editorUi.addListener('backgroundColorChanged', update);
-	editorUi.addListener('backgroundImageChanged', update);
-	editorUi.addListener('pageViewChanged', function()
+	var zoomInAction = editorUi.actions.get('zoomIn');
+	var zoomOutAction = editorUi.actions.get('zoomOut');
+	mxEvent.addMouseWheelListener(function(evt, up)
 	{
-		update();
-		outline.update(true);
-	});
-	
-	if (outline.outline.dialect == mxConstants.DIALECT_SVG)
-	{
-		var zoomInAction = editorUi.actions.get('zoomIn');
-		var zoomOutAction = editorUi.actions.get('zoomOut');
-		
-		mxEvent.addMouseWheelListener(function(evt, up)
+		var outlineWheel = false;
+		var source = mxEvent.getSource(evt);
+
+		while (source != null)
 		{
-			var outlineWheel = false;
-			var source = mxEvent.getSource(evt);
-	
-			while (source != null)
+			if (source == outline.svg)
 			{
-				if (source == outline.outline.view.canvas.ownerSVGElement)
-				{
-					outlineWheel = true;
-					break;
-				}
-	
-				source = source.parentNode;
+				outlineWheel = true;
+				break;
 			}
-	
-			if (outlineWheel)
+
+			source = source.parentNode;
+		}
+
+		if (outlineWheel)
+		{
+			if (up)
 			{
-				if (up)
-				{
-					zoomInAction.funct();
-				}
-				else
-				{
-					zoomOutAction.funct();
-				}
+				zoomInAction.funct();
 			}
-		});
-	}
-	
-	this.outline = outline;
-	this.update = update;
+			else
+			{
+				zoomOutAction.funct();
+			}
+		}
+	});
 };
 
 /**
@@ -2021,7 +1960,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	
 	var div = document.createElement('div');
 	div.style.userSelect = 'none';
-	div.style.background = (Dialog.backdropColor == 'white') ? 'whiteSmoke' : Dialog.backdropColor;
+	div.style.background = (!Editor.isDarkMode()) ? '#fff' : Dialog.backdropColor;
 	div.style.border = '1px solid whiteSmoke';
 	div.style.height = '100%';
 	div.style.marginBottom = '10px';
@@ -2030,7 +1969,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	var tbarHeight = (!EditorUi.compactUi) ? '30px' : '26px';
 	
 	var listDiv = document.createElement('div')
-	listDiv.style.backgroundColor = (Dialog.backdropColor == 'white') ? '#dcdcdc' : Dialog.backdropColor;
+	listDiv.style.backgroundColor = (!Editor.isDarkMode()) ? '#fff' : Dialog.backdropColor;
 	listDiv.style.position = 'absolute';
 	listDiv.style.overflow = 'auto';
 	listDiv.style.left = '0px';
@@ -2069,7 +2008,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	ldiv.style.height = tbarHeight;
 	ldiv.style.overflow = 'hidden';
 	ldiv.style.padding = (!EditorUi.compactUi) ? '1px' : '4px 0px 3px 0px';
-	ldiv.style.backgroundColor = (Dialog.backdropColor == 'white') ? 'whiteSmoke' : Dialog.backdropColor;
+	ldiv.style.backgroundColor = (!Editor.isDarkMode()) ? 'whiteSmoke' : Dialog.backdropColor;
 	ldiv.style.borderWidth = '1px 0px 0px 0px';
 	ldiv.style.borderColor = '#c3c3c3';
 	ldiv.style.borderStyle = 'solid';
@@ -2262,24 +2201,51 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	}
 	
 	ldiv.appendChild(addLink);
-	div.appendChild(ldiv);	
+	div.appendChild(ldiv);
+	
+	var layerDivs = new mxDictionary();
+	
+	var dot = document.createElement('span');
+	dot.setAttribute('title', mxResources.get('selectionOnly'));
+	dot.innerHTML = '&#8226;';
+	dot.style.position = 'absolute';
+	dot.style.fontWeight = 'bold';
+	dot.style.fontSize = '16pt';
+	dot.style.right = '6px';
+	dot.style.top = '5px';
+	
+	function updateLayerDot()
+	{
+		var div = layerDivs.get(graph.getLayerForCells(graph.getSelectionCells()));
+		
+		if (div != null)
+		{
+			div.appendChild(dot);
+		}
+		else if (dot.parentNode != null)
+		{
+			dot.parentNode.removeChild(dot);
+		}
+	};
 	
 	function refresh()
 	{
 		layerCount = graph.model.getChildCount(graph.model.root)
 		listDiv.innerHTML = '';
-
+		layerDivs.clear();
+		
 		function addLayer(index, label, child, defaultParent)
 		{
 			var ldiv = document.createElement('div');
 			ldiv.className = 'geToolbarContainer';
+			layerDivs.put(child, ldiv);
 
 			ldiv.style.overflow = 'hidden';
 			ldiv.style.position = 'relative';
 			ldiv.style.padding = '4px';
 			ldiv.style.height = '22px';
 			ldiv.style.display = 'block';
-			ldiv.style.backgroundColor = (Dialog.backdropColor == 'white') ? 'whiteSmoke' : Dialog.backdropColor;
+			ldiv.style.backgroundColor = (!Editor.isDarkMode()) ? 'whiteSmoke' : Dialog.backdropColor;
 			ldiv.style.borderWidth = '0px 0px 1px 0px';
 			ldiv.style.borderColor = '#c3c3c3';
 			ldiv.style.borderStyle = 'solid';
@@ -2492,21 +2458,26 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 			if (graph.getDefaultParent() == child)
 			{
-				ldiv.style.background =  (Dialog.backdropColor == 'white') ? '#e6eff8' : '#505759';
+				ldiv.style.background = (!Editor.isDarkMode()) ? '#e6eff8' : '#505759';
 				ldiv.style.fontWeight = (graph.isEnabled()) ? 'bold' : '';
 				selectionLayer = child;
 			}
-			else
+
+			mxEvent.addListener(ldiv, 'click', function(evt)
 			{
-				mxEvent.addListener(ldiv, 'click', function(evt)
+				if (graph.isEnabled())
 				{
-					if (graph.isEnabled())
+					graph.setDefaultParent(defaultParent);
+					graph.view.setCurrentRoot(null);
+
+					if (mxEvent.isShiftDown(evt))
 					{
-						graph.setDefaultParent(defaultParent);
-						graph.view.setCurrentRoot(null);
+						graph.setSelectionCells(child.children);	
 					}
-				});
-			}
+					
+					mxEvent.consume(evt);
+				}
+			});
 			
 			listDiv.appendChild(ldiv);
 		};
@@ -2530,12 +2501,14 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		{
 			insertLink.className = 'geButton mxDisabled';
 		}
+		
+		updateLayerDot();
 	};
 
 	refresh();
 	graph.model.addListener(mxEvent.CHANGE, refresh);
 	graph.addListener('defaultParentChanged', refresh);
-
+	
 	graph.selectionModel.addListener(mxEvent.CHANGE, function()
 	{
 		if (graph.isSelectionEmpty())
@@ -2546,6 +2519,8 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		{
 			insertLink.className = 'geButton';
 		}
+		
+		updateLayerDot();
 	});
 
 	this.window = new mxWindow(mxResources.get('layers'), div, x, y, w, h, true, true);
@@ -2575,7 +2550,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		var ih = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
 		
 		x = Math.max(0, Math.min(x, iw - this.table.clientWidth));
-		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
+		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - ((urlParams['sketch'] == '1') ? 3 : 48)));
 
 		if (this.getX() != x || this.getY() != y)
 		{
