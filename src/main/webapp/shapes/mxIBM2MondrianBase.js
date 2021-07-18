@@ -701,7 +701,7 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 						const shapeTypeCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE);
 						const shapeTypePrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.SHAPE_TYPE);
 	
-						const shapeLayoutCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[0];
+						var shapeLayoutCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[0];
 						const shapeLayoutPrevious = mxIBM2MondrianBase.prototype.getStyleValue(stylePrevious, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[0];
 
 						const shapeSubLayoutCurrent = mxIBM2MondrianBase.prototype.getStyleValue(styleCurrent, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT).split(':')[1];
@@ -718,7 +718,9 @@ mxIBM2MondrianBase.prototype.installListeners = function()
 						{
 							// Define the new style
 							var styleNew = styleCurrent;
-							styleNew = mxIBM2MondrianBase.prototype.getStyle(styleNew, shapeTypeCurrent, shapeLayoutCurrent, positionTextCurrent, iconImageCurrent);
+							var updatedStyle = mxIBM2MondrianBase.prototype.getStyle(styleNew, shapeTypeCurrent, shapeLayoutCurrent, positionTextCurrent, iconImageCurrent);
+							styleNew = updatedStyle.style;
+							shapeLayoutCurrent = updatedStyle.shapeLayout;
 							styleMustUpdate = mxIBM2MondrianBase.prototype.cellMustRestyle(styleCurrent, styleNew);
 						}
 						
@@ -803,6 +805,7 @@ mxIBM2MondrianBase.prototype.redraw = function()
 	let shapeLayout = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT, mxIBM2MondrianBase.prototype.cst.SHAPE_LAYOUT_DEFAULT).split(':');;
 	this.shapeLayout = shapeLayout[0];
 	this.shapeSubLayout = shapeLayout[1];
+
 	this.shapeStyle = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_STYLE, mxIBM2MondrianBase.prototype.cst.SHAPE_STYLE_DEFAULT);
 	this.shapeMultiplicity = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.SHAPE_MULTIPLICITY, mxIBM2MondrianBase.prototype.cst.SHAPE_MULTIPLICITY_DEFAULT);
 	this.iconImage = mxUtils.getValue(this.style, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE, mxIBM2MondrianBase.prototype.cst.ICON_IMAGE_DEFAULT);
@@ -1567,12 +1570,18 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 		style = mxUtils.setStyle(style, 'expand', 0);
 
 		if(shapeLayout === 'collapsed') // a group can only be expanded so should ignore the shapeLayout setting
-			style = mxUtils.setStyle(style, 'shapeLayout', 'expanded');
+		{
+			shapeLayout = 'expanded';
+			style = mxUtils.setStyle(style, 'shapeLayout', shapeLayout);
+		}	
 	}
 	else if(shapeType === 'actor')
 	{
 		if(shapeLayout === 'expanded') // an actor can only be expanded so should ignore the shapeLayout setting
-			style = mxUtils.setStyle(style, 'shapeLayout', 'collapsed');
+		{
+			shapeLayout = 'collapsed';
+			style = mxUtils.setStyle(style, 'shapeLayout', shapeLayout);
+		}	
 	}
 
 	if(shapeLayout === 'collapsed'|| shapeLayout === 'legend')
@@ -1667,7 +1676,7 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 
 	style = mxUtils.setStyle(style, 'positionText', shapeStyle.positionText);
 
-	return style;
+	return {style, shapeLayout};
 }
 /**
  * Function: getRectangle
@@ -2014,6 +2023,9 @@ mxIBM2MondrianLegend.prototype.getDimensions = function(childCells, legendLayout
 	let showTitle = (legendLayout == 'verticalTB' || legendLayout == 'horizontalTB');;
 	let marginTop = (showTitle) ? mxIBM2MondrianLegend.legendTitelbar : mxIBM2MondrianLegend.legendPadding;
 
+	const minWidth = 64;
+	const minHeight = (showTitle) ? mxIBM2MondrianLegend.legendTitelbar + mxIBM2MondrianLegend.legendItemHeight + 2 * mxIBM2MondrianLegend.legendPadding : mxIBM2MondrianLegend.legendItemHeight + 2 * mxIBM2MondrianLegend.legendPadding; 
+
 	let width = 2 * mxIBM2MondrianLegend.legendPadding;
 	let height = marginTop;
 
@@ -2024,7 +2036,7 @@ mxIBM2MondrianLegend.prototype.getDimensions = function(childCells, legendLayout
 			if(isHorizontal)
 			{
 				width = width + childCells[j].geometry.width + mxIBM2MondrianLegend.legendPadding;
-				height = Math.max(height, childCells[j].geometry.height + marginTop + mxIBM2MondrianLegend.legendPadding);	
+				height = minHeight;//Math.max(height, childCells[j].geometry.height + marginTop + mxIBM2MondrianLegend.legendPadding);	
 			}
 			else
 			{
@@ -2033,6 +2045,9 @@ mxIBM2MondrianLegend.prototype.getDimensions = function(childCells, legendLayout
 			}
 		}	
 	}
+
+	width = Math.max(width, minWidth);
+	height = Math.max(height, minHeight);
 
 	return {width, height};
 };

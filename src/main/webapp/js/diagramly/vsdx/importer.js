@@ -45,6 +45,7 @@ var com;
                     this.debugPaths = false;
                     this.vsdxModel = null;
                     this.editorUi = editorUi;
+					this.shapeIndexShift = 0;
                 }
                 mxVsdxCodec.vsdxPlaceholder_$LI$ = function ()
                 {
@@ -1142,7 +1143,35 @@ var com;
                     return new mxPoint(x, y);
                 }
                 
-
+				mxVsdxCodec.prototype.processEdgeGeo = function (edgeShape, edge) 
+				{
+					//Detect Line jumps (best effots)
+					try
+					{
+						var rows = edgeShape.geomList.geomList[0].rows;
+						
+						for (var i = 0; i < rows.length; i++)
+						{
+							if (rows[i] instanceof com.mxgraph.io.vsdx.geometry.ArcTo)
+							{
+								edge.style += 'jumpStyle=arc;';
+								break;
+							}
+						}
+						
+						//Handle NURBS
+						for (var i = 0; i < rows.length; i++)
+						{
+							if (rows[i] instanceof com.mxgraph.io.vsdx.geometry.NURBSTo)
+							{
+								//TODO HAndle NURBS points (convert to curved edge with these points)
+								//var str = rows[i].handle({}, edgeShape);
+							}
+						}
+					}
+					catch(e){} //Ignore
+				};
+				
                 /**
                  * Adds a connected edge to the graph.
                  * These edged are the referenced in one Connect element at least.
@@ -1188,7 +1217,8 @@ var com;
                         } return null; })(this.vertexMap, new com.mxgraph.io.vsdx.ShapePageId(pageId, sourceSheet)) : null;
                     
                     var removeFirstPt = true;
-                    if (source == null) 
+					//Treat source with zero height/width as null since constraint calc will be invalid
+                    if (source == null || source.geometry.width == 0 || source.geometry.height == 0) 
                     {
                         source = graph.insertVertex(parent, null, null, Math.floor(Math.round(beginXY.x * 100) / 100), Math.floor(Math.round(beginXY.y * 100) / 100), 0, 0);
                     }
@@ -1218,7 +1248,8 @@ var com;
                         } return null; })(this.vertexMap, new com.mxgraph.io.vsdx.ShapePageId(pageId, toSheet)) : null;
                     
                     var removeLastPt = true;
-                    if (target == null) 
+					//Treat target with zero height/width as null since constraint calc will be invalid
+                    if (target == null || target.geometry.width == 0 || target.geometry.height == 0) 
                     {
                         target = graph.insertVertex(parent, null, null, Math.floor(Math.round(endXY.x * 100) / 100), Math.floor(Math.round(endXY.y * 100) / 100), 0, 0);
                     }
@@ -1325,6 +1356,9 @@ var com;
                         var pointList = edgeShape.getControlPoints(parentHeight);
                         edgeGeometry.points = (pointList);
                     }
+
+					this.processEdgeGeo(edgeShape, edge) ;
+
                     return edgeId;
                 };
                 /**
@@ -1355,7 +1389,7 @@ var com;
                         }
                         else {
                             edge = graph.createEdge(parent, null, null, null, null, com.mxgraph.io.vsdx.mxVsdxUtils.getStyleString(styleMap, "="));
-                            edge = graph.addEdge(edge, parent, null, null, edgeShape.getShapeIndex());
+                            edge = graph.addEdge(edge, parent, null, null, edgeShape.getShapeIndex() + this.shapeIndexShift++);
                         }
                         var label = edgeShape.createLabelSubShape(graph, edge);
                         if (label != null) {
@@ -1373,7 +1407,7 @@ var com;
                         }
                         else {
                             edge = graph.createEdge(parent, null, edgeShape.getTextLabel(), null, null, com.mxgraph.io.vsdx.mxVsdxUtils.getStyleString(styleMap, "="));
-                            edge = graph.addEdge(edge, parent, null, null, edgeShape.getShapeIndex());
+                            edge = graph.addEdge(edge, parent, null, null, edgeShape.getShapeIndex() + this.shapeIndexShift++);
                         }
                         var lblOffset = edgeShape.getLblEdgeOffset(graph.getView(), points);
                         edge.getGeometry().offset = (lblOffset);
@@ -1396,6 +1430,9 @@ var com;
                         var pointList = edgeShape.getControlPoints(parentHeight);
                         edgeGeometry.points = (pointList);
                     }
+
+					this.processEdgeGeo(edgeShape, edge) ;
+
                     return edge;
                 };
                 mxVsdxCodec.prototype.rotateChildEdge = function (model, parent, beginXY, endXY, points) {

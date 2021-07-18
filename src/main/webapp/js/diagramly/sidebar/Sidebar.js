@@ -37,8 +37,9 @@
 
 	Sidebar.prototype.ibm2cloud = ['Groups', 'Actors', 'Applications', 'Compute', 'Data', 'DevOps', 'Industry', 'Kubernetes', 'Management', 'Network', 'Security', 'Storage'];
 
-    Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
-	Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
+        Sidebar.prototype.ibm2mondrian = ['Base Shapes'];
+
+        Sidebar.prototype.ibm2icons = ['Icons Batch 1'];
 
 	Sidebar.prototype.allied_telesis = ['Buildings', 'Computer and Terminals', 'Media Converters', 'Security', 'Storage', 'Switch', 'Wireless'];
 
@@ -128,7 +129,7 @@
 	                                   {id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm},
 	                                   {id: 'ibm2cloud', prefix: 'ibm2cloud', libs: Sidebar.prototype.ibm2cloud},
 	                                   {id: 'ibm2mondrian', prefix: 'ibm2mondrian', libs: Sidebar.prototype.ibm2mondrian},
-									   {id: 'ibm2icons', prefix: 'ibm2icons', libs: Sidebar.prototype.ibm2icons},
+	                                   {id: 'ibm2icons', prefix: 'ibm2icons', libs: Sidebar.prototype.ibm2icons},
 	                                   {id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis},
 	                                   {id: 'cumulus', libs: ['cumulus']},
 	                                   {id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip},
@@ -322,7 +323,7 @@
 	Sidebar.prototype.isEntryVisible = function(key)
 	{
 		var config = this.getConfigurationById(key);
-
+		
 		if (config != null)
 		{
 			var id = (config.libs != null) ? ((config.prefix || '') + config.libs[0]) : key;
@@ -498,7 +499,7 @@
             			          {title: 'Google Cloud Platform', id: 'gcp2', image: IMAGE_PATH + '/sidebar-gcp2.png'},
             			          {title: 'IBM Base (New)', id: 'ibm2mondrian', image: IMAGE_PATH + '/sidebar-ibm2mondrian-base-shapes.png'},
             			          {title: 'IBM Cloud (New)', id: 'ibm2cloud', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
-								  {title: 'IBM Icons (New)', id: 'ibm2icons', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
+            			          {title: 'IBM Icons (New)', id: 'ibm2icons', image: IMAGE_PATH + '/sidebar-ibm2cloud.png'},
             			          {title: 'IBM (Deprecated)', id: 'ibm', image: IMAGE_PATH + '/sidebar-ibm.png'},
             			          {title: 'Kubernetes', id: 'kubernetes', image: IMAGE_PATH + '/sidebar-kubernetes.png'},
             			          {title: 'Network', id: 'network', image: IMAGE_PATH + '/sidebar-network.png'},
@@ -1303,7 +1304,7 @@
 		if (this.searchIndexData != null)
 		{
 			this.addSearchIndex(JSON.parse(Graph.decompress(this.searchIndexData)));
-			this.searchFileData = null;
+			this.searchIndexData = null;
 		}
 		
 		if (ICONSEARCH_PATH != null)

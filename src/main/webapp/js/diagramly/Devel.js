@@ -56,7 +56,7 @@ if (!mxIsElectron && location.protocol !== 'http:')
 				'https://dl.dropboxusercontent.com ' +
 				'https://*.google.com https://fonts.gstatic.com https://fonts.googleapis.com; ' +
 			// font-src about: is required for MathJax HTML-CSS output with STIX
-			'img-src * data:; media-src * data:; font-src * about:; ' +
+			'img-src * data: blob:; media-src * data:; font-src * about:; ' +
 			// www.draw.io required for browser data migration to app.diagrams.net and
 			// viewer.diagrams.net required for iframe embed preview
 			'frame-src %frame-src% \'self\' https://viewer.diagrams.net https://www.draw.io https://*.google.com; ' +
@@ -84,15 +84,15 @@ if (!mxIsElectron && location.protocol !== 'http:')
 			console.log('app.diagrams.net:', app_diagrams_net);
 			// TODO remove https://ajax.googleapis.com April 2022. It's old jquery domain
 			var ac_draw_io = csp.replace(/%script-src%/g, 'https://aui-cdn.atlassian.com https://connect-cdn.atl-paas.net https://ajax.googleapis.com https://cdnjs.cloudflare.com').
-					replace(/%frame-src%/g, 'https://www.lucidchart.com https://app.lucidchart.com https://lucid.app').
+					replace(/%frame-src%/g, 'https://www.lucidchart.com https://app.lucidchart.com https://lucid.app blob:').
 					replace(/%style-src%/g, 'https://aui-cdn.atlassian.com https://*.atlassian.net').
 					replace(/%connect-src%/g, '').
 					replace(/  /g, ' ');
 			console.log('ac.draw.io:', ac_draw_io);
 			var aj_draw_io = csp.replace(/%script-src%/g, 'https://connect-cdn.atl-paas.net').
-					replace(/%frame-src%/g, '').
+					replace(/%frame-src%/g, 'blob:').
 					replace(/%style-src%/g, 'https://aui-cdn.atlassian.com https://*.atlassian.net').
-					replace(/%connect-src%/g, '').
+					replace(/%connect-src%/g, 'https://api.atlassian.com').
 					replace(/  /g, ' ');
 			console.log('aj.draw.io:', aj_draw_io);
 			console.log('import.diagrams.net:', 'default-src \'self\'; worker-src blob:; img-src \'self\' blob: data: https://www.lucidchart.com ' +
@@ -246,6 +246,9 @@ mxscript(drawDevUrl + 'js/diagramly/TrelloClient.js');
 mxscript(drawDevUrl + 'js/diagramly/GitLabFile.js');
 mxscript(drawDevUrl + 'js/diagramly/GitLabLibrary.js');
 mxscript(drawDevUrl + 'js/diagramly/GitLabClient.js');
+mxscript(drawDevUrl + 'js/diagramly/NotionFile.js');
+mxscript(drawDevUrl + 'js/diagramly/NotionLibrary.js');
+mxscript(drawDevUrl + 'js/diagramly/NotionClient.js');
 
 mxscript(drawDevUrl + 'js/diagramly/App.js');
 mxscript(drawDevUrl + 'js/diagramly/Menus.js');
