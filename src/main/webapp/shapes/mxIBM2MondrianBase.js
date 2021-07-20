@@ -1318,7 +1318,8 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 		
 		let rightTagX = 0;
 
-		const tagSpaceRight = -1 * (outerBoxSingleWidth/2);
+		let tagOffSet = (svd.shape.type === 'actor' || svd.shape.type === 'ts') ? -8 : 0;
+		const tagSpaceRight = -1 * (outerBoxSingleWidth/2) - tagOffSet;
 		//if(svd.shape.layout === 'collapsed')
 		//	rightTagX = (svd.shape.width/2 + tagWidth/2);
 		//else 
