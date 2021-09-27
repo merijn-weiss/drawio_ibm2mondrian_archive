@@ -4418,7 +4418,7 @@
 			// TODO: Update sstate in Format
 			var sstate = this.format.getSelectionState();
 
-			if (sstate.style.shape != 'image' && !sstate.containsLabel && sstate.cells.length > 0)
+			if (sstate.style.shape != 'image' && !sstate.containsLabel && sstate.cells.length > 0 && sstate.style.shape != 'mxgraph.ibm2mondrian.base')
 			{
 				this.container.appendChild(this.addStyles(this.createPanel()));
 			}
@@ -7617,6 +7617,11 @@
 	mxStencilRegistry.libraries['bootstrap'] = [SHAPES_PATH + '/mxBootstrap.js', SHAPES_PATH + '/mxBasic.js', STENCIL_PATH + '/bootstrap.xml'];
 	mxStencilRegistry.libraries['gmdl'] = [SHAPES_PATH + '/mxGmdl.js', STENCIL_PATH + '/gmdl.xml'];
 	mxStencilRegistry.libraries['gcp2'] = [SHAPES_PATH + '/mxGCP2.js', STENCIL_PATH + '/gcp2.xml'];
+	mxStencilRegistry.libraries['ibm2icons'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
+	mxStencilRegistry.libraries['ibm2mondrian'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
+	mxStencilRegistry.libraries['ibm2cloud'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
+	mxStencilRegistry.libraries['ibm2core'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
+	mxStencilRegistry.libraries['ibm2industry'] = [SHAPES_PATH + '/mxIBM2MondrianBase.js', STENCIL_PATH + '/ibm2mondrian.xml'];
 	mxStencilRegistry.libraries['ibm'] = [SHAPES_PATH + '/mxIBM.js', STENCIL_PATH + '/ibm.xml'];
 	mxStencilRegistry.libraries['cabinets'] = [SHAPES_PATH + '/mxCabinets.js', STENCIL_PATH + '/cabinets.xml'];
 	mxStencilRegistry.libraries['archimate'] = [SHAPES_PATH + '/mxArchiMate.js'];
