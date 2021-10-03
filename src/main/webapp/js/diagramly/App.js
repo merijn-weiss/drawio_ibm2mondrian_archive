@@ -265,7 +265,6 @@ App.DROPINS_URL = 'https://www.dropbox.com/static/api/2/dropins.js';
  * But it doesn't work for IE11, so we fallback to the original one
  */
 App.ONEDRIVE_URL = mxClient.IS_IE11? 'https://js.live.net/v7.2/OneDrive.js' : window.DRAWIO_BASE_URL + '/js/onedrive/OneDrive.js';
-App.ONEDRIVE_INLINE_PICKER_URL = window.DRAWIO_BASE_URL + '/js/onedrive/mxODPicker.js';
 
 /**
  * Trello URL
@@ -275,7 +274,7 @@ App.TRELLO_URL = 'https://api.trello.com/1/client.js';
 /**
  * Trello JQuery dependency
  */
-App.TRELLO_JQUERY_URL = 'https://code.jquery.com/jquery-1.7.1.min.js';
+App.TRELLO_JQUERY_URL = window.DRAWIO_BASE_URL + '/js/jquery/jquery-3.3.1.min.js';
 
 /**
  * Specifies the key for the pusher project.
@@ -517,16 +516,13 @@ App.getStoredMode = function()
 						if (App.mode == App.MODE_ONEDRIVE || (window.location.hash != null &&
 							window.location.hash.substring(0, 2) == '#W'))
 						{
-							if (urlParams['inlinePicker'] == '1' || mxClient.IS_ANDROID || mxClient.IS_IOS)
+							if (urlParams['inlinePicker'] == '0')
 							{
-								mxscript(App.ONEDRIVE_INLINE_PICKER_URL, function()
-								{
-									window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used 
-								});
+								mxscript(App.ONEDRIVE_URL);
 							}
 							else
 							{
-								mxscript(App.ONEDRIVE_URL);
+								window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used 
 							}
 						}
 						else if (urlParams['chrome'] == '0')
@@ -958,17 +954,14 @@ App.main = function(callback, createUi)
 						urlParams['od'] == '1')) && (navigator.userAgent == null ||
 						navigator.userAgent.indexOf('MSIE') < 0 || document.documentMode >= 10))))
 					{
-						if (urlParams['inlinePicker'] == '1' || mxClient.IS_ANDROID || mxClient.IS_IOS)
+						if (urlParams['inlinePicker'] == '0')
 						{
-							mxscript(App.ONEDRIVE_INLINE_PICKER_URL, function()
-							{
-								window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used 
-								window.DrawOneDriveClientCallback();
-							});
+							mxscript(App.ONEDRIVE_URL, window.DrawOneDriveClientCallback);
 						}
 						else
 						{
-							mxscript(App.ONEDRIVE_URL, window.DrawOneDriveClientCallback);
+							window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used 
+							window.DrawOneDriveClientCallback();
 						}
 					}
 					// Disables client
@@ -1699,7 +1692,7 @@ App.prototype.init = function()
 				var file = this.getCurrentFile();
 				var mode = (file != null) ? file.getMode() : null;
 				
-				if (mode == App.MODE_DEVICE || mode == App.MODE_BROWSER)
+				if (urlParams['extAuth'] != '1' && (mode == App.MODE_DEVICE || mode == App.MODE_BROWSER))
 				{
 					this.showDownloadDesktopBanner();
 				}
@@ -1735,8 +1728,7 @@ App.prototype.init = function()
 					
 					var status = mxUtils.htmlEntities(mxResources.get('timeout'));
 					this.editor.setStatus('<div title="'+ status +
-						'" class="geStatusAlert" style="overflow:hidden;">' + status +
-						'</div>');
+						'" class="geStatusAlert">' + status + '</div>');
 				}
 				
 				EditorUi.logEvent({category: 'TIMEOUT-CACHE-CHECK', action: 'timeout', label: 408});
@@ -2092,29 +2084,26 @@ App.prototype.showRatingBanner = function()
 };
 
 /**
- * 
+ * Checks license in the case of Google Drive storage.
+ * IMPORTANT: Do not change this function without consulting 
+ * the privacy lead. No personal information must be sent.
  */
 App.prototype.checkLicense = function()
 {
 	var driveUser = this.drive.getUser();
-	var email = ((urlParams['dev'] == '1') ? urlParams['lic'] : null) ||
-		((driveUser != null) ? driveUser.email : null);
+	var email = (driveUser != null) ? driveUser.email : null;
 	
-	if (!this.isOffline() && !this.editor.chromeless && email != null)
+	if (!this.isOffline() && !this.editor.chromeless && email != null && driveUser.id != null)
 	{
-		// Anonymises the local part of the email address
+		// Only the domain and hashed user ID are transmitted. This code was reviewed and deemed
+		// compliant by dbenson 2021-09-01.
 		var at = email.lastIndexOf('@');
-		var domain = email;
+		var domain = (at >= 0) ? email.substring(at + 1) : '';
+		var userId = Editor.crc32(driveUser.id);
 		
-		if (at >= 0)
-		{
-			domain = email.substring(at + 1);
-			email = Editor.crc32(email.substring(0, at)) + '@' + domain;
-		}
-
 		// Timestamp is workaround for cached response in certain environments
-		mxUtils.post('/license', 'domain=' + encodeURIComponent(domain) + '&email=' + encodeURIComponent(email) + 
-				'&lc=' + encodeURIComponent(driveUser.locale) + '&ts=' + new Date().getTime(),
+		mxUtils.post('/license', 'domain=' + encodeURIComponent(domain) + '&id=' + encodeURIComponent(userId) + 
+				'&ts=' + new Date().getTime(),
 			mxUtils.bind(this, function(req)
 			{
 				try
@@ -2357,7 +2346,8 @@ App.prototype.getThumbnail = function(width, fn)
 		}
 		
 		var graph = this.editor.graph;
-		
+		var bgImg = graph.backgroundImage;
+
 		// Exports PNG for first page while other page is visible by creating a graph
 		// LATER: Add caching for the graph or SVG while not on first page
 		// To avoid refresh during save dark theme uses separate graph instance
@@ -2366,9 +2356,21 @@ App.prototype.getThumbnail = function(width, fn)
 		if (this.pages != null && (darkTheme || this.currentPage != this.pages[0]))
 		{
 			var graphGetGlobalVariable = graph.getGlobalVariable;
-			graph = this.createTemporaryGraph((darkTheme) ? graph.getDefaultStylesheet() : graph.getStylesheet());
+			graph = this.createTemporaryGraph((darkTheme) ?
+				graph.getDefaultStylesheet() : graph.getStylesheet());
+			graph.setBackgroundImage = this.editor.graph.setBackgroundImage;
 			var page = this.pages[0];
-			
+
+			if (this.currentPage == page)
+			{
+				graph.setBackgroundImage(bgImg);
+			}
+			else if (page.viewState != null && page.viewState != null)
+			{
+				bgImg = page.viewState.backgroundImage;
+				graph.setBackgroundImage(bgImg);
+			}
+
 			// Avoids override of stylesheet in getSvg for dark mode
 			if (darkTheme)
 			{
@@ -2417,7 +2419,8 @@ App.prototype.getThumbnail = function(width, fn)
 		   	{
 		   		// Continues with null in error case
 		   		success();
-		   	}, null, null, null, null, null, null, graph);
+		   	}, null, null, null, null, null, null, graph, null, null, null,
+			   null, 'diagram', null);
 		   	
 		   	result = true;
 		}
@@ -2425,8 +2428,18 @@ App.prototype.getThumbnail = function(width, fn)
 		{
 			var canvas = document.createElement('canvas');
 			var bounds = graph.getGraphBounds();
+			var t = graph.view.translate;
+			var s = graph.view.scale;
+
+			if (bgImg != null)
+			{
+				bounds.add(new mxRectangle(
+					(t.x + bgImg.x) * s, (t.y + bgImg.y) * s,
+					bgImg.width * s, bgImg.height * s));
+			}
+
 			var scale = width / bounds.width;
-			
+
 			// Limits scale to 1 or 2 * width / height
 			scale = Math.min(1, Math.min((width * 3) / (bounds.height * 4), scale));
 			
@@ -2456,6 +2469,16 @@ App.prototype.getThumbnail = function(width, fn)
 			ctx.fillRect(x0, y0, Math.ceil(bounds.width + 4), Math.ceil(bounds.height + 4));
 			ctx.restore();
 			
+			// Paints background image
+			if (bgImg != null)
+			{
+				var img = new Image();
+				img.src = bgImg.src;
+
+				ctx.drawImage(img, bgImg.x * scale, bgImg.y * scale,
+					bgImg.width * scale, bgImg.height * scale);
+			}
+			
 			var htmlCanvas = new mxJsCanvas(canvas);
 			
 			// NOTE: htmlCanvas passed into async canvas is only used for image
@@ -2469,7 +2492,7 @@ App.prototype.getThumbnail = function(width, fn)
 			
 			// Render graph
 			var imgExport = new mxImageExport();
-			
+
 			imgExport.drawShape = function(state, canvas)
 			{
 				if (state.shape instanceof mxShape && state.shape.checkBounds())
@@ -5318,7 +5341,8 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 							// Shows a warning if a copy was opened which happens
 							// eg. for .png files in IE as they cannot be written
 							var status = mxResources.get('copyCreated');
-							this.editor.setStatus('<div title="'+ status + '" class="geStatusAlert" style="overflow:hidden;">' + status + '</div>');
+							this.editor.setStatus('<div title="'+ status +
+								'" class="geStatusAlert">' + status + '</div>');
 						}
 						
 						if (success != null)
@@ -5879,7 +5903,11 @@ App.prototype.fetchAndShowNotification = function(target)
 					return b.timestamp - a.timestamp;
 				});
 
-				localStorage.setItem(cachedNotifKey, JSON.stringify({ts: Date.now(), notifs: notifs}));
+				if (isLocalStorage)
+				{
+					localStorage.setItem(cachedNotifKey, JSON.stringify({ts: Date.now(), notifs: notifs}));
+				}
+				
 				this.fetchingNotif = false;	
 				processNotif(notifs);
 			}
@@ -5899,7 +5927,6 @@ App.prototype.showNotification = function(notifs, lsReadFlag)
 		
 		if (countEl == null)
 		{
-			EditorUi.logError('Error: element (.geNotification-count) is null in showNotification in shouldAnimate', null, 5769);
 			return;
 		}
 		
@@ -5921,7 +5948,7 @@ App.prototype.showNotification = function(notifs, lsReadFlag)
 			unread[i].className = 'circle';
 		}
 		
-		if (notifs[0])
+		if (isLocalStorage && notifs[0])
 		{
 			localStorage.setItem(lsReadFlag, notifs[0].timestamp);
 		}
@@ -6012,7 +6039,7 @@ App.prototype.showNotification = function(notifs, lsReadFlag)
 	
 	if (notifListEl == null)
 	{
-		EditorUi.logError('Error: element (geNotifList) is null in showNotification', null, 5859);
+		return; //This shouldn't happen and no meaning of continuing
 	}
 	else if (notifs.length == 0)
 	{
@@ -6232,7 +6259,7 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 			{
 				// TODO: Add callback with url param for clickable status message
 				// "File exported. Click here to open folder."
-//				this.editor.setStatus('<div class="geStatusMessage" style="cursor:pointer;">' +
+//				this.editor.setStatus('<div class="geStatusMessage">' +
 //					mxResources.get('saved') + '</div>');
 //				
 //				// Installs click handler for opening
@@ -6242,6 +6269,8 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 //					
 //					if (links.length > 0)
 //					{
+//						links[0].style.cursor = 'pointer';
+//
 //						mxEvent.addListener(links[0], 'click', mxUtils.bind(this, function()
 //						{
 //							if (resp != null && resp.id != null)
@@ -7029,7 +7058,7 @@ App.prototype.updateUserElement = function()
 	    	{
 				evt.preventDefault();
 			}));
-			
+
 			mxEvent.addListener(this.userElement, 'click', mxUtils.bind(this, function(evt)
 			{
 				if (this.userPanel == null)
@@ -7037,10 +7066,13 @@ App.prototype.updateUserElement = function()
 					var div = document.createElement('div');
 					div.className = 'geDialog';
 					div.style.position = 'absolute';
-					div.style.top = (this.userElement.clientTop + this.userElement.clientHeight + 6) + 'px';
+					div.style.top = (this.userElement.clientTop +
+						this.userElement.clientHeight + 6) + 'px';
+					div.style.zIndex = 5;
 					div.style.right = '36px';
 					div.style.padding = '0px';
 					div.style.cursor = 'default';
+					div.style.minWidth = '300px';
 					
 					this.userPanel = div;
 				}
@@ -7107,22 +7139,58 @@ App.prototype.updateUserElement = function()
 							var createUserRow = mxUtils.bind(this, function (user)
 							{
 								var tr = document.createElement('tr');
-								tr.style.cssText = user.isCurrent? '' : 'background-color: whitesmoke; cursor: pointer';
 								tr.setAttribute('title', 'User ID: ' + user.id);
-								tr.innerHTML = '<td valign="middle" style="height: 59px;width: 66px;' + 
-									(user.isCurrent? '' : 'border-top: 1px solid rgb(224, 224, 224);') + '">' +
-									'<img width="50" height="50" style="margin: 4px 8px 0 8px;border-radius:50%;" src="' + 
-									((user.pictureUrl != null) ? user.pictureUrl : this.defaultUserPicture) + '"/>' +
-									'</td><td valign="middle" style="white-space:nowrap;' +
-									((user.pictureUrl != null) ? 'padding-top:4px;' : '') +
-									(user.isCurrent? '' : 'border-top: 1px solid rgb(224, 224, 224);') +
-									'">' + mxUtils.htmlEntities(user.displayName) + '<br>' +
-									'<small style="color:gray;">' + mxUtils.htmlEntities(user.email) +
-									'</small><div style="margin-top:4px;"><i>' +
-									mxResources.get('googleDrive') + '</i></div>';
-								
+
+								var td = document.createElement('td');
+								td.setAttribute('valig', 'middle');
+								td.style.height = '59px';
+								td.style.width = '66px';
+
+								var img = document.createElement('img');
+								img.setAttribute('width', '50');
+								img.setAttribute('height', '50');
+								img.setAttribute('border', '0');
+								img.setAttribute('src', (user.pictureUrl != null) ? user.pictureUrl : this.defaultUserPicture);
+								img.style.borderRadius = '50%';
+								img.style.margin = '4px 8px 0 8px';
+								td.appendChild(img);
+								tr.appendChild(td);
+	
+								var td = document.createElement('td');
+								td.setAttribute('valign', 'middle');
+								td.style.whiteSpace = 'nowrap';
+								td.style.paddingTop = '4px';
+								td.style.maxWidth = '0';
+								td.style.overflow = 'hidden';
+								td.style.textOverflow = 'ellipsis';
+								mxUtils.write(td, user.displayName +
+									((user.isCurrent && driveUsers.length > 1) ?
+									' (' + mxResources.get('default') + ')' : ''));
+	
+								if (user.email != null)
+								{
+									mxUtils.br(td);
+	
+									var small = document.createElement('small');
+									small.style.color = 'gray';
+									mxUtils.write(small, user.email);
+									td.appendChild(small);
+								}
+	
+								var div = document.createElement('div');
+								div.style.marginTop = '4px';
+
+								var i = document.createElement('i');
+								mxUtils.write(i, mxResources.get('googleDrive'));
+								div.appendChild(i);
+								td.appendChild(div);
+								tr.appendChild(td);
+
 								if (!user.isCurrent)
 								{
+									tr.style.cursor = 'pointer';
+									tr.style.opacity = '0.3';
+
 									mxEvent.addListener(tr, 'click', mxUtils.bind(this, function(evt)
 									{
 										closeFile(mxUtils.bind(this, function()
@@ -7151,7 +7219,10 @@ App.prototype.updateUserElement = function()
 							connected = true;
 							
 							var driveUserTable = document.createElement('table');
-							driveUserTable.style.cssText ='font-size:10pt;padding: 20px 0 0 0;min-width: 300px;border-spacing: 0;';
+							driveUserTable.style.borderSpacing = '0';
+							driveUserTable.style.fontSize = '10pt';
+							driveUserTable.style.width = '100%';
+							driveUserTable.style.padding = '10px';
 
 							for (var i = 0; i < driveUsers.length; i++)
 							{
@@ -7162,7 +7233,7 @@ App.prototype.updateUserElement = function()
 							
 							var div = document.createElement('div');
 							div.style.textAlign = 'left';
-							div.style.padding = '8px';
+							div.style.padding = '10px';
 							div.style.whiteSpace = 'nowrap';
 							div.style.borderTop = '1px solid rgb(224, 224, 224)';
 
@@ -7224,19 +7295,69 @@ App.prototype.updateUserElement = function()
 							
 							connected = true;
 							var userTable = document.createElement('table');
-							userTable.style.cssText = 'font-size:10pt;padding:' + (connected? '10' : '20') + 'px 20px 10px 10px;';
-							
-							userTable.innerHTML += '<tr><td valign="top">' +
-								((logo != null) ? '<img style="margin-right:6px;" src="' + logo + '" width="40" height="40"/></td>' : '') +
-								'<td valign="middle" style="white-space:nowrap;">' + mxUtils.htmlEntities(user.displayName) +
-								((user.email != null) ? '<br><small style="color:gray;">' + mxUtils.htmlEntities(user.email) + '</small>' : '') +
-								((label != null) ? '<div style="margin-top:4px;"><i>' + mxUtils.htmlEntities(label) + '</i></div>' : '') +
-								'</td></tr>';
-							
+							userTable.style.borderSpacing = '0';
+							userTable.style.fontSize = '10pt';
+							userTable.style.width = '100%';
+							userTable.style.padding = '10px';
+
+							var tbody = document.createElement('tbody');
+							var row = document.createElement('tr');
+							var td = document.createElement('td');
+							td.setAttribute('valig', 'top');
+							td.style.width = '40px';
+
+							if (logo != null)
+							{
+								var img = document.createElement('img');
+								img.setAttribute('width', '40');
+								img.setAttribute('height', '40');
+								img.setAttribute('border', '0');
+								img.setAttribute('src', logo);
+								img.style.marginRight = '6px';
+
+								td.appendChild(img);
+							}
+
+							row.appendChild(td);
+
+							var td = document.createElement('td');
+							td.setAttribute('valign', 'middle');
+							td.style.whiteSpace = 'nowrap';
+							td.style.maxWidth = '0';
+							td.style.overflow = 'hidden';
+							td.style.textOverflow = 'ellipsis';
+
+							mxUtils.write(td, user.displayName);
+
+							if (user.email != null)
+							{
+								mxUtils.br(td);
+
+								var small = document.createElement('small');
+								small.style.color = 'gray';
+								mxUtils.write(small, user.email);
+								td.appendChild(small);
+							}
+
+							if (label != null)
+							{
+								var div = document.createElement('div');
+								div.style.marginTop = '4px';
+
+								var i = document.createElement('i');
+								mxUtils.write(i, label);
+								div.appendChild(i);
+								td.appendChild(div);
+							}
+
+							row.appendChild(td);
+							tbody.appendChild(row);
+							userTable.appendChild(tbody);
+
 							this.userPanel.appendChild(userTable);
 							var div = document.createElement('div');
 							div.style.textAlign = 'center';
-							div.style.paddingBottom = '12px';
+							div.style.padding = '10px';
 							div.style.whiteSpace = 'nowrap';
 							
 							if (logout != null)
@@ -7441,7 +7562,7 @@ App.prototype.updateUserElement = function()
 					{
 						var div = document.createElement('div');
 						div.style.textAlign = 'center';
-						div.style.padding = '20px 20px 10px 10px';
+						div.style.padding = '10px';
 						div.innerHTML = mxResources.get('notConnected');
 						
 						this.userPanel.appendChild(div);
@@ -7449,7 +7570,7 @@ App.prototype.updateUserElement = function()
 					
 					var div = document.createElement('div');
 					div.style.textAlign = 'center';
-					div.style.padding = '12px';
+					div.style.padding = '10px';
 					div.style.background = Editor.isDarkMode() ? '' : 'whiteSmoke';
 					div.style.borderTop = '1px solid #e0e0e0';
 					div.style.whiteSpace = 'nowrap';
@@ -7583,5 +7704,8 @@ Editor.prototype.resetGraph = function()
 	editorResetGraph.apply(this, arguments);
 	
 	// Overrides default with persisted value
-	this.graph.pageFormat = mxSettings.getPageFormat();
+	if (this.graph.defaultPageFormat == null)
+	{
+		this.graph.pageFormat = mxSettings.getPageFormat();
+	}
 };
