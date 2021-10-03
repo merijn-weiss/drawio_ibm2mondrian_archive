@@ -17,6 +17,31 @@ EditorUi = function(editor, container, lightbox)
 	this.initialDefaultVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
 	this.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
 
+	if (lightbox)
+	{
+		// Overrides graph bounds to include background pages
+		var graphGetGraphBounds = graph.getGraphBounds;
+
+		graph.getGraphBounds = function(img)
+		{
+			var bounds = graphGetGraphBounds.apply(this, arguments);
+			var img = this.backgroundImage;
+
+			if (img != null)
+			{
+				var t = this.view.translate;
+				var s = this.view.scale;
+
+				bounds.add(new mxRectangle(
+					(t.x + img.x) * s, (t.y + img.y) * s,
+					img.width * s, img.height * s));
+			}
+	
+			return bounds;
+		};
+	}
+
+
 	// Faster scrollwheel zoom is possible with CSS transforms
 	if (graph.useCssTransforms)
 	{
@@ -162,7 +187,7 @@ EditorUi = function(editor, container, lightbox)
 						 ['startSize', 'endSize'],
 						 ['sourcePerimeterSpacing', 'targetPerimeterSpacing'],
 		                 ['strokeColor', 'strokeWidth'],
-		                 ['fillColor', 'gradientColor'],
+		                 ['fillColor', 'gradientColor', 'gradientDirection'],
 		                 ['align', 'verticalAlign'],
 		                 ['opacity'],
 		                 ['html']];
@@ -1178,22 +1203,19 @@ EditorUi.prototype.installShapePicker = function()
 			ui.hideShapePicker();
 		}
 	}));
-	
-	graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
+
+	var hidePicker = mxUtils.bind(this, function()
 	{
 		ui.hideShapePicker(true);
-	}));
+	});
 	
-	graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
-	{
-		ui.hideShapePicker(true);
-	}));
-	
-	graph.getModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
-	{
-		ui.hideShapePicker(true);
-	}));
-	
+	graph.addListener('wheel', hidePicker);
+	graph.addListener(mxEvent.ESCAPE, hidePicker);
+	graph.view.addListener(mxEvent.SCALE, hidePicker);
+	graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, hidePicker);
+	graph.getSelectionModel().addListener(mxEvent.CHANGE, hidePicker);
+	graph.getModel().addListener(mxEvent.CHANGE, hidePicker);
+
 	// Counts as popup menu
 	var popupMenuHandlerIsMenuShowing = graph.popupMenuHandler.isMenuShowing;
 	 
@@ -1212,9 +1234,9 @@ EditorUi.prototype.installShapePicker = function()
 			if (cell == null && ui.sidebar != null && !mxEvent.isShiftDown(evt) &&
 				!graph.isCellLocked(graph.getDefaultParent()))
 			{
-				mxEvent.consume(evt);
 				var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-				
+				mxEvent.consume(evt);
+
 				// Asynchronous to avoid direct insert after double tap
 				window.setTimeout(mxUtils.bind(this, function()
 				{
@@ -1227,9 +1249,10 @@ EditorUi.prototype.installShapePicker = function()
 			}
 		}
 	};
-	
+
 	if (this.hoverIcons != null)
 	{
+		this.hoverIcons.addListener('reset', hidePicker);
 		var hoverIconsDrag = this.hoverIcons.drag;
 		
 		this.hoverIcons.drag = function()
@@ -1282,22 +1305,123 @@ EditorUi.prototype.installShapePicker = function()
 				hoverIconsExecute.apply(this, arguments);
 			}
 		};
+
+		var thread = null;
+
+		this.hoverIcons.addListener('focus', mxUtils.bind(this, function(sender, evt)
+		{
+			if (thread != null)
+			{
+				window.clearTimeout(thread);
+			}
+
+			thread = window.setTimeout(mxUtils.bind(this, function()
+			{
+				var arrow = evt.getProperty('arrow');
+				var dir = evt.getProperty('direction');
+				var mouseEvent = evt.getProperty('event');
+
+				var rect = arrow.getBoundingClientRect();
+				var offset = mxUtils.getOffset(graph.container);
+				var x = graph.container.scrollLeft + rect.x - offset.x;
+				var y = graph.container.scrollTop + rect.y - offset.y;
+
+				var temp = graph.getCompositeParent((this.hoverIcons.currentState != null) ?
+					this.hoverIcons.currentState.cell : null);
+				var div = ui.showShapePicker(x, y, temp, mxUtils.bind(this, function(cell)
+				{
+					if (cell != null)
+					{
+						graph.connectVertex(temp, dir, graph.defaultEdgeLength, mouseEvent, true, true, function(x, y, execute)
+						{
+							execute(cell);
+								
+							if (ui.hoverIcons != null)
+							{
+								ui.hoverIcons.update(graph.view.getState(cell));
+							}
+						}, function(cells)
+						{
+							graph.selectCellsForConnectVertex(cells);
+						}, mouseEvent, this.hoverIcons);
+					}
+				}), dir, true);
+
+				this.centerShapePicker(div, rect, x, y, dir);
+				mxUtils.setOpacity(div, 30);
+
+				mxEvent.addListener(div, 'mouseenter', function()
+				{
+					mxUtils.setOpacity(div, 100);
+				});
+
+				mxEvent.addListener(div, 'mouseleave', function()
+				{
+					ui.hideShapePicker();
+				});
+			}), Editor.shapePickerHoverDelay);
+		}));
+
+		this.hoverIcons.addListener('blur', mxUtils.bind(this, function(sender, evt)
+		{
+			if (thread != null)
+			{
+				window.clearTimeout(thread);
+			}
+		}));
 	}
 };
 
 /**
  * Creates a temporary graph instance for rendering off-screen content.
  */
-EditorUi.prototype.showShapePicker = function(x, y, source, callback, direction)
+EditorUi.prototype.centerShapePicker = function(div, rect, x, y, dir)
+{
+	if (dir == mxConstants.DIRECTION_EAST || dir == mxConstants.DIRECTION_WEST)
+	{
+		div.style.width = '40px';
+	}
+
+	var r2 = div.getBoundingClientRect();
+
+	if (dir == mxConstants.DIRECTION_NORTH)
+	{
+		x -= r2.width / 2 - 10;
+		y -= r2.height + 6;
+	}
+	else if (dir == mxConstants.DIRECTION_SOUTH)
+	{
+		x -= r2.width / 2 - 10;
+		y += rect.height + 6;
+	}
+	else if (dir == mxConstants.DIRECTION_WEST)
+	{
+		x -= r2.width + 6;
+		y -= r2.height / 2 - 10;
+	}
+	else if (dir == mxConstants.DIRECTION_EAST)
+	{
+		x += rect.width + 6;
+		y -= r2.height / 2 - 10;
+	}
+
+	div.style.left = x + 'px';
+	div.style.top = y + 'px';
+};
+
+/**
+ * Creates a temporary graph instance for rendering off-screen content.
+ */
+EditorUi.prototype.showShapePicker = function(x, y, source, callback, direction, hovering)
 {
 	var div = this.createShapePicker(x, y, source, callback, direction, mxUtils.bind(this, function()
 	{	
 		this.hideShapePicker();
-	}), this.getCellsForShapePicker(source));
+	}), this.getCellsForShapePicker(source, hovering), hovering);
 	
 	if (div != null)
 	{
-		if (this.hoverIcons != null)
+		if (this.hoverIcons != null && !hovering)
 		{
 			this.hoverIcons.reset();
 		}
@@ -1311,12 +1435,14 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback, direction)
 		this.shapePickerCallback = callback;
 		this.shapePicker = div;
 	}
+
+	return div;
 };
 
 /**
  * Creates a temporary graph instance for rendering off-screen content.
  */
-EditorUi.prototype.createShapePicker = function(x, y, source, callback, direction, afterClick, cells)
+EditorUi.prototype.createShapePicker = function(x, y, source, callback, direction, afterClick, cells, hovering)
 {
 	var div = null;
 	
@@ -1332,12 +1458,16 @@ EditorUi.prototype.createShapePicker = function(x, y, source, callback, directio
 		
 		// Do not place entry under pointer for touch devices
 		var w = (cells.length < 6) ? cells.length * 35 : 140;
-		div.className = 'geToolbarContainer geSidebarContainer geSidebar';
+		div.className = 'geToolbarContainer geSidebarContainer';
 		div.style.cssText = 'position:absolute;left:' + x + 'px;top:' + y +
 			'px;width:' + w + 'px;border-radius:10px;padding:4px;text-align:center;' +
 			'box-shadow:0px 0px 3px 1px #d1d1d1;padding: 6px 0 8px 0;' +
 			'z-index: ' + mxPopupMenu.prototype.zIndex + 1 + ';';
-		mxUtils.setPrefixedStyle(div.style, 'transform', 'translate(-22px,-22px)');
+
+		if (!hovering)
+		{
+			mxUtils.setPrefixedStyle(div.style, 'transform', 'translate(-22px,-22px)');
+		}
 		
 		if (graph.background != null && graph.background != mxConstants.NONE)
 		{
@@ -1408,7 +1538,7 @@ EditorUi.prototype.createShapePicker = function(x, y, source, callback, directio
 			});
 		});
 		
-		for (var i = 0; i < cells.length; i++)
+		for (var i = 0; i < (hovering ? Math.min(cells.length, 4) : cells.length); i++)
 		{
 			addCell(cells[i]);
 		}
@@ -1436,7 +1566,7 @@ EditorUi.prototype.createShapePicker = function(x, y, source, callback, directio
 /**
  * Creates a temporary graph instance for rendering off-screen content.
  */
-EditorUi.prototype.getCellsForShapePicker = function(cell)
+EditorUi.prototype.getCellsForShapePicker = function(cell, hovering)
 {
 	var createVertex = mxUtils.bind(this, function(style, w, h, value)
 	{
@@ -1444,11 +1574,11 @@ EditorUi.prototype.getCellsForShapePicker = function(cell)
 	});
 	
 	return [(cell != null) ? this.editor.graph.cloneCell(cell) :
-			createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;', 40, 20, 'Text'),
+			createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;', 40, 20, 'Text'),
 		createVertex('whiteSpace=wrap;html=1;'),
-		createVertex('rounded=1;whiteSpace=wrap;html=1;'),
 		createVertex('ellipse;whiteSpace=wrap;html=1;'),
 		createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80),
+		createVertex('rounded=1;whiteSpace=wrap;html=1;'),
 		createVertex('shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;'),
 		createVertex('shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;', 120, 60),
 		createVertex('shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;', 120, 80),
@@ -1458,11 +1588,7 @@ EditorUi.prototype.getCellsForShapePicker = function(cell)
 		createVertex('shape=document;whiteSpace=wrap;html=1;boundedLbl=1;', 120, 80),
 		createVertex('shape=tape;whiteSpace=wrap;html=1;', 120, 100),
 		createVertex('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80),
-		createVertex('shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;', 60, 80),
-		createVertex('shape=callout;rounded=1;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;', 120, 80),
-		createVertex('shape=doubleArrow;whiteSpace=wrap;html=1;arrowWidth=0.4;arrowSize=0.3;'),
 		createVertex('shape=singleArrow;whiteSpace=wrap;html=1;arrowWidth=0.4;arrowSize=0.4;', 80, 60),
-		createVertex('shape=singleArrow;whiteSpace=wrap;html=1;arrowWidth=0.4;arrowSize=0.4;flipH=1;', 80, 60),
 		createVertex('shape=waypoint;sketch=0;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;', 40, 40)];
 };
 
@@ -1995,11 +2121,20 @@ EditorUi.prototype.initCanvas = function()
 			this.chromelessToolbar.style.overflow = 'hidden';
 			this.chromelessToolbar.style.boxSizing = 'border-box';
 			this.chromelessToolbar.style.whiteSpace = 'nowrap';
-			this.chromelessToolbar.style.backgroundColor = '#000000';
 			this.chromelessToolbar.style.padding = '10px 10px 8px 10px';
 			this.chromelessToolbar.style.left = (graph.isViewer()) ? '0' : '50%';
+
+			if (!mxClient.IS_IE && !mxClient.IS_IE11)
+			{
+				this.chromelessToolbar.style.backgroundColor = '#000000';
+			}
+			else
+			{
+				this.chromelessToolbar.style.backgroundColor = '#ffffff';
+				this.chromelessToolbar.style.border = '3px solid black';
+			}
 			
-			mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'borderRadius', '20px');
+			mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'borderRadius', '16px');
 			mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'opacity 600ms ease-in-out');
 			
 			var updateChromelessToolbarPosition = mxUtils.bind(this, function()
@@ -2040,6 +2175,8 @@ EditorUi.prototype.initCanvas = function()
 				var img = document.createElement('img');
 				img.setAttribute('border', '0');
 				img.setAttribute('src', imgSrc);
+				img.style.width = '36px';
+				img.style.filter = 'invert(100%)';
 				
 				a.appendChild(img);
 				this.chromelessToolbar.appendChild(a);
@@ -2053,7 +2190,7 @@ EditorUi.prototype.initCanvas = function()
 				{
 					window.location.href = toolbarConfig.backBtn.url;
 					mxEvent.consume(evt);
-				}), Editor.backLargeImage, mxResources.get('back', null, 'Back'));
+				}), Editor.backImage, mxResources.get('back', null, 'Back'));
 			}
 			
 			if (this.isPagesEnabled())
@@ -2062,22 +2199,32 @@ EditorUi.prototype.initCanvas = function()
 				{
 					this.actions.get('previousPage').funct();
 					mxEvent.consume(evt);
-				}), Editor.previousLargeImage, mxResources.get('previousPage'));
+				}), Editor.previousImage, mxResources.get('previousPage'));
 				
 				var pageInfo = document.createElement('div');
+				pageInfo.style.fontFamily = Editor.defaultHtmlFont;
 				pageInfo.style.display = 'inline-block';
 				pageInfo.style.verticalAlign = 'top';
-				pageInfo.style.fontFamily = 'Helvetica,Arial';
+				pageInfo.style.fontWeight = 'bold';
 				pageInfo.style.marginTop = '8px';
 				pageInfo.style.fontSize = '14px';
-				pageInfo.style.color = '#ffffff';
+
+				if (!mxClient.IS_IE && !mxClient.IS_IE11)
+				{
+					pageInfo.style.color = '#ffffff';
+				}
+				else
+				{
+					pageInfo.style.color = '#000000';
+				}
+
 				this.chromelessToolbar.appendChild(pageInfo);
 				
 				var nextButton = addButton(mxUtils.bind(this, function(evt)
 				{
 					this.actions.get('nextPage').funct();
 					mxEvent.consume(evt);
-				}), Editor.nextLargeImage, mxResources.get('nextPage'));
+				}), Editor.nextImage, mxResources.get('nextPage'));
 				
 				var updatePageInfo = mxUtils.bind(this, function()
 				{
@@ -2119,13 +2266,13 @@ EditorUi.prototype.initCanvas = function()
 			{
 				this.actions.get('zoomOut').funct();
 				mxEvent.consume(evt);
-			}), Editor.zoomOutLargeImage, mxResources.get('zoomOut') + ' (Alt+Mousewheel)');
+			}), Editor.zoomOutImage, mxResources.get('zoomOut') + ' (Alt+Mousewheel)');
 			
 			addButton(mxUtils.bind(this, function(evt)
 			{
 				this.actions.get('zoomIn').funct();
 				mxEvent.consume(evt);
-			}), Editor.zoomInLargeImage, mxResources.get('zoomIn') + ' (Alt+Mousewheel)');
+			}), Editor.zoomInImage, mxResources.get('zoomIn') + ' (Alt+Mousewheel)');
 			
 			addButton(mxUtils.bind(this, function(evt)
 			{
@@ -2148,7 +2295,7 @@ EditorUi.prototype.initCanvas = function()
 				}
 				
 				mxEvent.consume(evt);
-			}), Editor.actualSizeLargeImage, mxResources.get('fit'));
+			}), Editor.zoomFitImage, mxResources.get('fit'));
 	
 			// Changes toolbar opacity on hover
 			var fadeThread = null;
@@ -2212,7 +2359,7 @@ EditorUi.prototype.initCanvas = function()
 					}
 					else
 					{
-						this.layersDialog = graph.createLayersDialog();
+						this.layersDialog = graph.createLayersDialog(null, true);
 						
 						mxEvent.addListener(this.layersDialog, 'mouseleave', mxUtils.bind(this, function()
 						{
@@ -2224,32 +2371,43 @@ EditorUi.prototype.initCanvas = function()
 						
 						mxUtils.setPrefixedStyle(this.layersDialog.style, 'borderRadius', '5px');
 						this.layersDialog.style.position = 'fixed';
-						this.layersDialog.style.fontFamily = 'Helvetica,Arial';
-						this.layersDialog.style.backgroundColor = '#000000';
+						this.layersDialog.style.fontFamily = Editor.defaultHtmlFont;
 						this.layersDialog.style.width = '160px';
 						this.layersDialog.style.padding = '4px 2px 4px 2px';
-						this.layersDialog.style.color = '#ffffff';
-						mxUtils.setOpacity(this.layersDialog, 70);
 						this.layersDialog.style.left = r.left + 'px';
 						this.layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
 							this.chromelessToolbar.offsetHeight + 4 + 'px';
-						
+
+						if (!mxClient.IS_IE && !mxClient.IS_IE11)
+						{
+							this.layersDialog.style.backgroundColor = '#000000';
+							this.layersDialog.style.color = '#ffffff';
+							mxUtils.setOpacity(this.layersDialog, 80);
+						}
+						else
+						{
+							this.layersDialog.style.backgroundColor = '#ffffff';
+							this.layersDialog.style.border = '2px solid black';
+							this.layersDialog.style.color = '#000000';
+						}
+
 						// Puts the dialog on top of the container z-index
 						var style = mxUtils.getCurrentStyle(this.editor.graph.container);
 						this.layersDialog.style.zIndex = style.zIndex;
 						
 						document.body.appendChild(this.layersDialog);
+						this.editor.fireEvent(new mxEventObject('layersDialogShown'));
 					}
 					
 					mxEvent.consume(evt);
-				}), Editor.layersLargeImage, mxResources.get('layers'));
+				}), Editor.layersImage, mxResources.get('layers'));
 				
 				// Shows/hides layers button depending on content
 				var model = graph.getModel();
 	
 				model.addListener(mxEvent.CHANGE, function()
 				{
-					 layersButton.style.display = (model.getChildCount(model.root) > 1) ? '' : 'none';
+					layersButton.style.display = (model.getChildCount(model.root) > 1) ? '' : 'none';
 				});
 			}
 	
@@ -2276,7 +2434,7 @@ EditorUi.prototype.initCanvas = function()
 					}
 					
 					mxEvent.consume(evt);
-				}), Editor.editLargeImage, mxResources.get('edit'));
+				}), Editor.editImage, mxResources.get('edit'));
 			}
 			
 			if (this.lightboxToolbarActions != null)
@@ -2284,7 +2442,7 @@ EditorUi.prototype.initCanvas = function()
 				for (var i = 0; i < this.lightboxToolbarActions.length; i++)
 				{
 					var lbAction = this.lightboxToolbarActions[i];
-					addButton(lbAction.fn, lbAction.icon, lbAction.tooltip);
+					lbAction.elem = addButton(lbAction.fn, lbAction.icon, lbAction.tooltip);
 				}
 			}
 
@@ -2302,7 +2460,7 @@ EditorUi.prototype.initCanvas = function()
 					}
 					
 					mxEvent.consume(evt);
-				}), Editor.refreshLargeImage, mxResources.get('refresh', null, 'Refresh'));
+				}), Editor.refreshImage, mxResources.get('refresh', null, 'Refresh'));
 			}
 
 			if (toolbarConfig.fullscreenBtn != null && window.self !== window.top)
@@ -2319,12 +2477,11 @@ EditorUi.prototype.initCanvas = function()
 					}
 					
 					mxEvent.consume(evt);
-				}), Editor.fullscreenLargeImage, mxResources.get('openInNewWindow', null, 'Open in New Window'));
+				}), Editor.fullscreenImage, mxResources.get('openInNewWindow', null, 'Open in New Window'));
 			}
 			
 			if ((toolbarConfig.closeBtn && window.self === window.top) ||
 				(graph.lightbox && (urlParams['close'] == '1' || this.container != document.body)))
-			
 			{
 				addButton(mxUtils.bind(this, function(evt)
 				{
@@ -2337,7 +2494,7 @@ EditorUi.prototype.initCanvas = function()
 						this.destroy();
 						mxEvent.consume(evt);
 					}
-				}), Editor.closeLargeImage, mxResources.get('close') + ' (Escape)');
+				}), Editor.closeImage, mxResources.get('close') + ' (Escape)');
 			}
 	
 			// Initial state invisible
@@ -2370,6 +2527,9 @@ EditorUi.prototype.initCanvas = function()
 			
 			mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
 			{
+				graph.tooltipHandler.resetTimer();
+				graph.tooltipHandler.hideTooltip();
+
 				if (!mxEvent.isShiftDown(evt))
 				{
 					fadeIn(100);
@@ -2774,6 +2934,8 @@ EditorUi.prototype.initCanvas = function()
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up, force, cx, cy)
 	{
+		graph.fireEvent(new mxEventObject('wheel'));
+
 		if (this.dialogs == null || this.dialogs.length == 0)
 		{
 			// Scrolls with scrollbars turned off
@@ -2833,7 +2995,7 @@ EditorUi.prototype.addChromelessToolbarItems = function(addButton)
 	{
 		this.actions.get('print').funct();
 		mxEvent.consume(evt);
-	}), Editor.printLargeImage, mxResources.get('print'));	
+	}), Editor.printImage, mxResources.get('print'));	
 };
 
 /**
@@ -2849,23 +3011,7 @@ EditorUi.prototype.isPagesEnabled = function()
  */
 EditorUi.prototype.createTemporaryGraph = function(stylesheet)
 {
-	var graph = new Graph(document.createElement('div'));
-	graph.stylesheet.styles = mxUtils.clone(stylesheet.styles);
-	graph.resetViewOnRootChange = false;
-	graph.setConnectable(false);
-	graph.gridEnabled = false;
-	graph.autoScroll = false;
-	graph.setTooltips(false);
-	graph.setEnabled(false);
-
-	// Container must be in the DOM for correct HTML rendering
-	graph.container.style.visibility = 'hidden';
-	graph.container.style.position = 'absolute';
-	graph.container.style.overflow = 'hidden';
-	graph.container.style.height = '1px';
-	graph.container.style.width = '1px';
-	
-	return graph;
+	return Graph.createOffscreenGraph(stylesheet);
 };
 
 /**
@@ -3423,7 +3569,14 @@ ChangePageSetup.prototype.execute = function()
 	{
 		this.image = this.previousImage;
 		var tmp = graph.backgroundImage;
-		this.ui.setBackgroundImage(this.previousImage);
+		var img = this.previousImage;
+
+		if (img != null && img.src != null && img.src.substring(0, 13) == 'data:page/id,')
+		{
+			img = this.ui.createImageForPageLink(img.src, this.ui.currentPage);
+		}
+
+		this.ui.setBackgroundImage(img);
 		this.previousImage = tmp;
 	}
 	

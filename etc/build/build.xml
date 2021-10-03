@@ -131,6 +131,11 @@
 				<file name="Sidebar-GCP.js" />
 				<file name="Sidebar-GCP2.js" />
 				<file name="Sidebar-Gmdl.js" />
+				<file name="Sidebar-IBM2Icons.js" />
+				<file name="Sidebar-IBM2Mondrian.js" />
+				<file name="Sidebar-IBM2Cloud.js" />
+				<file name="Sidebar-IBM2Core.js" />
+				<file name="Sidebar-IBM2Industry.js" />
 				<file name="Sidebar-IBM.js" />
 				<file name="Sidebar-IBM2Cloud.js" />
 				<file name="Sidebar-IBM2Mondrian.js" />
@@ -432,6 +437,10 @@
 				<file name="NotionClient.js" />
 				<file name="DrawioComment.js" />
 				<file name="DriveComment.js" />
+			</sources>
+			
+			<sources dir="${war.dir}/js/onedrive">
+				<file name="mxODPicker.js" />
 			</sources>
 			
 			<sources dir="${war.dir}/js/diagramly">

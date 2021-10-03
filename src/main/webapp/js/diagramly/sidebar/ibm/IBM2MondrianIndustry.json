@@ -1,0 +1,238 @@
+{
+  "Sidebars": {
+    "Industry": {
+      "Automotive": {
+        "Connected Car": {
+          "icon": "vehicle--connected",
+          "format": "$LN_FORMAT_COLLAPSED",
+          "color": "$NETWORK_COLOR",
+          "$DEFAULT_PROPERTIES": null
+        },
+        "Vehicle Insights": {
+          "icon": "vehicle--insights",
+          "format": "$LN_FORMAT_COLLAPSED",
+          "color": "$APPLICATIONS_COLOR",
+          "$DEFAULT_PROPERTIES": null
+        },
+        "Vehicle API": {
+          "icon": "vehicle--api",
+          "format": "$LN_FORMAT_COLLAPSED",
+          "color": "$APPLICATIONS_COLOR",
+          "$DEFAULT_PROPERTIES": null
+        },
+        "Mobility Servces": {
+          "icon": "mobility--services",
+          "format": "$LN_FORMAT_COLLAPSED",
+          "color": "$APPLICATIONS_COLOR",
+          "$DEFAULT_PROPERTIES": null
+        },
+        "Vehicle Servces": {
+          "icon": "vehicle--services",
+          "format": "$LN_FORMAT_COLLAPSED",
+          "color": "$APPLICATIONS_COLOR",
+          "$DEFAULT_PROPERTIES": null
+        }
+      }
+    }
+  },
+
+  "Variables": {
+    "$DEFAULT_PROPERTIES": {
+      "id": "",
+      "text": "$DEFAULT_TEXT_DETAIL",
+      "tag": "$DEFAULT_TAG",
+      "extra": ""
+    },
+    "$DEFAULT_COLOR": {
+      "family": "blue",
+      "intensity": null,
+      "background": null
+    },
+    "$DEFAULT_TAG": {
+      "form": null,
+      "family": null,
+      "fill": null,
+      "text": null
+    },
+    "$DEFAULT_TEXT_DETAIL": {
+      "font": "",
+      "position": null
+    },
+    "$ACTOR_FORMAT": {
+      "type": "actor",
+      "layout": "collapsed",
+      "container": "no_container_transparent"
+    },
+    "$ACTOR_FORMAT_MULTIPLICITY": {
+      "type": "actor",
+      "layout": "collapsed",
+      "container": "no_container_transparent",
+      "multiplicity": "1"
+    },
+    "$TS_FORMAT_COLLAPSED": {
+      "type": "ts",
+      "layout": "collapsed",
+      "container": "container_transparent"
+    },
+    "$TS_FORMAT_EXPANDED": {
+      "type": "ts",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$LN_FORMAT_COLLAPSED": {
+      "type": "ln",
+      "layout": "collapsed",
+      "container": "container_transparent"
+    },
+    "$LN_FORMAT_COLLAPSED_MULTIPLICITY": {
+      "type": "ln",
+      "layout": "collapsed",
+      "container": "container_transparent",
+      "multiplicity": "1"
+    },
+    "$LN_FORMAT_EXPANDED": {
+      "type": "ln",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$LC_FORMAT_COLLAPSED": {
+      "type": "lc",
+      "layout": "collapsed",
+      "container": "container_transparent"
+    },
+    "$LC_FORMAT_EXPANDED": {
+      "type": "lc",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$LG_FORMAT_CONTAINER": {
+      "type": "lg",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$LG_FORMAT_NO_CONTAINER": {
+      "type": "lg",
+      "layout": "expanded",
+      "container": "no_container_transparent"
+    },
+    "$LG_FORMAT_WIDE_BORDER": {
+      "type": "lg",
+      "layout": "expanded",
+      "container": "no_container_transparent",
+      "border": "2"
+    },
+    "$PN_FORMAT_COLLAPSED": {
+      "type": "pn",
+      "layout": "collapsed",
+      "container": "container_transparent"
+    },
+    "$PN_FORMAT_COLLAPSED_MULTIPLICITY": {
+      "type": "pn",
+      "layout": "collapsed",
+      "container": "container_transparent",
+      "multiplicity": "1"
+    },
+    "$PN_FORMAT_EXPANDED": {
+      "type": "pn",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$PC_FORMAT_COLLAPSED": {
+      "type": "pc",
+      "layout": "collapsed",
+      "container": "container_transparent"
+    },
+    "$PC_FORMAT_EXPANDED": {
+      "type": "pc",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$PG_FORMAT_CONTAINER": {
+      "type": "pg",
+      "layout": "expanded",
+      "container": "container_transparent"
+    },
+    "$PG_FORMAT_NO_CONTAINER": {
+      "type": "pg",
+      "layout": "expanded",
+      "container": "no_container_transparent"
+    },
+    "$PG_FORMAT_WIDE_BORDER": {
+      "type": "pg",
+      "layout": "expanded",
+      "container": "no_container_transparent",
+      "border": "2"
+    },
+
+    "$APPLICATIONS_COLOR": {
+      "family": "purple",
+      "intensity": null,
+      "background": null
+    },
+    "$BACKEND_COLOR": {
+      "family": "gray",
+      "intensity": null,
+      "background": null
+    },
+    "$COMPUTE_COLOR": {
+      "family": "green",
+      "intensity": null,
+      "background": null
+    },
+    "$DATA_COLOR": {
+      "family": "blue",
+      "intensity": null,
+      "background": null
+    },
+    "$DEVOPS_COLOR": {
+      "family": "magenta",
+      "intensity": null,
+      "background": null
+    },
+    "$GROUP_COLOR": {
+      "family": "cyan",
+      "intensity": null,
+      "background": null
+    },
+    "$INDUSTRY_COLOR": {
+      "family": "gray",
+      "intensity": null,
+      "background": null
+    },
+    "$LOCATION_COLOR": {
+      "family": "gray",
+      "intensity": null,
+      "background": null
+    },
+    "$MANAGEMENT_COLOR": {
+      "family": "teal",
+      "intensity": null,
+      "background": null
+    },
+    "$NETWORK_COLOR": {
+      "family": "cyan",
+      "intensity": null,
+      "background": null
+    },
+    "$SECURITY_COLOR": {
+      "family": "red",
+      "intensity": null,
+      "background": null
+    },
+    "$SERVICES_COLOR": {
+      "family": "green",
+      "intensity": null,
+      "background": null
+    },
+    "$STORAGE_COLOR": {
+      "family": "blue",
+      "intensity": null,
+      "background": null
+    },
+    "$USER_COLOR": {
+      "family": "black",
+      "intensity": null,
+      "background": null
+    }
+  }
+}

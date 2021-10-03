@@ -330,16 +330,23 @@
 					!selection.checked, noPages || !pages.checked);
 			}), null, mxResources.get('export'));
 			
-			editorUi.showDialog(dlg.container, 300, 180, true, true);
+			editorUi.showDialog(dlg.container, 300, 200, true, true);
 		}));
 		
 		editorUi.actions.put('exportUrl', new Action(mxResources.get('url') + '...', function()
 		{
 			editorUi.showPublishLinkDialog(mxResources.get('url'), true, null, null,
-				function(linkTarget, linkColor, allPages, lightbox, editLink, layers)
+				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height, tags)
 			{
-				var dlg = new EmbedDialog(editorUi, editorUi.createLink(linkTarget,
-					linkColor, allPages, lightbox, editLink, layers, null, true));
+				var params = [];
+
+				if (tags)
+				{
+					params.push('tags=%7B%7D');
+				}
+
+				var dlg = new EmbedDialog(editorUi, editorUi.createLink(linkTarget, linkColor,
+					allPages, lightbox, editLink, layers, null, true, params));
 				editorUi.showDialog(dlg.container, 440, 240, true, true);
 				dlg.init();
 			});
@@ -354,16 +361,17 @@
 					editorUi.spinner.stop();
 					
 					editorUi.showHtmlDialog(mxResources.get('export'), null, url, function(publicUrl, zoomEnabled,
-						initialZoom, linkTarget, linkColor, fit, allPages, layers, lightbox, editLink)
+						initialZoom, linkTarget, linkColor, fit, allPages, layers, tags, lightbox, editLink)
 					{
-						editorUi.createHtml(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor,
-							fit, allPages, layers, lightbox, editLink, mxUtils.bind(this, function(html, scriptTag)
+						editorUi.createHtml(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor, fit, allPages,
+							layers, tags, lightbox, editLink, mxUtils.bind(this, function(html, scriptTag)
 							{
 								var basename = editorUi.getBaseFilename(allPages);
 								var result = '<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=5,IE=9" ><![endif]-->\n' +
 									'<!DOCTYPE html>\n<html>\n<head>\n<title>' + mxUtils.htmlEntities(basename) + '</title>\n' +
 									'<meta charset="utf-8"/>\n</head>\n<body>' + html + '\n' + scriptTag + '\n</body>\n</html>';
-								editorUi.saveData(basename + '.html', 'html', result, 'text/html');
+								editorUi.saveData(basename + ((basename.substring(basename.lenth - 7) ==
+									'.drawio') ? '' : '.drawio') + '.html', 'html', result, 'text/html');
 							}));
 					});
 				});
@@ -405,20 +413,80 @@
 					}
 				};
 				
-				var dlgH = 180;
+				var dlgH = 200;
+				var pageCount = 1;
+				var currentPage = null;
 				
 				if (editorUi.pdfPageExport && !noPages)
 				{
 					var allPages = editorUi.addRadiobox(div, 'pages', mxResources.get('allPages'), true);
-					var currentPage = editorUi.addRadiobox(div, 'pages', mxResources.get('currentPage'), false);
+					var pagesRadio = editorUi.addRadiobox(div, 'pages', mxResources.get('pages') + ':', false, null, true);
+
+					var pagesFromInput = document.createElement('input');
+					pagesFromInput.style.cssText = 'margin:0 8px 0 8px;'
+					pagesFromInput.setAttribute('value', '1');
+					pagesFromInput.setAttribute('type', 'number');
+					pagesFromInput.setAttribute('min', '1');
+					pagesFromInput.style.width = '50px';
+					div.appendChild(pagesFromInput);
+					
+					var span = document.createElement('span');
+					mxUtils.write(span, mxResources.get('to'));
+					div.appendChild(span);
+					
+					var pagesToInput = pagesFromInput.cloneNode(true);
+					div.appendChild(pagesToInput);
+
+					mxEvent.addListener(pagesFromInput, 'focus', function()
+					{
+						pagesRadio.checked = true;
+					});
+					
+					mxEvent.addListener(pagesToInput, 'focus', function()
+					{
+						pagesRadio.checked = true;
+					});					
+
+					function validatePageRange()
+					{
+						pagesToInput.value = Math.max(1, Math.min(pageCount, Math.max(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))));
+						pagesFromInput.value = Math.max(1, Math.min(pageCount, Math.min(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))));
+					};
+					
+					mxEvent.addListener(pagesFromInput, 'change', validatePageRange);
+					mxEvent.addListener(pagesToInput, 'change', validatePageRange);
+					
+					if (editorUi.pages != null)
+					{
+						pageCount = editorUi.pages.length;
+			
+						if (editorUi.currentPage != null)
+						{
+							for (var i = 0; i < editorUi.pages.length; i++)
+							{
+								if (editorUi.currentPage == editorUi.pages[i])
+								{
+									currentPage = i + 1;
+									pagesFromInput.value = currentPage;
+									pagesToInput.value = currentPage;
+									break;
+								}
+							}
+						}
+					}
+					
+					pagesFromInput.setAttribute('max', pageCount);
+					pagesToInput.setAttribute('max', pageCount);
+					mxUtils.br(div);
+
 					var selection = editorUi.addRadiobox(div, 'pages', mxResources.get('selectionOnly'), false, graph.isSelectionEmpty());
 					var crop = editorUi.addCheckbox(div, mxResources.get('crop'), false, true);
 					var grid = editorUi.addCheckbox(div, mxResources.get('grid'), false, false);
 					
 					mxEvent.addListener(allPages, 'change', cropEnableFn);
-					mxEvent.addListener(currentPage, 'change', cropEnableFn);
+					mxEvent.addListener(pagesRadio, 'change', cropEnableFn);
 					mxEvent.addListener(selection, 'change', cropEnableFn);
-					dlgH += 60;
+					dlgH += 64;
 				}
 				else
 				{
@@ -440,11 +508,11 @@
 					editorUi.getServiceName() == 'draw.io';
 
 				var transparentBkg = null, include = null;
-					
+				
 				if (EditorUi.isElectronApp || isDrawioWeb)
 				{
-					include = editorUi.addCheckbox(div,
-							mxResources.get('includeCopyOfMyDiagram'), true);
+					include = editorUi.addCheckbox(div, mxResources.get('includeCopyOfMyDiagram'),
+						Editor.defaultIncludeDiagram);
 					dlgH += 30;
 				}
 				
@@ -455,12 +523,25 @@
 					
 					dlgH += 30;
 				}
-				
+
 				var dlg = new CustomDialog(editorUi, div, mxUtils.bind(this, function()
 				{
+					var pageRange = null;
+
+					if (!noPages)
+					{
+						var from = parseInt(pagesFromInput.value);
+						var to = parseInt(pagesToInput.value);
+						pageRange = (!allPages.checked &&
+							(from != currentPage || to != currentPage)) ?
+							{from: Math.max(0, Math.min(pageCount - 1, from - 1)),
+							to: Math.max(0, Math.min(pageCount - 1, to - 1))} : null;
+					}
+					
 					editorUi.downloadFile('pdf', null, null, !selection.checked,
-						noPages? true : !allPages.checked, !crop.checked, transparentBkg != null && transparentBkg.checked, null,
-						null, grid.checked, include != null && include.checked);
+						noPages? true : !allPages.checked && pageRange == null,
+						!crop.checked, transparentBkg != null && transparentBkg.checked, null,
+						null, grid.checked, include != null && include.checked, pageRange);
 				}), null, mxResources.get('export'));
 				editorUi.showDialog(dlg.container, 300, dlgH, true, true);
 			}
@@ -696,7 +777,7 @@
 								addShadow, editable, border, !cropImage, false, null, grid, null,
 								keepTheme, exportType);
 						}
-					}), true, true, 'png', true);
+					}), true, Editor.defaultIncludeDiagram, 'png', true);
 			}
 			else if (!editorUi.isOffline() && (!mxClient.IS_IOS || !navigator.standalone))
 			{
@@ -823,11 +904,11 @@
 			editorUi.openLink('https://get.diagrams.net/');
 		});
 		
-		action = editorUi.actions.addAction('tags...', mxUtils.bind(this, function()
+		action = editorUi.actions.addAction('tags', mxUtils.bind(this, function()
 		{
 			if (this.tagsWindow == null)
 			{
-				this.tagsWindow = new TagsWindow(editorUi, document.body.offsetWidth - 380, 230, 300, 120);
+				this.tagsWindow = new TagsWindow(editorUi, document.body.offsetWidth - 400, 60, 212, 200);
 				this.tagsWindow.window.addListener('show', function()
 				{
 					editorUi.fireEvent(new mxEventObject('tags'));
@@ -909,7 +990,7 @@
 					editorUi.exportVisio(!pages.checked);
 				}), null, mxResources.get('export'));
 				
-				editorUi.showDialog(dlg.container, 300, 110, true, true);
+				editorUi.showDialog(dlg.container, 300, 130, true, true);
 			}
 		}));
 		
@@ -1324,7 +1405,7 @@
 					doLayout();
 				});
 				
-				editorUi.showDialog(dlg.container, 355, 125, true, true);
+				editorUi.showDialog(dlg.container, 355, 140, true, true);
 			}, parent, null, isGraphEnabled());
 						
 			menu.addSeparator(parent);
@@ -1836,10 +1917,10 @@
 					editorUi.spinner.stop();
 					
 					editorUi.showHtmlDialog(mxResources.get('create'), 'https://www.diagrams.net/doc/faq/embed-html-options',
-						url, function(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor, fit, allPages, layers, lightbox, editLink)
+						url, function(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor, fit, allPages, layers, tags, lightbox, editLink)
 					{
-						editorUi.createHtml(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor,
-							fit, allPages, layers, lightbox, editLink, mxUtils.bind(this, function(html, scriptTag)
+						editorUi.createHtml(publicUrl, zoomEnabled, initialZoom, linkTarget, linkColor, fit, allPages,
+							layers, tags, lightbox, editLink, mxUtils.bind(this, function(html, scriptTag)
 							{
 								var dlg = new EmbedDialog(editorUi, html + '\n' + scriptTag, null, null, function()
 								{
@@ -1985,17 +2066,23 @@
 			
 			editorUi.showPublishLinkDialog(mxResources.get('iframe'), null, '100%',
 				Math.ceil(bounds.height / graph.view.scale) + 2,
-				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height)
+				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height, tags)
 			{
 				if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
 				{
 					editorUi.getPublicUrl(editorUi.getCurrentFile(), function(url)
 					{
 						editorUi.spinner.stop();
+						var params = [];
+
+						if (tags)
+						{
+							params.push('tags=%7B%7D');
+						}
 						
 						var dlg = new EmbedDialog(editorUi, '<iframe frameborder="0" style="width:' + width +
 							';height:' + height + ';" src="' + editorUi.createLink(linkTarget, linkColor,
-							allPages, lightbox, editLink, layers, url) + '"></iframe>');
+							allPages, lightbox, editLink, layers, url, null, params) + '"></iframe>');
 						editorUi.showDialog(dlg.container, 440, 240, true, true);
 						dlg.init();
 					});
@@ -2006,16 +2093,22 @@
 		editorUi.actions.put('embedNotion', new Action(mxResources.get('notion') + '...', function()
 		{
 			editorUi.showPublishLinkDialog(mxResources.get('notion'), null, null, null,
-				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height)
+				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height, tags)
 			{
 				if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
 				{
 					editorUi.getPublicUrl(editorUi.getCurrentFile(), function(url)
 					{
 						editorUi.spinner.stop();
-						
+						var params = ['border=0'];
+
+						if (tags)
+						{
+							params.push('tags=%7B%7D');
+						}
+
 						var dlg = new EmbedDialog(editorUi, editorUi.createLink(linkTarget, linkColor,
-							allPages, lightbox, editLink, layers, url, null, ['border=0'], true));
+							allPages, lightbox, editLink, layers, url, null, params, true));
 						editorUi.showDialog(dlg.container, 440, 240, true, true);
 						dlg.init();
 					});
@@ -2026,15 +2119,23 @@
 		editorUi.actions.put('publishLink', new Action(mxResources.get('link') + '...', function()
 		{
 			editorUi.showPublishLinkDialog(null, null, null, null,
-				function(linkTarget, linkColor, allPages, lightbox, editLink, layers)
+				function(linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height, tags)
 			{
 				if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
 				{
 					editorUi.getPublicUrl(editorUi.getCurrentFile(), function(url)
 					{
 						editorUi.spinner.stop();
-						var dlg = new EmbedDialog(editorUi, editorUi.createLink(linkTarget,
-							linkColor, allPages, lightbox, editLink, layers, url));
+						
+						var params = [];
+
+						if (tags)
+						{
+							params.push('tags=%7B%7D');
+						}
+
+						var dlg = new EmbedDialog(editorUi, editorUi.createLink(linkTarget, linkColor,
+							allPages, lightbox, editLink, layers, url, null, params));
 						editorUi.showDialog(dlg.container, 440, 240, true, true);
 						dlg.init();
 					});
@@ -2085,12 +2186,18 @@
 			});
 			
 			action.setToggleAction(true);
-			action.setSelectedCallback(function() { return editorUi.scratchpad != null; });
-
-			editorUi.actions.addAction('plugins...', function()
+			action.setSelectedCallback(function()
 			{
-				editorUi.showDialog(new PluginsDialog(editorUi).container, 360, 170, true, false);
+				return editorUi.scratchpad != null;
 			});
+			
+			if (urlParams['plugins'] != '0')
+			{
+				editorUi.actions.addAction('plugins...', function()
+				{
+					editorUi.showDialog(new PluginsDialog(editorUi).container, 360, 170, true, false);
+				});
+			}
 		}
 		
 		var action = editorUi.actions.addAction('search', function()
@@ -2105,6 +2212,7 @@
 			}
 		});
 		
+		action.label = mxResources.get('searchShapes');
 		action.setToggleAction(true);
 		action.setSelectedCallback(function() { return editorUi.sidebar.isEntryVisible('search'); });
 		
@@ -2441,11 +2549,14 @@
 				}, parent);
 			}
 
-			menu.addItem(mxResources.get('device') + '...', null, function()
+			if (urlParams['noDevice'] != '1')
 			{
-				editorUi.importLocalFile(true);
-			}, parent);
-
+				menu.addItem(mxResources.get('device') + '...', null, function()
+				{
+					editorUi.importLocalFile(true);
+				}, parent);
+			}
+			
 			if (!editorUi.isOffline())
 			{
 				menu.addSeparator(parent);
@@ -2528,15 +2639,18 @@
 				menu.addCheckmark(item, Editor.checkmarkImage);
 			}
 			
-			item = menu.addItem(mxResources.get('dark'), null, function()
+			if (theme == 'dark' || (!mxClient.IS_IE && !mxClient.IS_IE11))
 			{
-				mxSettings.setUi('dark');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
-			
-			if (theme == 'dark')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
+				item = menu.addItem(mxResources.get('dark'), null, function()
+				{
+					mxSettings.setUi('dark');
+					editorUi.alert(mxResources.get('restartForChangeRequired'));
+				}, parent);
+				
+				if (theme == 'dark')
+				{
+					menu.addCheckmark(item, Editor.checkmarkImage);
+				}
 			}
 			
 			menu.addSeparator(parent);
@@ -2601,7 +2715,7 @@
 						
 						return false;
 					}, null, null, null, null, editorUi.editor.fileExtensions);
-					this.editorUi.showDialog(dlg.container, 340, 90, true, true);
+					this.editorUi.showDialog(dlg.container, 340, 96, true, true);
 					dlg.init();
 				}
 			}
@@ -3064,6 +3178,7 @@
 			}
 			
 			//if (!mxClient.IS_IOS)
+			if (urlParams['noDevice'] != '1')
 			{
 				menu.addItem(mxResources.get('device') + '...', null, function()
 				{
@@ -3204,6 +3319,7 @@
 				}
 				
 				//if (!mxClient.IS_IOS)
+				if (urlParams['noDevice'] != '1')
 				{
 					menu.addItem(mxResources.get('device') + '...', null, function()
 					{
@@ -3315,6 +3431,7 @@
 				}
 				
 				//if (!mxClient.IS_IOS)
+				if (urlParams['noDevice'] != '1')
 				{
 					menu.addItem(mxResources.get('device') + '...', null, function()
 					{
@@ -3444,6 +3561,8 @@
 		viewPanelsMenu.funct = function(menu, parent)
 		{
 			viewPanelsFunct.apply(this, arguments);
+
+			editorUi.menus.addMenuItems(menu, ['tags'], parent);
 			
 			if (editorUi.commentsSupported())
 			{
@@ -3455,7 +3574,7 @@
 		this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 		{
 			this.addMenuItems(menu, ((this.editorUi.format != null) ? ['formatPanel'] : []).
-				concat(['outline', 'layers']).concat((editorUi.commentsSupported()) ?
+				concat(['outline', 'layers', 'tags']).concat((editorUi.commentsSupported()) ?
 				['comments', '-'] : ['-']));
 			
 			this.addMenuItems(menu, ['-', 'search'], parent);
@@ -3532,7 +3651,7 @@
 				this.addMenuItem(menu, 'plugins', parent);
 			}
 
-			this.addMenuItems(menu, ['tags', '-', 'editDiagram'], parent);
+			this.addMenuItems(menu, ['-', 'editDiagram'], parent);
 	
 			if (Graph.translateDiagram)
 			{
@@ -4254,7 +4373,7 @@
 						}
 					}
 				}));
-				this.editorUi.showDialog(dlg.container, 380, 250, true, true);
+				this.editorUi.showDialog(dlg.container, 380, Editor.enableWebFonts ? 250 : 180, true, true);
 				dlg.init();
 			}), parent, null, true);
 		})));

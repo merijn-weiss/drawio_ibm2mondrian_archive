@@ -31,7 +31,6 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	
 	var input = document.createElement('input');
 	input.style.marginBottom = '10px';
-	input.style.width = '216px';
 	
 	// Required for picker to render in IE
 	if (mxClient.IS_IE)
@@ -39,7 +38,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		input.style.marginTop = '10px';
 		document.body.appendChild(input);
 	}
-	
+
 	var applyFunction = (apply != null) ? apply : this.createApplyFunction();
 	
 	function doApply()
@@ -94,7 +93,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		return table;
 	};
 	
-	function addPresets(presets, rowLength, defaultColor, addResetOption)
+	var addPresets = mxUtils.bind(this, function(presets, rowLength, defaultColor, addResetOption)
 	{
 		rowLength = (rowLength != null) ? rowLength : 12;
 		var table = document.createElement('table');
@@ -113,7 +112,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			
 			for (var i = 0; i < rowLength; i++)
 			{
-				(function(clr)
+				(mxUtils.bind(this, function(clr)
 				{
 					var td = document.createElement('td');
 					td.style.border = '1px solid black';
@@ -130,9 +129,15 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					{
 						td.style.background = 'url(\'' + Dialog.prototype.noColorImage + '\')';
 					}
-					else
+					else if (clr != null)
 					{
 						td.style.backgroundColor = '#' + clr;
+						var name = this.colorNames[clr.toUpperCase()];
+
+						if (name != null)
+						{
+							td.setAttribute('title', name);
+						}
 					}
 					
 					tr.appendChild(td);
@@ -156,7 +161,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 						
 						mxEvent.addListener(td, 'dblclick', doApply);
 					}
-				})(presets[row * rowLength + i]);
+				}))(presets[row * rowLength + i]);
 			}
 			
 			tbody.appendChild(tr);
@@ -187,9 +192,48 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		center.appendChild(table);
 		
 		return table;
-	};
+	});
 
 	div.appendChild(input);
+
+	if (!mxClient.IS_IE && !mxClient.IS_IE11)
+	{
+		input.style.width = '182px';
+
+		var clrInput = document.createElement('input');
+		clrInput.setAttribute('type', 'color');
+		clrInput.style.visibility = 'hidden';
+		clrInput.style.width = '0px';
+		clrInput.style.height = '0px';
+		clrInput.style.border = 'none';
+		clrInput.style.marginLeft = '2px';
+		div.style.whiteSpace = 'nowrap';
+		div.appendChild(clrInput);
+
+		div.appendChild(mxUtils.button('...', function()
+		{
+			// LATER: Check if clrInput is expanded
+			if (document.activeElement == clrInput)
+			{
+				input.focus();
+			}
+			else
+			{
+				clrInput.value = '#' + input.value;
+				clrInput.click();
+			}
+		}));
+
+		mxEvent.addListener(clrInput, 'input', function()
+		{
+			picker.fromString(clrInput.value.substring(1));
+		});
+	}
+	else
+	{
+		input.style.width = '216px';
+	}
+
 	mxUtils.br(div);
 	
 	// Adds recent colors
@@ -273,6 +317,11 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
  * Creates function to apply value
  */
 ColorDialog.prototype.presetColors = ['E6D0DE', 'CDA2BE', 'B5739D', 'E1D5E7', 'C3ABD0', 'A680B8', 'D4E1F5', 'A9C4EB', '7EA6E0', 'D5E8D4', '9AC7BF', '67AB9F', 'D5E8D4', 'B9E0A5', '97D077', 'FFF2CC', 'FFE599', 'FFD966', 'FFF4C3', 'FFCE9F', 'FFB570', 'F8CECC', 'F19C99', 'EA6B66']; 
+
+/**
+ * Creates function to apply value
+ */
+ ColorDialog.prototype.colorNames = {};
 
 /**
  * Creates function to apply value
@@ -1450,7 +1499,7 @@ var EditDataDialog = function(ui, cell)
 		
 		mxEvent.addListener(text, 'dblclick', function(evt)
 		{
-			if (mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt))
+			if (mxEvent.isShiftDown(evt))
 			{
 				var dlg = new FilenameDialog(ui, id, mxResources.get('apply'), mxUtils.bind(this, function(value)
 				{
@@ -1474,6 +1523,8 @@ var EditDataDialog = function(ui, cell)
 				dlg.init();
 			}
 		});
+
+		text.setAttribute('title', 'Shift+Double Click to Edit ID');
 	}
 	
 	for (var i = 0; i < temp.length; i++)
@@ -1483,7 +1534,13 @@ var EditDataDialog = function(ui, cell)
 	}
 	
 	var top = document.createElement('div');
-	top.style.cssText = 'position:absolute;left:30px;right:30px;overflow-y:auto;top:30px;bottom:80px;';
+	top.style.position = 'absolute';
+	top.style.top = '30px';
+	top.style.left = '30px';
+	top.style.right = '30px';
+	top.style.bottom = '80px';
+	top.style.overflowY = 'auto';
+	
 	top.appendChild(form.table);
 
 	var newProp = document.createElement('div');
@@ -2018,8 +2075,19 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	var link = document.createElement('a');
 	link.className = 'geButton';
 	
-	var removeLink = link.cloneNode();
-	removeLink.innerHTML = '<div class="geSprite geSprite-delete" style="display:inline-block;"></div>';
+	var removeLink = link.cloneNode(false);
+	var img = document.createElement('img');
+	img.setAttribute('border', '0');
+	img.setAttribute('width', '22');
+	img.setAttribute('src', Editor.trashImage);
+	img.style.opacity = '0.9';
+
+	if (Editor.isDarkMode())
+	{
+		img.style.filter = 'invert(100%)';
+	}
+
+	removeLink.appendChild(img);
 
 	mxEvent.addListener(removeLink, 'click', function(evt)
 	{
@@ -2064,8 +2132,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 	var insertLink = link.cloneNode();
 	insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', ['...'])));
-	insertLink.innerHTML = '<div class="geSprite geSprite-insert" style="display:inline-block;"></div>';
-	
+
+	img = img.cloneNode(false);
+	img.setAttribute('src', Editor.verticalDotsImage);
+	insertLink.appendChild(img);
+
 	mxEvent.addListener(insertLink, 'click', function(evt)
 	{
 		if (graph.isEnabled() && !graph.isSelectionEmpty())
@@ -2097,9 +2168,12 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 	ldiv.appendChild(insertLink);
 	
-	var dataLink = link.cloneNode();
-	dataLink.innerHTML = '<div class="geSprite geSprite-dots" style="display:inline-block;"></div>';
-	dataLink.setAttribute('title', mxResources.get('rename'));
+	var dataLink = link.cloneNode(false);
+	dataLink.setAttribute('title', mxResources.get('editData'));
+
+	img = img.cloneNode(false);
+	img.setAttribute('src', Editor.editImage);
+	dataLink.appendChild(img);
 
 	mxEvent.addListener(dataLink, 'click', function(evt)
 	{
@@ -2135,9 +2209,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		}
 	};
 	
-	var duplicateLink = link.cloneNode();
-	duplicateLink.innerHTML = '<div class="geSprite geSprite-duplicate" style="display:inline-block;"></div>';
-	
+	var duplicateLink = link.cloneNode(false);
+	duplicateLink.setAttribute('title', mxResources.get('duplicate'));
+
+	img = img.cloneNode(false);
+	img.setAttribute('src', Editor.duplicateImage);
+	duplicateLink.appendChild(img);
+
 	mxEvent.addListener(duplicateLink, 'click', function(evt)
 	{
 		if (graph.isEnabled())
@@ -2171,9 +2249,12 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 	ldiv.appendChild(duplicateLink);
 
-	var addLink = link.cloneNode();
-	addLink.innerHTML = '<div class="geSprite geSprite-plus" style="display:inline-block;"></div>';
+	var addLink = link.cloneNode(false);
 	addLink.setAttribute('title', mxResources.get('addLayer'));
+
+	img = img.cloneNode(false);
+	img.setAttribute('src', Editor.addImage);
+	addLink.appendChild(img);
 	
 	mxEvent.addListener(addLink, 'click', function(evt)
 	{
@@ -2211,8 +2292,8 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	dot.style.position = 'absolute';
 	dot.style.fontWeight = 'bold';
 	dot.style.fontSize = '16pt';
-	dot.style.right = '6px';
-	dot.style.top = '5px';
+	dot.style.right = '2px';
+	dot.style.top = '2px';
 	
 	function updateLayerDot()
 	{
@@ -2291,22 +2372,67 @@ var LayersWindow = function(editorUi, x, y, w, h)
 				evt.preventDefault();
 			});
 
+			var inp = document.createElement('img');
+			inp.setAttribute('draggable', 'false');
+			inp.setAttribute('align', 'top');
+			inp.setAttribute('border', '0');
+			inp.style.width = '16px';
+			inp.style.padding = '0px 6px 0 4px';
+			inp.style.marginTop = '2px';
+			inp.style.cursor = 'pointer';
+			inp.setAttribute('title', mxResources.get(
+				graph.model.isVisible(child) ?
+				'hide' : 'show'));
+
+			if (graph.model.isVisible(child))
+			{
+				inp.setAttribute('src', Editor.visibleImage);
+				mxUtils.setOpacity(ldiv, 75);
+			}
+			else
+			{
+				inp.setAttribute('src', Editor.hiddenImage);
+				mxUtils.setOpacity(ldiv, 25);
+			}
+
+			if (Editor.isDarkMode())
+			{
+				inp.style.filter = 'invert(100%)';
+			}
+
+			left.appendChild(inp);
+			
+			mxEvent.addListener(inp, 'click', function(evt)
+			{
+				graph.model.setVisible(child, !graph.model.isVisible(child));
+				mxEvent.consume(evt);
+			});
+
 			var btn = document.createElement('img');
 			btn.setAttribute('draggable', 'false');
 			btn.setAttribute('align', 'top');
 			btn.setAttribute('border', '0');
-			btn.style.padding = '4px';
+			btn.style.width = '16px';
+			btn.style.padding = '0px 6px 0 0';
+			btn.style.marginTop = '2px';
 			btn.setAttribute('title', mxResources.get('lockUnlock'));
 
 			var style = graph.getCurrentCellStyle(child);
 
 			if (mxUtils.getValue(style, 'locked', '0') == '1')
 			{
-				btn.setAttribute('src', Dialog.prototype.lockedImage);
+				btn.setAttribute('src', Editor.lockedImage);
+				mxUtils.setOpacity(btn, 75);
 			}
 			else
 			{
-				btn.setAttribute('src', Dialog.prototype.unlockedImage);
+				btn.setAttribute('src', Editor.unlockedImage);
+				mxUtils.setOpacity(btn, 25);
+			}
+
+			if (Editor.isDarkMode())
+			{
+				btn.style.filter = 'invert(100%)';
 			}
 			
 			if (graph.isEnabled())
@@ -2342,28 +2468,18 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 			left.appendChild(btn);
 
-			var inp = document.createElement('input');
-			inp.setAttribute('type', 'checkbox');
-			inp.setAttribute('title', mxResources.get(graph.model.isVisible(child) ?
-				'hide' : 'show'));
-			inp.style.marginLeft = '4px';
-			inp.style.marginRight = '6px';
-			inp.style.marginTop = '4px';
-			left.appendChild(inp);
-			
-			if (graph.model.isVisible(child))
-			{
-				inp.setAttribute('checked', 'checked');
-				inp.defaultChecked = true;
-			}
+			var span = document.createElement('span');
+			mxUtils.write(span, label);
+			span.style.display = 'block';
+			span.style.whiteSpace = 'nowrap';
+			span.style.overflow = 'hidden';
+			span.style.textOverflow = 'ellipsis';
+			span.style.position = 'absolute';
+			span.style.left = '52px';
+			span.style.right = '8px';
+			span.style.top = '8px';
 
-			mxEvent.addListener(inp, 'click', function(evt)
-			{
-				graph.model.setVisible(child, !graph.model.isVisible(child));
-				mxEvent.consume(evt);
-			});
-
-			mxUtils.write(left, label);
+			left.appendChild(span);
 			ldiv.appendChild(left);
 			
 			if (graph.isEnabled())
@@ -2377,7 +2493,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 					right.style.textAlign = 'right';
 					right.style.whiteSpace = 'nowrap';
 					right.style.position = 'absolute';
-					right.style.right = '6px';
+					right.style.right = '16px';
 					right.style.top = '6px';
 		
 					// Poor man's change layer order
@@ -2495,7 +2611,6 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		var label = graph.convertValueToString(selectionLayer) || mxResources.get('background');
 		removeLink.setAttribute('title', mxResources.get('removeIt', [label]));
 		duplicateLink.setAttribute('title', mxResources.get('duplicateIt', [label]));
-		dataLink.setAttribute('title', mxResources.get('editData'));
 
 		if (graph.isSelectionEmpty())
 		{
@@ -2524,7 +2639,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	});
 
 	this.window = new mxWindow(mxResources.get('layers'), div, x, y, w, h, true, true);
-	this.window.minimumSize = new mxRectangle(0, 0, 120, 120);
+	this.window.minimumSize = new mxRectangle(0, 0, 150, 120);
 	this.window.destroyOnClose = false;
 	this.window.setMaximizable(false);
 	this.window.setResizable(true);
