@@ -22,6 +22,16 @@
                 "Prescribed Group (Container)": {"$DEFAULT_PROPERTIES": null, "format": "$PG_CONTAINER"},
                 "Prescribed Group (No Container)": {"$DEFAULT_PROPERTIES": null, "format": "$PG_NO_CONTAINER"}
             },
+            "Deployment Units": {
+                "Data": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_D"},
+                "Execution": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_E"},
+                "Installation": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_I"},
+                "Presentation": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_P"},
+                "Technical Data": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_TD"},
+                "Technical Execution": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_TE"},
+                "Technical Installation": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_TI"},
+                "Technical Presentation": {"$DU_DEFAULT_PROPERTIES": null, "format": "$DU_TP"}
+            },
             "Legend": {
                 "Horizontal Legend": {"$LEGEND_DEFAULT_PROPERTIES": null, "extra": ";legendColor=black:black:white","format": "$LEGEND_HORIZONTAL"},
                 "Vertical Legend": {"$LEGEND_DEFAULT_PROPERTIES": null, "extra": ";legendColor=black:black:white", "format": "$LEGEND_VERTICAL"},
@@ -100,6 +110,17 @@
         "$LEGEND_ITEM_PG": {"type": "pg", "layout": "legend:shape", "container": "no_container_transparent"},
 
         "$LEGEND_ITEM_TAG": {"type": "ln", "layout": "legend:tag", "container": "no_container_transparent"},
-        "$LEGEND_ICON_TAG": {"type": "ln", "layout": "legend:icon", "container": "no_container_transparent"}
+        "$LEGEND_ICON_TAG": {"type": "ln", "layout": "legend:icon", "container": "no_container_transparent"},
+
+
+        "$DU_DEFAULT_PROPERTIES": {"id": "", "extra":"", "color": "$DEFAULT_COLOR", "text": {"font": ";fontFamily=IBM Plex Sans;fontColor=#000000;fontSize=12"}},
+        "$DU_D": {"type": "du", "layout": "d"},
+        "$DU_E": {"type": "du", "layout": "e"},
+        "$DU_I": {"type": "du", "layout": "i"},
+        "$DU_P": {"type": "du", "layout": "p"},
+        "$DU_TD": {"type": "du", "layout": "td"},
+        "$DU_TE": {"type": "du", "layout": "te"},
+        "$DU_TI": {"type": "du", "layout": "ti"},
+        "$DU_TP": {"type": "du", "layout": "tp"}
     }
 }

@@ -3,6 +3,8 @@
 	Sidebar.prototype.IBM2MondrianBaseShape = {
 		BASE_SHAPE : 'mxgraph.ibm2mondrian.base',
 		LEGEND_SHAPE : 'mxgraph.ibm2mondrian.legend',
+		DU_SHAPE : 'mxgraph.ibm2mondrian.du',
+		
 
 		SHAPE_TYPE: {
 			ACTOR: 'actor',
@@ -13,7 +15,8 @@
 			PRESCRIBED_NODE: 'pn',
 			PRESCRIBED_COMPONENT: 'pc',
 			PRESCRIBED_GROUP: 'pg',
-			LEGEND: 'legend'
+			LEGEND: 'legend',
+			DU: 'du'
 		},
 
 		SHAPE_LAYOUT: {
@@ -52,7 +55,8 @@
 		const MBS = Sidebar.prototype.IBM2MondrianBaseShape;
 
 		// load webfonts used in Visual Standards
-		Graph.addFont('IBM Plex Sans', 'fonts/IBMPlexSans-Regular.woff');
+		Graph.addFont('IBM Plex Sans Regular', 'fonts/IBMPlexSans-Regular.woff');
+		Graph.addFont('IBM Plex Sans SmBld', 'fonts/IBMPlexSans-SemiBold.woff');
 		Graph.addFont('IBM Plex Mono', 'fonts/IBMPlexMono-Regular.woff');
 		Graph.addFont('IBM Plex Sans Condensed', 'fonts/IBMPlexSansCondensed-Regular.woff');
 
@@ -215,7 +219,9 @@
 								}
 
 								var bg = Sidebar.prototype.addIBM2MondrianVertexTemplateFactory(shape.format.type, shape.format.layout, shape.color.family, shapeIntensity, shapeBackground, shapeMultiplicity, shapeBorder, shape.format.container, shape.text.font, shape.extra, shape.id, shapeName, positionText, shape.icon, tagForm, tagColorFamily, tagColorFill, tagText);
-								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName, false);
+								
+								let showLabel = (shape.format.type == 'du');
+								return sb.createVertexTemplateFromCells([bg], bg.geometry.width, bg.geometry.height, shapeName, showLabel);
 							}));
 						}
 					}
@@ -239,11 +245,18 @@
 	Sidebar.prototype.addIBM2MondrianVertexTemplateFactory = function(shapeType, shapeLayout, shapeColor, shapeIntensity, shapeBackground, shapeMultiplicity, shapeBorder, shapeContainer, styleFont, shapeExtraStyle, elementID, elementName, positionText, iconName, tagForm, tagColorFamily, tagColorFill, tagText)
 	{
 		let MBS = Sidebar.prototype.IBM2MondrianBaseShape;
-		// let fixedStandardSettings = ';html=1;whiteSpace=wrap;metaEdit=1;strokeWidth=1;collapsible=0;recursiveResize=0;expand=0';
 		let fixedStandardSettings = ';html=1;whiteSpace=wrap;metaEdit=1;collapsible=0;recursiveResize=0;expand=0';
 
-		let shape = (shapeType == MBS.SHAPE_TYPE.LEGEND) ? 'shape=' + MBS.LEGEND_SHAPE : 'shape=' + MBS.BASE_SHAPE;
-		let fontSettings = (styleFont == '') ? ';fontFamily=IBM Plex Sans;fontColor=#000000;fontSize=14' : styleFont;
+		let shape = null;
+		
+		if(shapeType == MBS.SHAPE_TYPE.LEGEND)
+			shape = 'shape=' + MBS.LEGEND_SHAPE;
+		else if(shapeType == MBS.SHAPE_TYPE.DU)
+			shape = 'shape=' + MBS.DU_SHAPE;
+		else
+			shape = 'shape=' + MBS.BASE_SHAPE;
+
+		let fontSettings = (styleFont == '') ? ';fontFamily=IBM Plex Sans SmBld;fontColor=#000000;fontSize=14' : styleFont;
 
 		let shapeSettings = '';
 		let standardSettings = '';
@@ -273,6 +286,15 @@
 				standardSettings = standardSettings + ';noLabel=1;marginTop=8';
 
 			standardSettings = standardSettings + ';marginBottom=8;marginRight=8;marginLeft=8;stackSpacing=8';
+		}
+		else if(shapeType == MBS.SHAPE_TYPE.DU)
+		{
+			shapeHeight = 16;
+			shapeWidth = 192;
+
+			standardSettings = standardSettings + ';shapeType=' + shapeLayout;
+			standardSettings = standardSettings + ';verticalAlign=middle;align=left;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0';
+			standardSettings = standardSettings + ';connectable=0';
 		}
 		else
 		{
@@ -340,7 +362,6 @@
 			new mxGeometry(0, 0, shapeWidth, shapeHeight), shape + shapeSettings + fixedStandardSettings + fontSettings + standardSettings + shapeExtraStyle);
 		bg.vertex = true;
 
-
 		bg.setValue(mxUtils.createXmlDocument().createElement('UserObject'));
 		bg.setAttribute('placeholders', '1');
 		if(shapeType == MBS.SHAPE_TYPE.LEGEND)
@@ -348,9 +369,15 @@
 			bg.setAttribute('label', '%Legend-Title%');
 			bg.setAttribute('Legend-Title', elementName);
 		}
+		else if(shapeType == MBS.SHAPE_TYPE.DU)
+		{
+			bg.setAttribute('label', '%Element-Name%');
+			bg.setAttribute('Element-ID', elementID);
+			bg.setAttribute('Element-Name', elementName);
+		}
 		else
 		{
-			bg.setAttribute('label', '%Element-Name%<BR><font style=\'font-size: 12px\'>%Element-ID%</font>');
+			bg.setAttribute('label', '%Element-Name%<BR><font style=\'font-size: 12px\' face=\'IBM Plex Sans Regular\'>%Element-ID%</font>');
 			bg.setAttribute('Element-ID', elementID);
 			bg.setAttribute('Element-Name', elementName);
 			bg.setAttribute('Icon-Name', iconName);

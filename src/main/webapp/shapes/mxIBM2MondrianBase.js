@@ -216,7 +216,7 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 			titleBarHeight = 48;
 			lableBoundOffsetLeft = null; // depends on other settings
 			
-			barWidth = 6;
+			barWidth = 4;
 			barHeight = 48;
 		}
 		else if(shapeLayout === 'legend')
@@ -407,7 +407,7 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	shapeVD.container.colorSwatch = this.getColorSwatch(colorFamily, colorFillContainer, 'container', shapeLayout, shapeVD.shape.type);
 
 	//dividerLine
-	shapeVD.dividerLine.visible = shapeVD.container.visible && (shapeVD.shape.type !== 'pg' && shapeVD.shape.type != 'lg');
+	shapeVD.dividerLine.visible = false;//shapeVD.container.visible && (shapeVD.shape.type !== 'pg' && shapeVD.shape.type != 'lg');
 	shapeVD.dividerLine.colorSwatch = (shapeVD.titleBar.colorSwatch === 'swatch_10') ? 'swatch_30' : 'swatch_20';
 
 	// Get the HEX values for each Shape part
@@ -479,19 +479,49 @@ mxIBM2MondrianBase.prototype.customProperties = [
 	{name:'shapeLayout', dispName:'Shape (Layout)', type:'enum', defVal:'expanded',
 		enumList:[
 			{val:'collapsed', dispName: 'Collapsed'},{val:'expanded', dispName: 'Expanded'},
+			{val:'expanded:stackLayout', dispName: 'Expanded (Stack Layout)'},
 			{val:'legend:color', dispName: 'Legend (Color)'}, {val:'legend:shape', dispName: 'Legend (Shape)'}, {val:'legend:style', dispName: 'Legend (Style)'},
 			{val:'legend:icon', dispName: 'Legend (Icon)'}, {val:'legend:tag', dispName: 'Legend (Tag)'},
-			{val:'legend:shapeAndStyle', dispName: 'Legend (Shape, Style & Color)'}]},
+			{val:'legend:shapeAndStyle', dispName: 'Legend (Shape, Style & Color)'}],
+			onChange: function(graph, newValue)
+			{
+				let selectedCells = graph.getSelectionCells();
+
+				if(newValue == 'expanded:stackLayout')
+				{
+					graph.setCellStyles('container', 1, selectedCells);
+
+					graph.setCellStyles('childLayout', 'stackLayout', selectedCells);
+					graph.setCellStyles('stackFill', 1, selectedCells);
+					graph.setCellStyles('horizontalStack', 0, selectedCells);
+					graph.setCellStyles('marginTop', 56, selectedCells);
+					graph.setCellStyles('marginLeft', 8, selectedCells);
+					graph.setCellStyles('marginRight', 8, selectedCells);
+					graph.setCellStyles('marginBottom', 8, selectedCells);
+		
+				}
+				else
+				{
+					graph.setCellStyles('childLayout', null, selectedCells);
+					graph.setCellStyles('stackFill', null, selectedCells);
+					graph.setCellStyles('horizontalStack', null, selectedCells);
+					graph.setCellStyles('marginTop', null, selectedCells);
+					graph.setCellStyles('marginLeft', null, selectedCells);
+					graph.setCellStyles('marginRight', null, selectedCells);
+					graph.setCellStyles('marginBottom', null, selectedCells);
+				}
+			}
+	},
 	{name:'shapeStyle', dispName:'Shape (Style)', type:'enum', defVal:'solid',
 		enumList:[{val:'solid', dispName: 'Solid'},{val:'strikethrough', dispName: 'Strikethrough'},{val:'double', dispName: 'Double'}, {val:'dashed', dispName: 'Dashed'}
 	]},
 	{name:'shapeMultiplicity', dispName: 'Multiplicity', type: 'bool', defVal: false},
 	{name:'colorFamily', dispName:'Color', type:'enum', defVal:'blue',
 		enumList:[{val:'blue', dispName: 'Blue'}, {val:'black', dispName: 'Black'}, {val:'cyan', dispName: 'Cyan'}, {val:'green', dispName: 'Green'}, {val:'gray', dispName: 'Gray'}, {val:'magenta', dispName: 'Magenta'}, {val:'purple', dispName: 'Purple'}, {val:'red', dispName: 'Red'}, {val:'teal', dispName: 'Teal'}, {val:'yellow', dispName: 'Yellow'}, {val:'orange', dispName: 'Orange'}]},
-	{name:'colorFillIcon', dispName:'Color (Corner)', type:'enum', defVal:'medium',
+	{name:'colorFillIcon', dispName:'Color (Outline)', type:'enum', defVal:'medium',
 		enumList:[{val:'noColor', dispName: 'None'}, {val:'light', dispName: 'Light'}, {val:'medium', dispName: 'Medium'}, {val:'dark', dispName: 'Dark'}]},
 	
-	{name:'colorBackground', dispName:'Color (Background)', type:'enum', defVal:'noColor:noColor',
+	{name:'colorBackground', dispName:'Color (Fill)', type:'enum', defVal:'noColor:noColor',
 		enumList:[
 		{val:'noColor:noColor', dispName: 'None'}, {val:'white:white', dispName: 'White'}, {val:'veryLight:veryLight', dispName: 'Very Light'},
 		{val:'white:noColor', dispName: 'Bar: White, Body: None'},
@@ -2104,61 +2134,46 @@ mxIBM2MondrianLegend.prototype.getLabelBounds = function(rect)
  mxIBM2MondrianBaseDeploymentUnit.prototype.cst = 
  {
 		 MONDRIAN_DU : 'mxgraph.ibm2mondrian.du',
-		 LEGEND_COLOR : 'legendColor',
-		 LEGEND_COLOR_DEFAULT : 'gray:white:white'	
+		 SHAPE_TYPE : 'shapeType',
+		 SHAPE_TYPE_DEFAULT : 'd',	 
+		 DU_COLOR : 'duColor',
+		 DU_COLOR_DEFAULT : 'black:noColor:noColor'	
  };
  
  mxIBM2MondrianBaseDeploymentUnit.prototype.customProperties = [
-	 {name: 'legendColor', dispName: 'Color (Background)', type: 'enum', defVal: 'gray:white:white',
-	 enumList:[
-		 {val:'gray:white:white', dispName: 'Text: Gray'},
-		 {val:'black:white:white', dispName: 'Text: Black'},
-		 {val:'gray:gray:white', dispName: 'Text & Line: Gray'},
-		 {val:'black:black:white', dispName: 'Text & Line: Black'},
-	 ]},
-	 {name: 'legendLayout', dispName: 'Layout', type: 'enum', defVal: 'horizontal',
-		 enumList: [
-			 {val: 'horizontal', dispName: 'Horizontal'}, {val: 'vertical', dispName: 'Vertical'}, 
-			 {val: 'horizontalTB', dispName: 'Horizontal (with Title)'}, {val: 'verticalTB', dispName: 'Vertical (with Title)'}],
-		 onChange: function(graph, newValue)
-		 {
-			 let isHorizontal = (newValue == 'horizontal' || newValue == 'horizontalTB');
-			 let showTitle = (newValue == 'verticalTB' || newValue == 'horizontalTB');;
-			 let graphScale = graph.view.scale;
-			 let marginTop = (showTitle) ? mxIBM2MondrianBaseDeploymentUnit.legendTitelbar : mxIBM2MondrianBaseDeploymentUnit.legendPadding;
- 
-			 let selectedCells = graph.getSelectionCells();
- 
-			 //determine geometry
-			 for (let i = 0; i < selectedCells.length; i++)
-			 {
-				 let geo = graph.getCellGeometry(selectedCells[i]);
-				 let minParentWidth = 2 * mxIBM2MondrianBaseDeploymentUnit.legendPadding;
-				 let minParentHeight = marginTop;
- 
-				 let childCells = graph.getChildCells(selectedCells[i], true, false);
-				 for (let j = 0; j < childCells.length; j++)
-				 {
-					 minParentWidth = Math.max(minParentWidth, graph.getCellBounds(childCells[j],true,false).width / graphScale + mxIBM2MondrianBaseDeploymentUnit.legendPadding + marginTop);
-					 minParentHeight = Math.max(minParentHeight, graph.getCellBounds(childCells[j],true,false).height / graphScale + mxIBM2MondrianBaseDeploymentUnit.legendPadding + marginTop);
-				 }
-				 geo.width = minParentWidth;
-				 geo.height = minParentHeight;
-				 graph.getModel().setGeometry(selectedCells[i], geo);
-			 }
-			 
-			 //set the styles
-			 graph.setCellStyles('stackFill', isHorizontal ? 0 : 1, selectedCells);
-			 graph.setCellStyles('horizontalStack', isHorizontal ? 1 : 0, selectedCells);
-			 graph.setCellStyles('noLabel', showTitle ? 0 : 1, selectedCells);
-			 graph.setCellStyles('marginTop', marginTop, selectedCells);
-		 }
-	 }
+	{name:'shapeType', dispName:'Type', type:'enum', defVal:'d',
+		enumList:[
+			{val:'d', dispName: 'Data'}, {val:'e', dispName: 'Execution'}, {val:'i', dispName: 'Installation'}, {val:'p', dispName: 'Presentation'}, 
+			{val:'td', dispName: 'Technical Data'}, {val:'te', dispName: 'Technical Execution'}, {val:'ti', dispName: 'Technical Installation'}, {val:'tp', dispName: 'Technical Presentation'}
+		]
+	}
  ];
  
+// The ShapeVisualDefinition contains all properties that define color of various parts of the Shape
+mxIBM2MondrianBaseDeploymentUnit.prototype.getShapeVisualDefinition = function (thisShape, shapeType)
+{
+	// basic colors
+	const WHITE = '#ffffff';
+	const BLACK = '#000000';
+
+	// VD properties
+	let shapeVD = {
+		shape: {visible:false, type: shapeType, width: null, height: null, radius: null, leftOffSet: null},
+		icon: {visible: false, color: null, colorSwatch: null, size: null, spacing: null, rotate: 0, flipH: false, flipV: false},
+		text: {color: null, labelBoundsHeight: 16, labelBoundsOffSetLeft: 24},
+	};
+
+	shapeVD.icon.visible = true;
+	shapeVD.icon.color = BLACK;
+	shapeVD.icon.spacing = 0;
+	shapeVD.icon.size = 16;
+
+	return shapeVD;
+};
+
  mxIBM2MondrianBaseDeploymentUnit.prototype.init = function(container)
  {
-	 let mondrianAttributes = ['Legend-Title'];
+	let mondrianAttributes = ['Element-ID', 'Element-Name'];
 	 for (attributeIndex = 0; attributeIndex < mondrianAttributes.length; attributeIndex++ ) {
 		 if(!this.state.cell.hasAttribute(mondrianAttributes[attributeIndex]))
 		 {
@@ -2175,31 +2190,30 @@ mxIBM2MondrianLegend.prototype.getLabelBounds = function(rect)
   */
   mxIBM2MondrianBaseDeploymentUnit.prototype.redraw = function()
   {
-	 let childCells = this.state.cell.children;
-	 let legendDimensions = mxIBM2MondrianBaseDeploymentUnit.prototype.getDimensions(childCells, mxUtils.getValue(this.style, 'legendLayout', 'verticalTB'));
-	 let geo = this.state.cell.geometry;
-	 geo.width = legendDimensions.width;
-	 geo.height = legendDimensions.height;
-	 this.state.view.graph.model.setGeometry(this.state.cell, geo);
- 
-	  mxShape.prototype.redraw.apply(this, arguments);
+	 this.shapeType = mxUtils.getValue(this.style, mxIBM2MondrianBaseDeploymentUnit.prototype.cst.SHAPE_TYPE, mxIBM2MondrianBaseDeploymentUnit.prototype.cst.SHAPE_TYPE_DEFAULT);
+	 
+	 mxShape.prototype.redraw.apply(this, arguments);
   };
  
   mxIBM2MondrianBaseDeploymentUnit.prototype.paintVertexShape = function(c, x, y, w, h)
  {	
-	 let legendColor = mxUtils.getValue(this.style, 
-		mxIBM2MondrianBaseDeploymentUnit.prototype.cst.LEGEND_COLOR, mxIBM2MondrianBaseDeploymentUnit.prototype.cst.LEGEND_COLOR_DEFAULT).split(':');
+	 this.shapeVisualDefinition = mxIBM2MondrianBaseDeploymentUnit.prototype.getShapeVisualDefinition(this,this.shapeType);
+
+	 let duColor = mxUtils.getValue(this.style, mxIBM2MondrianBaseDeploymentUnit.prototype.cst.DU_COLOR, mxIBM2MondrianBaseDeploymentUnit.prototype.cst.DU_COLOR_DEFAULT).split(':');
  
-	 let textColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[0]).swatch_50;
-	 let strokeColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[1]).swatch_50;
-	 let fillColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(legendColor[2]).swatch_50;
- 
+	 let textColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(duColor[0]).swatch_50;
+	 let strokeColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(duColor[1]).swatch_50;
+	 let fillColor = mxIBM2MondrianBase.prototype.getSelectedColorSpecification(duColor[2]).swatch_50;
  
 	 c.translate(x, y);
+	 
+	 //this.paintLabel(c);
 	 c.setFillColor(fillColor);
 	 c.setStrokeColor(strokeColor);
 	 c.rect(0, 0, w, h);
 	 c.fillAndStroke();
+	 
+	 this.paintIcon(c);
  
 	 const standardBlack = mxIBM2MondrianBase.prototype.getSelectedColorSpecification('black').swatch_50;
 	 const standardGray = mxIBM2MondrianBase.prototype.getSelectedColorSpecification('gray').swatch_50;
@@ -2214,50 +2228,62 @@ mxIBM2MondrianLegend.prototype.getLabelBounds = function(rect)
 	 }
  };
  
- mxIBM2MondrianBaseDeploymentUnit.prototype.getDimensions = function(childCells, legendLayout)
+
+ mxIBM2MondrianBaseDeploymentUnit.prototype.paintIcon = function(c)
  {
-	 let isHorizontal = (legendLayout == 'horizontal' || legendLayout == 'horizontalTB');
-	 let showTitle = (legendLayout == 'verticalTB' || legendLayout == 'horizontalTB');;
-	 let marginTop = (showTitle) ? mxIBM2MondrianBaseDeploymentUnit.legendTitelbar : mxIBM2MondrianBaseDeploymentUnit.legendPadding;
- 
-	 const minWidth = 64;
-	 const minHeight = (showTitle) ? mxIBM2MondrianBaseDeploymentUnit.legendTitelbar + mxIBM2MondrianBaseDeploymentUnit.legendItemHeight + 2 * mxIBM2MondrianBaseDeploymentUnit.legendPadding : mxIBM2MondrianBaseDeploymentUnit.legendItemHeight + 2 * mxIBM2MondrianBaseDeploymentUnit.legendPadding; 
- 
-	 let width = 2 * mxIBM2MondrianBaseDeploymentUnit.legendPadding;
-	 let height = marginTop;
- 
-	 if(childCells != null)
+	 let svd = this.shapeVisualDefinition;
+	 if(svd.icon.visible)
 	 {
-		 for (let j = 0; j < childCells.length; j++)
+		 let positionX = svd.icon.spacing;
+		 let positionY = svd.icon.spacing;
+ 
+		 let iconStencilName = this.shapeType;
+ 
+		 // Determine what Icon to show
+		 let showStencilIcon = true;
+ 
+		 // Retrieve the stencil from the registry 
+		 let iconStencil = null;
+		 if(showStencilIcon)
 		 {
-			 if(isHorizontal)
-			 {
-				 width = width + childCells[j].geometry.width + mxIBM2MondrianBaseDeploymentUnit.legendPadding;
-				 height = minHeight;
-			 }
-			 else
-			 {
-				 width = Math.max(width, childCells[j].geometry.width + 2 * mxIBM2MondrianBaseDeploymentUnit.legendPadding);
-				 height = height + childCells[j].geometry.height + mxIBM2MondrianBaseDeploymentUnit.legendPadding;	
-			 }
-		 }	
+			 iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.du_' + iconStencilName);
+ 
+			 if(iconStencil == null) // the iconStencilName cannot be found, so the 'undefined' Icon is retrieved
+				 iconStencil = mxStencilRegistry.getStencil('mxgraph.ibm2mondrian.undefined');
+ 
+			 showStencilIcon = (iconStencil != null); // only show the Icon if a stencil is found
+		 }
+ 
+		 if(showStencilIcon)
+		 {
+			c.save();
+			let canvasCenterX = positionX + svd.icon.size/2;
+			let canvasCenterY = 16;
+		
+			// rotate icon
+			c.rotate(svd.icon.rotate, svd.icon.flipH, svd.icon.flipV, 
+				canvasCenterX, canvasCenterY);
+			
+			c.setStrokeColor('none');
+			c.setFillColor(svd.icon.color);
+			c.setDashed(false);
+
+			iconStencil.strokewidth = 1;
+			iconStencil.drawShape(c, this, positionX, positionY, svd.icon.size, svd.icon.size);	
+			 
+			 c.restore();
+		 }
 	 }
- 
-	 width = Math.max(width, minWidth);
-	 height = Math.max(height, minHeight);
- 
-	 return {width, height};
  };
  
  mxIBM2MondrianBaseDeploymentUnit.prototype.getLabelBounds = function(rect)
  {
-	 const legendPadding = 8;
-	 const legendTitleHeight = 16;
-	 return new mxRectangle(
-					 rect.x + legendPadding * this.scale, 
-					 rect.y + legendPadding * this.scale,
-					 rect.width -  (2* legendPadding * this.scale),
-					 legendTitleHeight * this.scale);
+	let svd = this.shapeVisualDefinition;
+	return new mxRectangle(
+					rect.x + svd.text.labelBoundsOffSetLeft * this.scale, 
+					rect.y,
+					rect.width - (svd.text.labelBoundsOffSetLeft * this.scale),
+					svd.text.labelBoundsHeight * this.scale);
  };
 
 /**
