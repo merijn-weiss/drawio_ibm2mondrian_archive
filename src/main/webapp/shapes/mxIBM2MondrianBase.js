@@ -494,8 +494,8 @@ mxIBM2MondrianBase.prototype.customProperties = [
 					graph.setCellStyles('childLayout', 'stackLayout', selectedCells);
 					graph.setCellStyles('stackFill', 1, selectedCells);
 					graph.setCellStyles('horizontalStack', 0, selectedCells);
-					graph.setCellStyles('marginTop', 56, selectedCells);
-					graph.setCellStyles('marginLeft', 8, selectedCells);
+					graph.setCellStyles('marginTop', 64, selectedCells);
+					graph.setCellStyles('marginLeft', 16, selectedCells);
 					graph.setCellStyles('marginRight', 8, selectedCells);
 					graph.setCellStyles('marginBottom', 8, selectedCells);
 		
@@ -1578,7 +1578,7 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 		{
 			c.save();
 			let canvasCenterX = positionX + svd.icon.size/2;
-			let canvasCenterY = 24;
+			let canvasCenterY = svd.icon.size;
 		
 			// rotate icon
 			c.rotate(svd.icon.rotate, svd.icon.flipH, svd.icon.flipV, 
@@ -2258,7 +2258,7 @@ mxIBM2MondrianBaseDeploymentUnit.prototype.getShapeVisualDefinition = function (
 		 {
 			c.save();
 			let canvasCenterX = positionX + svd.icon.size/2;
-			let canvasCenterY = 16;
+			let canvasCenterY = svd.icon.size;
 		
 			// rotate icon
 			c.rotate(svd.icon.rotate, svd.icon.flipH, svd.icon.flipV, 
