@@ -187,9 +187,6 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 		let shapeRadius = (shapeType === 'ts' || shapeType === 'actor') ? 24 : 8;
 		let shapeLeftOffSet = (shapeType === 'ts' && shapeLayout === 'legend') ? -2 : 0;
 		
-		let barWidth = 0;
-		let barHeight = 0;
-
 		let decoratorComponentWidth = 8;
 		let decoratorComponentHeight = 4;
 		let decoratorComponentOffset = -4;
@@ -197,8 +194,12 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 		let multiplicitySpacing = 4;
 		let secondLineOffSet = 3;
 
-		let iconSize = 24;
-		let iconSpacing = 12;
+		let iconSize = 20;
+		let iconSpacing = 14;
+
+		let cornerWidth = 0;
+		let barWidth = 0;
+		let barHeight = 0;
 
 		if(shapeLayout === 'collapsed')
 		{
@@ -207,15 +208,25 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 
 			titleBarHeight = 16;
 			lableBoundOffsetLeft = 0;
+
+			cornerWidth = minRectWidth;
 		}
 		else if(shapeLayout === 'expanded')
 		{
-			minRectWidth = (shapeType === 'actor') ? 48 : 144;
-			minRectHeight = (shapeType === 'lg' || shapeType === 'pg') ? 64 : 48;
+			minRectWidth = (shapeType === 'actor') ? 48 : 96;
+			minRectHeight = 48;//(shapeType === 'lg' || shapeType === 'pg') ? 64 : 48;
 			
 			titleBarHeight = 48;
 			lableBoundOffsetLeft = null; // depends on other settings
 			
+			if(shapeType === 'lg' || shapeType === 'pg')
+				cornerWidth = 1*iconSpacing + iconSize
+			else if (shapeType === 'ts')
+				cornerWidth = 1*iconSpacing + iconSize - 4;
+			else
+				cornerWidth = 2*iconSpacing + iconSize;
+
+
 			barWidth = 4;
 			barHeight = 48;
 		}
@@ -244,6 +255,8 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 			shapeHeight = 16;
 			shapeRadius = (shapeType === 'ts' || shapeType === 'actor') ? 8 : 4;
 
+			cornerWidth = shapeWidth;
+
 			barWidth = 2;
 			barHeight = 12;
 
@@ -261,7 +274,7 @@ mxIBM2MondrianBase.prototype.getShapeDimensions = function (shapeType, shapeLayo
 		return {
 			minRectWidth, minRectHeight, 
 			shapeWidth, shapeHeight, shapeRadius, shapeLeftOffSet,
-			barWidth, barHeight,
+			cornerWidth, barWidth, barHeight,
 			titleBarHeight, lableBoundOffsetLeft,
 			decoratorComponentWidth, decoratorComponentHeight, decoratorComponentOffset,
 			multiplicitySpacing, secondLineOffSet,
@@ -370,37 +383,13 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 	//bar & corner
 	shapeVD.corner.colorSwatch = this.getColorSwatch(colorFamily, colorFillIcon, 'corner', shapeLayout, shapeVD.shape.type);
 	shapeVD.corner.visible = shapeVD.shape.visible && (shapeVD.icon.visible || shapeVD.corner.colorSwatch != 'noColor');
-	shapeVD.corner.width = dimensions.minRectHeight;
+	shapeVD.corner.width = (shapeVD.corner.visible) ? dimensions.cornerWidth : 0;
 	shapeVD.corner.height = dimensions.minRectHeight;
 
 	shapeVD.bar.colorSwatch = shapeVD.outerLine.colorSwatch;
 	shapeVD.bar.visible = (shapeVD.shape.type === 'pg' || shapeVD.shape.type === 'lg') && ((colorFillIcon != 'noColor') || (shapeVD.shape.layout == 'legend' && shapeSubLayout === 'shape')); // color fill is a workaround to enable hiding the bar
 	shapeVD.bar.width = (shapeVD.bar.visible) ? dimensions.barWidth : 0;
 	shapeVD.bar.height = dimensions.barHeight;
-
-	if(shapeVD.corner.visible)
-	{
-		if(shapeVD.shape.type === 'ts')
-		{
-			if(shapeLayout === 'collapsed')
-				shapeVD.corner.width = (2 * shapeVD.shape.radius + 16);
-			else if(shapeLayout === 'expanded')
-				shapeVD.corner.width = (shapeVD.icon.visible) ? (shapeVD.icon.spacing + shapeVD.icon.size - 4) : 0;
-		}
-		else if(shapeVD.shape.type === 'legendBaseItem')
-		{
-			shapeVD.corner.width = 32;
-		}
-		else
-		{
-			shapeVD.corner.width = (shapeVD.corner.colorSwatch === 'noColor' || shapeVD.corner.colorSwatch === shapeVD.titleBar.colorSwatch) ? 
-				shapeVD.icon.spacing + shapeVD.icon.size + shapeVD.bar.width: shapeVD.corner.width + shapeVD.bar.width;
-		}
-	}
-	else
-	{
-		shapeVD.corner.width = shapeVD.bar.width;
-	}
 
 	//container
 	shapeVD.container.visible = shapeVD.shape.visible && (shapeVD.shape.layout === 'expanded') && (shapeVD.shape.height - dimensions.titleBarHeight > 0);
@@ -441,6 +430,8 @@ mxIBM2MondrianBase.prototype.getShapeVisualDefinition = function (
 				shapeVD.style.color = (this.isDarkColor(shapeVD.corner.color, shapeVD.corner.colorSwatch)) ?  WHITE : shapeVD.outerLine.color;
 			else if(shapeVD.outerLine.dashed)
 				shapeVD.outerLine.secondLine = (this.isDarkColor(shapeVD.corner.color, shapeVD.corner.colorSwatch));
+
+			shapeVD.text.labelBoundsOffSetLeft = (shapeVD.icon.visible) ? shapeVD.text.labelBoundsOffSetLeft : 0;
 		}
 	}
 
@@ -556,12 +547,26 @@ mxIBM2MondrianBase.prototype.customProperties = [
 mxIBM2MondrianBase.prototype.textSpacing = 4;
 
 /**
+ * Variable: textSpacingLeft
+ *
+ * Default value for text spacing. Default is 16.
+ */
+ mxIBM2MondrianBase.prototype.textSpacingLeft = 16;
+
+/**
  * Function: init
  *
  * Initializes the shape and the <indicator>.
  */
 mxIBM2MondrianBase.prototype.init = function(container)
 {
+	if (!mxUtils.isNode(this.state.cell.value)) {
+		let obj = mxUtils.createXmlDocument().createElement('UserObject');
+		obj.setAttribute('label', this.state.cell.value);
+		
+		this.state.cell.value = obj;
+	}
+
 	let mondrianAttributes = ['Element-ID', 'Element-Name','Icon-Name','Tag-Text'];
 	for (attributeIndex = 0; attributeIndex < mondrianAttributes.length; attributeIndex++ ) {
 		if(!this.state.cell.hasAttribute(mondrianAttributes[attributeIndex]))
@@ -1359,7 +1364,7 @@ mxIBM2MondrianBase.prototype.paintTag = function(c)
 			rightTagX = svd.shape.width - tagSpaceRight;
 
 		if(svd.shape.layout === 'legend')
-			svd.text.labelBoundsOffSetLeft = tagWidth + 8;
+			svd.text.labelBoundsOffSetLeft = 15 + extraTextWidth + 8;
 		
 		let leftTagX = rightTagX - tagWidth;
 		let centerTagX = (rightTagX + leftTagX)/2;
@@ -1535,13 +1540,11 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 	let svd = this.shapeVisualDefinition;
 	if(svd.icon.visible)
 	{
-		let positionX = svd.icon.spacing;
-		let positionY = svd.icon.spacing;
-
-		if(svd.shape.layout === 'collapsed' && svd.shape.type === 'ts')
-			positionX = 20;
-		else if((svd.shape.layout === 'collapsed' || svd.shape.layout === 'expanded') && (svd.shape.type === 'pg' || svd.shape.type === 'lg'))
-			positionX = svd.bar.width + svd.icon.spacing;
+		let positionX = (svd.shape.type === 'lg' || svd.shape.type  === 'pg') ? svd.corner.width - svd.icon.size : svd.corner.width/2 - svd.icon.size/2;
+		positionX = (svd.shape.layout === 'expanded' && svd.shape.type  === 'ts') ? positionX + svd.shape.radius/2 : positionX;
+		positionX = (svd.shape.layout === 'legend') ? 0 : positionX;
+		
+		let positionY = svd.corner.height/2 - svd.icon.size/2;
 
 		let iconStencilName = this.state.cell.getAttribute('Icon-Name',null) || 'undefined';
 		let iconImageStyle = this.image || 'undefined';
@@ -1578,7 +1581,7 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 		{
 			c.save();
 			let canvasCenterX = positionX + svd.icon.size/2;
-			let canvasCenterY = svd.icon.size;
+			let canvasCenterY = svd.corner.height/2;
 		
 			// rotate icon
 			c.rotate(svd.icon.rotate, svd.icon.flipH, svd.icon.flipV, 
@@ -1611,6 +1614,7 @@ mxIBM2MondrianBase.prototype.paintIcon = function(c)
 var shapeStyle = {};
 mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, positionText, iconImage)
 {	
+
 	if(shapeType === 'pg' || shapeType === 'lg')
 	{
 		style = mxUtils.setStyle(style, 'container', 1);
@@ -1640,7 +1644,7 @@ mxIBM2MondrianBase.prototype.getStyle = function(style, shapeType, shapeLayout, 
 
 	if(shapeLayout === 'expanded' || shapeLayout === 'legend')
 	{
-		let spacingLeft = (shapeLayout === 'expanded') ? 12 : 0;
+		let spacingLeft = (shapeLayout === 'expanded') ? this.textSpacingLeft : 0;
 		let spacingRight = (shapeLayout === 'expanded' && shapeType === 'ts' && iconImage === 'noIcon') ? 16 : spacingLeft;
 		let align = (shapeLayout === 'expanded' && shapeType === 'ts' && iconImage === 'noIcon') ? mxConstants.ALIGN_CENTER : mxConstants.ALIGN_LEFT;
 
@@ -2127,10 +2131,6 @@ mxIBM2MondrianLegend.prototype.getLabelBounds = function(rect)
  
  mxUtils.extend(mxIBM2MondrianBaseDeploymentUnit, mxShape);
  
- mxIBM2MondrianBaseDeploymentUnit.legendPadding = 8;
- mxIBM2MondrianBaseDeploymentUnit.legendItemHeight = 16;
- mxIBM2MondrianBaseDeploymentUnit.legendTitelbar = 32;
- 
  mxIBM2MondrianBaseDeploymentUnit.prototype.cst = 
  {
 		 MONDRIAN_DU : 'mxgraph.ibm2mondrian.du',
@@ -2258,7 +2258,7 @@ mxIBM2MondrianBaseDeploymentUnit.prototype.getShapeVisualDefinition = function (
 		 {
 			c.save();
 			let canvasCenterX = positionX + svd.icon.size/2;
-			let canvasCenterY = svd.icon.size;
+			let canvasCenterY = positionY + svd.icon.size/2;
 		
 			// rotate icon
 			c.rotate(svd.icon.rotate, svd.icon.flipH, svd.icon.flipV, 

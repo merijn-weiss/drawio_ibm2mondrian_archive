@@ -336,7 +336,7 @@
 			{
 				shapeHeight = (shapeType == MBS.SHAPE_TYPE.LOGICAL_GROUP || shapeType == MBS.SHAPE_TYPE.PRESCRIBED_GROUP) ? 152 : 48;
 				shapeWidth = 240;
-				standardSettings = standardSettings + ';verticalAlign=middle;align=left;spacing=0;spacingLeft=12;spacingRight=16;spacingTop=0;spacingBottom=0';
+				standardSettings = standardSettings + ';verticalAlign=middle;align=left;spacing=0;spacingLeft=16;spacingRight=16;spacingTop=0;spacingBottom=0';
 			}
 			else if(shapeLayout === MBS.SHAPE_LAYOUT.COLLAPSED)
 			{
@@ -377,7 +377,7 @@
 		}
 		else
 		{
-			bg.setAttribute('label', '%Element-Name%<BR><font style=\'font-size: 12px\' face=\'IBM Plex Sans Regular\'>%Element-ID%</font>');
+			bg.setAttribute('label', '%Element-Name%<BR><font style=\'font-size: 14px\' face=\'IBM Plex Sans Regular\'>%Element-ID%</font>');
 			bg.setAttribute('Element-ID', elementID);
 			bg.setAttribute('Element-Name', elementName);
 			bg.setAttribute('Icon-Name', iconName);
